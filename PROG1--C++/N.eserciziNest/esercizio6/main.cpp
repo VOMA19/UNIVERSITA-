@@ -1,6 +1,19 @@
 #include <iostream>
 using namespace std;
 
+bool controllo(const char parentesi[]);
+
+int main() {
+    char parentesi[] = {'[','(',']',')','\0'};
+    bool corr = controllo(parentesi);
+
+    if (corr)
+        cout << "la parentesizzazione è perfetta" << endl;
+    else
+        cout << "la parentesizzazione non è perfetta" << endl;
+    return 0;
+}
+
 bool controllo(const char parentesi[]) {
     char stack[100];
     int top = -1;
@@ -20,16 +33,4 @@ bool controllo(const char parentesi[]) {
         }
     }
     return top == -1;
-}
-
-int main() {
-    char parentesi[] = {'[','(',']',')','\0'};
-    bool corr = controllo(parentesi);
-
-    if (corr)
-        cout << "la parentesizzazione è perfetta" << endl;
-    else
-        cout << "la parentesizzazione non è perfetta" << endl;
-
-    return 0;
 }
