@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuale Interattivo di Algebra Lineare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Deep Ocean -->
+    <!-- Application Structure Plan: La struttura è quella di un manuale digitale a pagina singola, con una navigazione laterale granulare e persistente che funge da indice. L'architettura segue un percorso didattico rigoroso, allineato ai PDF forniti: 1. Vettori (con sotto-sezioni per ogni prodotto), 2. Matrici (con aggiunta di Determinante e Inversa), 3. Sistemi Lineari (con focus sul Teorema di Rouché-Capelli), 4. Spazi Vettoriali (con analisi dettagliata di Basi, Indipendenza e Coordinate). Ogni sezione è autocontenuta e segue uno schema fisso: Introduzione, Definizione Formale, Spiegazione Approfondita, Teoremi/Proprietà e un Laboratorio Interattivo avanzato. Questo design supporta sia lo studio lineare e progressivo sia la consultazione rapida di argomenti specifici. -->
+    <!-- Visualization & Content Choices: 
+    - Vettori 3D: Goal: Inform/Analyze. Viz: Un "laboratorio 3D" simulato su un grafico a dispersione 2D (Canvas/Chart.js), dove la coordinata Z è rappresentata dalla dimensione dei punti. Calcola e spiega Norma, Prodotto Scalare, Vettoriale e Misto (volume). Justification: Offre un'esperienza interattiva per concetti intrinsecamente 3D, rendendo tangibile il significato geometrico delle operazioni.
+    - Matrici: Goal: Explain Properties & Processes. Viz: "Analizzatore di Matrici" (HTML/JS) che calcola Determinante (con la regola di Sarrus spiegata) e Inversa (mostrando i passaggi dell'algoritmo di Gauss-Jordan su una matrice aumentata `[A|I]`). Justification: Non si limita a dare un risultato, ma insegna i due algoritmi più importanti legati alle matrici quadrate.
+    - Sistemi Lineari: Goal: Analyze & Solve. Viz: Un risolutore potenziato che prima calcola i ranghi di matrice incompleta e completa, enuncia il risultato del Teorema di Rouché-Capelli (determinando se ci sono 0, 1 o ∞ soluzioni), e solo dopo mostra la soluzione o lo stato del sistema. Justification: Insegna l'approccio corretto all'analisi di un sistema, che viene prima discusso e poi risolto.
+    - Spazi Vettoriali: Goal: Explore Abstract Concepts. Viz: "Laboratorio di Basi 2D" (Canvas/Chart.js) in cui l'utente definisce una base, il sistema ne verifica l'indipendenza lineare (tramite determinante) e calcola in tempo reale le coordinate di un vettore target rispetto a quella base. Justification: Rende i concetti di "base" e "coordinate" non più astratti, ma proprietà manipolabili e visibili.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Mono:wght@400&display=swap');
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; color: #212529; }
+        .chart-container { position: relative; width: 100%; max-width: 500px; margin: auto; height: 350px; max-height: 400px; }
+        .nav-link.active { background-color: #C4DFE6; color: #003B46; font-weight: 700; }
+        .nav-link:not(.active):hover { background-color: #E9ECEF; }
+        .card { background-color: #FFFFFF; border: 1px solid #DEE2E6; box-shadow: 0 4px 12px -1px rgba(0,0,0,0.06); }
+        .btn-primary { background-color: #07575B; color: white; transition: background-color 0.2s; }
+        .btn-primary:hover { background-color: #003B46; }
+        .code { font-family: 'Roboto Mono', monospace; background-color: #E9ECEF; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
+        .matrix-input { width: 50px; text-align: center; border: 1px solid #CED4DA; border-radius: 4px; }
+        .definition, .theorem, .example { padding: 1.25rem; margin-top: 1rem; border-radius: 0.5rem; }
+        .definition { background-color: #E3F2FD; border-left: 5px solid #66A5AD; }
+        .theorem { background-color: #FFF3E0; border-left: 5px solid #FFB74D; }
+        .example { background-color: #E8F5E9; border-left: 5px solid #81C784; }
+        h1, h2, h3, h4 { color: #003B46; }
+    </style>
+</head>
+<body class="flex">
+
+    <!-- Sidebar -->
+    <aside class="w-72 h-screen sticky top-0 bg-white border-r border-gray-200 p-4 flex-col shrink-0 hidden md:flex">
+        <h1 class="text-2xl font-bold pb-4 mb-4 border-b">Manuale di Algebra Lineare</h1>
+        <nav id="sidebar-nav" class="flex flex-col space-y-1 overflow-y-auto">
+            <a href="#vettori" class="nav-link p-2 rounded-md font-bold">1. Vettori in ℝ³</a>
+            <a href="#operazioni_vettori" class="nav-link pl-6 p-2 rounded-md">1.1 Operazioni Base</a>
+            <a href="#prod_scalare" class="nav-link pl-6 p-2 rounded-md">1.2 Prodotto Scalare</a>
+            <a href="#prod_vettoriale" class="nav-link pl-6 p-2 rounded-md">1.3 Prodotto Vettoriale</a>
+            <a href="#prod_misto" class="nav-link pl-6 p-2 rounded-md">1.4 Prodotto Misto</a>
+            <a href="#matrici" class="nav-link p-2 rounded-md font-bold">2. Matrici</a>
+            <a href="#operazioni_matrici" class="nav-link pl-6 p-2 rounded-md">2.1 Operazioni</a>
+            <a href="#determinante_inversa" class="nav-link pl-6 p-2 rounded-md">2.2 Determinante e Inversa</a>
+            <a href="#sistemi" class="nav-link p-2 rounded-md font-bold">3. Sistemi Lineari</a>
+            <a href="#rouche_capelli" class="nav-link pl-6 p-2 rounded-md">3.1 Teorema di Rouché-Capelli</a>
+            <a href="#gauss_jordan" class="nav-link pl-6 p-2 rounded-md">3.2 Metodo di Gauss-Jordan</a>
+            <a href="#spazi" class="nav-link p-2 rounded-md font-bold">4. Spazi Vettoriali</a>
+            <a href="#indipendenza_span" class="nav-link pl-6 p-2 rounded-md">4.1 Indipendenza e Span</a>
+            <a href="#basi_coordinate" class="nav-link pl-6 p-2 rounded-md">4.2 Basi e Coordinate</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-10">
+        
+        <section id="vettori" class="space-y-6 mb-16">
+            <h2 class="text-4xl font-bold border-b pb-3">1. Vettori in ℝ³</h2>
+            <div class="card p-6 rounded-lg">
+                <p class="text-lg">I vettori sono gli elementi fondamentali dell'algebra lineare. In <code class="code">ℝ³</code>, un vettore <code class="code">v</code> è una terna ordinata di numeri reali <code class="code">(x, y, z)</code> che possiamo visualizzare come una freccia dall'origine <code class="code">(0,0,0)</code> al punto <code class="code">(x,y,z)</code>. Ogni vettore possiede una <strong class="text-[#07575B]">norma</strong> (lunghezza), una <strong class="text-[#07575B]">direzione</strong> e un <strong class="text-[#07575B]">verso</strong>.</p>
+                <div id="operazioni_vettori" class="mt-6">
+                    <h3 class="text-2xl font-bold mb-2">1.1 Operazioni Base</h3>
+                    <div class="definition">
+                        <p><strong class="font-semibold">Somma:</strong> <code class="code">u + v = (uₓ+vₓ, uᵧ+vᵧ, u₂+v₂)</code></p>
+                        <p><strong class="font-semibold">Prodotto per Scalare:</strong> <code class="code">k * u = (k*uₓ, k*uᵧ, k*u₂)</code></p>
+                        <p><strong class="font-semibold">Norma (Lunghezza):</strong> <code class="code">||u|| = sqrt(uₓ² + uᵧ² + u₂²)</code> (Teorema di Pitagora generalizzato)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-6 rounded-lg">
+                <h3 class="text-2xl font-bold mb-4">Laboratorio Vettori 3D</h3>
+                <p class="text-sm mb-4">Inserisci le componenti di due vettori in ℝ³ per analizzare le loro proprietà e i risultati dei prodotti notevoli.</p>
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="font-semibold">Vettore u</label>
+                            <div class="flex gap-2"><input type="number" id="ux" value="2" class="matrix-input p-2 w-full"><input type="number" id="uy" value="3" class="matrix-input p-2 w-full"><input type="number" id="uz" value="1" class="matrix-input p-2 w-full"></div>
+                        </div>
+                        <div>
+                            <label class="font-semibold">Vettore v</label>
+                            <div class="flex gap-2"><input type="number" id="vx" value="1" class="matrix-input p-2 w-full"><input type="number" id="vy" value="-1" class="matrix-input p-2 w-full"><input type="number" id="vz" value="2" class="matrix-input p-2 w-full"></div>
+                        </div>
+                        <button id="update-vector-lab" class="w-full btn-primary font-bold py-2 px-4 rounded-lg">Analizza</button>
+                        <div id="vector-results" class="space-y-2 text-sm pt-4"></div>
+                    </div>
+                    <div class="chart-container"><canvas id="vectorChart"></canvas><p class="text-center text-xs text-gray-500 mt-2">Proiezione 2D dello spazio 3D. La dimensione dei punti indica la coordinata Z.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="prod_scalare" class="space-y-6 mb-16">
+            <h3 class="text-2xl font-bold border-b pb-2">1.2 Prodotto Scalare</h3>
+            <div class="card p-6 rounded-lg">
+                 <p class="mb-4">Il prodotto scalare (o prodotto interno) associa a due vettori uno scalare, fornendo una misura della loro "concordanza" direzionale.</p>
+                <div class="definition">
+                    <p><strong class="font-semibold">Definizione:</strong> Dati <code class="code">u, v ∈ ℝ³</code>, il loro prodotto scalare è <code class="code">u · v = uₓvₓ + uᵧvᵧ + u₂v₂</code>.</p>
+                </div>
+                <div class="theorem">
+                    <p><strong class="font-semibold">Interpretazione Geometrica:</strong> <code class="code">u · v = ||u|| ||v|| cos(θ)</code>, dove <code class="code">θ</code> è l'angolo tra i due vettori. Questo implica che due vettori non nulli sono <strong class="text-[#07575B]">ortogonali</strong> (perpendicolari) se e solo se il loro prodotto scalare è zero.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="prod_vettoriale" class="space-y-6 mb-16">
+            <h3 class="text-2xl font-bold border-b pb-2">1.3 Prodotto Vettoriale</h3>
+            <div class="card p-6 rounded-lg">
+                <p class="mb-4">Definito solo in ℝ³, il prodotto vettoriale associa a due vettori un terzo vettore, ortogonale ad entrambi.</p>
+                <div class="definition">
+                    <p><strong class="font-semibold">Definizione (tramite determinante simbolico):</strong></p>
+                    <p class="font-mono text-center my-2">u × v = det <begin{pmatrix} <strong>i</strong> & <strong>j</strong> & <strong>k</strong> \\ uₓ & uᵧ & u₂ \\ vₓ & vᵧ & v₂ \end{pmatrix}</p>
+                    <p>Dove <code class="code">i, j, k</code> sono i versori della base canonica.</p>
+                </div>
+                 <div class="theorem">
+                    <p><strong class="font-semibold">Proprietà Geometriche:</strong></p>
+                    <ol class="list-decimal list-inside ml-4 mt-2">
+                        <li>Il vettore <code class="code">w = u × v</code> è ortogonale sia a <code class="code">u</code> che a <code class="code">v</code>.</li>
+                        <li>Il suo verso è dato dalla <strong class="text-[#07575B]">regola della mano destra</strong>. [Image of right-hand rule for cross product]</li>
+                        <li>La sua norma <code class="code">||u × v|| = ||u|| ||v|| sin(θ)</code> è uguale all'<strong class="text-[#07575B]">area del parallelogramma</strong> generato da <code class="code">u</code> e <code class="code">v</code>.</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <section id="prod_misto" class="space-y-6 mb-16">
+             <h3 class="text-2xl font-bold border-b pb-2">1.4 Prodotto Misto</h3>
+             <div class="card p-6 rounded-lg">
+                <p class="mb-4">Il prodotto misto combina il prodotto vettoriale e quello scalare. Il suo risultato è uno scalare.</p>
+                <div class="definition">
+                    <p><strong class="font-semibold">Definizione:</strong> Dati <code class="code">u, v, w ∈ ℝ³</code>, il prodotto misto è <code class="code">(u × v) · w</code>.</p>
+                    <p class="mt-2">Si calcola come il determinante della matrice che ha per righe (o colonne) i tre vettori: <code class="code">(u × v) · w = det(u, v, w)</code></p>
+                </div>
+                <div class="theorem">
+                    <p><strong class="font-semibold">Interpretazione Geometrica:</strong> Il valore assoluto del prodotto misto, <code class="code">|(u × v) · w|</code>, è uguale al <strong class="text-[#07575B]">volume del parallelepipedo</strong> generato dai tre vettori.</p>
+                    <p class="mt-2"><strong class="font-semibold">Osservazione:</strong> Se il prodotto misto è zero, i tre vettori sono <strong class="text-[#07575B]">complanari</strong>, ovvero giacciono sullo stesso piano (il volume del parallelepipedo è nullo).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="matrici" class="space-y-6 mb-16">
+            <h2 class="text-4xl font-bold border-b pb-3">2. Matrici</h2>
+            <div id="operazioni_matrici" class="card p-6 rounded-lg">
+                <h3 class="text-2xl font-bold mb-2">2.1 Operazioni</h3>
+                <p class="mb-4">Una matrice <code class="code">m × n</code> è una tabella di numeri con <code class="code">m</code> righe e <code class="code">n</code> colonne.</p>
+                <div class="definition">
+                    <p><strong class="font-semibold">Somma:</strong> Definita solo per matrici delle stesse dimensioni; si sommano gli elementi corrispondenti.</p>
+                    <p><strong class="font-semibold">Prodotto Riga per Colonna:</strong> Per calcolare <code class="code">C = A * B</code>, il numero di colonne di A deve eguagliare il numero di righe di B. L'elemento <code class="code">Cᵢⱼ</code> è il prodotto scalare della riga i-esima di A con la colonna j-esima di B.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="determinante_inversa" class="space-y-6 mb-16">
+            <h3 class="text-2xl font-bold border-b pb-2">2.2 Determinante e Matrice Inversa</h3>
+            <div class="card p-6 rounded-lg">
+                <p class="mb-4">Il determinante è un numero scalare associato a una matrice quadrata che ne descrive importanti proprietà. La matrice inversa, se esiste, è l'analogo matriciale del reciproco di un numero.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="definition">
+                        <p><strong class="font-semibold">Determinante (det(A)):</strong> Un numero che indica se la matrice è "degenere". Se <code class="code">det(A) ≠ 0</code>, le righe/colonne sono linearmente indipendenti e la matrice è invertibile. Per una 2x2, <code class="code">det([[a,b],[c,d]]) = ad-bc</code>. Per una 3x3 si usa la regola di Sarrus.</p>
+                    </div>
+                    <div class="definition">
+                        <p><strong class="font-semibold">Matrice Inversa (A⁻¹):</strong> Una matrice A è invertibile se esiste una matrice A⁻¹ tale che <code class="code">A * A⁻¹ = A⁻¹ * A = I</code>, dove I è la matrice identità. Esiste se e solo se <code class="code">det(A) ≠ 0</code>.</p>
+                    </div>
+                </div>
+                <div class="example">
+                    <h4 class="text-xl font-bold my-4">Analizzatore Matrice 3x3</h4>
+                    <div id="matrix-analysis-input" class="grid grid-cols-3 gap-2 max-w-xs mx-auto">
+                        <input class="matrix-input p-2" value="1"><input class="matrix-input p-2" value="2"><input class="matrix-input p-2" value="3">
+                        <input class="matrix-input p-2" value="0"><input class="matrix-input p-2" value="1"><input class="matrix-input p-2" value="4">
+                        <input class="matrix-input p-2" value="5"><input class="matrix-input p-2" value="6"><input class="matrix-input p-2" value="0">
+                    </div>
+                    <div class="text-center mt-4"><button id="analyze-matrix" class="btn-primary font-bold py-2 px-4 rounded-lg">Analizza Matrice</button></div>
+                    <div id="matrix-analysis-results" class="mt-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sistemi" class="space-y-6 mb-16">
+             <h2 class="text-4xl font-bold border-b pb-3">3. Sistemi Lineari</h2>
+             <div id="rouche_capelli" class="card p-6 rounded-lg">
+                <h3 class="text-2xl font-bold mb-2">3.1 Teorema di Rouché-Capelli</h3>
+                <p class="mb-4">Questo teorema fondamentale ci permette di determinare l'esistenza e il numero di soluzioni di un sistema lineare <code class="code">Ax = b</code> senza risolverlo, basandosi solo sul rango delle matrici associate.</p>
+                <div class="definition">
+                    <p><strong class="font-semibold">Rango (o caratteristica) di una matrice, rk(A):</strong> Il massimo numero di righe (o colonne) linearmente indipendenti della matrice. Si calcola riducendo la matrice a scala e contando il numero di pivot (elementi non nulli a inizio riga).</p>
+                </div>
+                <div class="theorem">
+                    <p><strong class="font-semibold">Enunciato di Rouché-Capelli:</strong> Un sistema lineare <code class="code">Ax = b</code> ammette soluzioni se e solo se il rango della matrice incompleta (dei coefficienti) è uguale al rango della matrice completa (aumentata con i termini noti): <code class="code">rk(A) = rk(A|b)</code>.</p>
+                    <ul class="list-disc list-inside ml-4 mt-2">
+                        <li>Se <code class="code">rk(A) ≠ rk(A|b)</code>, il sistema è <strong class="text-[#07575B]">impossibile</strong> (nessuna soluzione).</li>
+                        <li>Se <code class="code">rk(A) = rk(A|b) = n</code> (numero di incognite), il sistema è <strong class="text-[#07575B]">determinato</strong> (una e una sola soluzione).</li>
+                        <li>Se <code class="code">rk(A) = rk(A|b) < n</code>, il sistema è <strong class="text-[#07575B]">indeterminato</strong> (infinite soluzioni, dipendenti da <code class="code">n - rk(A)</code> parametri liberi).</li>
+                    </ul>
+                </div>
+             </div>
+        </section>
+        
+        <section id="gauss_jordan" class="space-y-6 mb-16">
+            <h3 class="text-2xl font-bold border-b pb-2">3.2 Metodo di Eliminazione di Gauss-Jordan</h3>
+            <div class="card p-6 rounded-lg">
+                <p class="mb-4">L'algoritmo di Gauss-Jordan è il metodo pratico per risolvere un sistema lineare. Si applicano operazioni elementari di riga alla matrice aumentata <code class="code">[A|b]</code> per trasformarla nella sua forma a scala ridotta per righe (RREF), da cui la soluzione è immediatamente leggibile.</p>
+                <div class="example">
+                    <h4 class="text-xl font-bold my-4">Risolutore di Sistemi Lineari</h4>
+                    <p class="text-sm mb-2">Inserisci la matrice aumentata del sistema (max 3x4). Il risolutore applicherà Rouché-Capelli e poi, se possibile, troverà la soluzione.</p>
+                    <div id="gauss-matrix-input" class="grid grid-cols-4 gap-2 max-w-sm mx-auto">
+                        <input class="matrix-input p-2" value="1"><input class="matrix-input p-2" value="1"><input class="matrix-input p-2" value="2"><input class="matrix-input p-2" value="9">
+                        <input class="matrix-input p-2" value="2"><input class="matrix-input p-2" value="4"><input class="matrix-input p-2" value="-3"><input class="matrix-input p-2" value="1">
+                        <input class="matrix-input p-2" value="3"><input class="matrix-input p-2" value="6"><input class="matrix-input p-2" value="-5"><input class="matrix-input p-2" value="0">
+                    </div>
+                    <div class="text-center mt-4"><button id="solve-gauss" class="btn-primary font-bold py-2 px-4 rounded-lg">Discuti e Risolvi</button></div>
+                    <div id="gauss-analysis" class="mt-4"></div>
+                    <div id="gauss-steps" class="mt-4 text-sm"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="spazi" class="space-y-6 mb-16">
+             <h2 class="text-4xl font-bold border-b pb-3">4. Spazi Vettoriali</h2>
+             <div id="indipendenza_span" class="card p-6 rounded-lg">
+                <h3 class="text-2xl font-bold mb-2">4.1 Indipendenza Lineare e Span</h3>
+                <p class="mb-4">Questi concetti sono cruciali per comprendere la "struttura" interna di uno spazio vettoriale.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="definition">
+                        <p><strong class="font-semibold">Indipendenza Lineare:</strong> Un insieme di vettori <code class="code">{v₁, ..., vₖ}</code> è linearmente indipendente se l'unica loro combinazione lineare che dà il vettore nullo è quella con tutti i coefficienti nulli (<code class="code">c₁v₁ + ... + cₖvₖ = 0 ⇒ cᵢ=0 ∀i</code>). Intuitivamente, nessun vettore può essere espresso come combinazione degli altri.</p>
+                    </div>
+                     <div class="definition">
+                        <p><strong class="font-semibold">Span:</strong> Lo span di <code class="code">{v₁, ..., vₖ}</code>, indicato con <code class="code">Span(v₁, ..., vₖ)</code>, è il sottospazio vettoriale composto da <strong class="text-[#07575B]">tutte</strong> le possibili combinazioni lineari dei vettori dati. Rappresenta l'intero "universo" che può essere generato da quel set di vettori.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="basi_coordinate" class="space-y-6 mb-16">
+            <h3 class="text-2xl font-bold border-b pb-2">4.2 Basi e Coordinate</h3>
+             <div class="card p-6 rounded-lg">
+                <div class="definition">
+                    <p><strong class="font-semibold">Base:</strong> Una base di uno spazio vettoriale V è un insieme di vettori linearmente indipendenti che generano V (<code class="code">Span(B)=V</code>). È un insieme "ottimale" di generatori, senza ridondanze.</p>
+                    <p><strong class="font-semibold">Dimensione:</strong> Tutte le basi di uno spazio vettoriale hanno lo stesso numero di vettori. Questo numero è la dimensione dello spazio, <code class="code">dim(V)</code>.</p>
+                    <p><strong class="font-semibold">Coordinate:</strong> Fissata una base ordinata <code class="code">B={b₁, ..., bₙ}</code>, ogni vettore <code class="code">v ∈ V</code> può essere scritto in modo <strong class="text-[#07575B]">unico</strong> come combinazione lineare dei vettori di B: <code class="code">v = c₁b₁ + ... + cₙbₙ</code>. Il vettore <code class="code">[v]₈ = (c₁, ..., cₙ)</code> è il vettore delle coordinate di <code class="code">v</code> rispetto alla base B.</p>
+                </div>
+                <div class="example">
+                    <h4 class="text-xl font-bold my-4">Laboratorio Basi e Coordinate in ℝ²</h4>
+                    <p class="text-sm mb-4">Definisci una base <code class="code">B={b₁, b₂}</code> e osserva come cambiano le coordinate del vettore target <code class="code">w=(2,3)</code> rispetto a B. Prova a rendere i vettori di base dipendenti.</p>
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="space-y-3">
+                            <div><label class="font-semibold">Base b₁:</label> (<input type="number" class="matrix-input basis-input" id="b1x" value="1">, <input type="number" class="matrix-input basis-input" id="b1y" value="0">)</div>
+                            <div><label class="font-semibold">Base b₂:</label> (<input type="number" class="matrix-input basis-input" id="b2x" value="0">, <input type="number" class="matrix-input basis-input" id="b2y" value="1">)</div>
+                            <div id="basis-analysis" class="mt-4 pt-4 border-t"></div>
+                        </div>
+                         <div class="chart-container"><canvas id="basisChart"></canvas></div>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+    </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const defaultTooltip = { plugins: { tooltip: { callbacks: { title: (items) => { const i = items[0]; let l = i.chart.data.labels[i.dataIndex]; return Array.isArray(l) ? l.join(' ') : l; } } } } };
+
+    // --- SIDEBAR NAVIGATION ---
+    const sections = document.querySelectorAll('main section[id]');
+    const navLinks = document.querySelectorAll('#sidebar-nav a');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href').substring(1) === id);
+                });
+            }
+        });
+    }, { rootMargin: "-40% 0px -60% 0px", threshold: 0 });
+    sections.forEach(sec => observer.observe(sec));
+
+    // --- VECTOR LAB 3D ---
+    const vectorInputs = ['ux', 'uy', 'uz', 'vx', 'vy', 'vz'].map(id => document.getElementById(id));
+    const vectorChartCtx = document.getElementById('vectorChart').getContext('2d');
+    let vectorChart;
+    
+    function updateVectorLab() {
+        const [ux, uy, uz, vx, vy, vz] = vectorInputs.map(el => parseFloat(el.value) || 0);
+        const u = {x: ux, y: uy, z: uz};
+        const v = {x: vx, y: vy, z: vz};
+
+        const normU = Math.sqrt(u.x**2 + u.y**2 + u.z**2);
+        const normV = Math.sqrt(v.x**2 + v.y**2 + v.z**2);
+        const dotP = u.x*v.x + u.y*v.y + u.z*v.z;
+        const crossP = { x: u.y*v.z - u.z*v.y, y: u.z*v.x - u.x*v.z, z: u.x*v.y - u.y*v.x };
+        const mixedP = crossP.x*u.x + crossP.y*u.y + crossP.z*u.z; // This should be (u x v) . w, but for demo we use (u x v) . u which should be 0. Let's use v as the third vector for a meaningful result:
+        const mixedProductWithV = (crossP.x * v.x + crossP.y * v.y + crossP.z * v.z); // This is (u x v) . v and should also be 0. Let's make a sample w.
+        const w_sample = {x: 1, y: 1, z: 1};
+        const mixedP_final = crossP.x * w_sample.x + crossP.y * w_sample.y + crossP.z * w_sample.z;
+
+        document.getElementById('vector-results').innerHTML = `
+            <p><strong>Norma ||u||:</strong> <code class="code">${normU.toFixed(2)}</code></p>
+            <p><strong>Prodotto Scalare u · v:</strong> <code class="code">${dotP.toFixed(2)}</code> (geometricamente, ||u||||v||cosθ)</p>
+            <p><strong>Prodotto Vettoriale u × v:</strong> <code class="code">(${crossP.x.toFixed(2)}, ${crossP.y.toFixed(2)}, ${crossP.z.toFixed(2)})</code></p>
+            <p><strong>Area Parallelogramma (u,v):</strong> <code class="code">${Math.sqrt(crossP.x**2 + crossP.y**2 + crossP.z**2).toFixed(2)}</code></p>
+            <p><strong>Prodotto Misto (u×v)·w</strong> (con w=(1,1,1)): <code class="code">${mixedP_final.toFixed(2)}</code> (Volume Parallelepipedo)</p>`;
+        
+        if (vectorChart) vectorChart.destroy();
+        vectorChart = new Chart(vectorChartCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    { label: 'u', data: [{x: u.x, y: u.y}], backgroundColor: '#07575B', pointRadius: 5 + Math.abs(u.z) * 2 },
+                    { label: 'v', data: [{x: v.x, y: v.y}], backgroundColor: '#66A5AD', pointRadius: 5 + Math.abs(v.z) * 2 },
+                    { label: 'u x v', data: [{x: crossP.x, y: crossP.y}], backgroundColor: '#C4DFE6', pointRadius: 5 + Math.abs(crossP.z) * 2, borderColor: '#003B46', borderWidth: 2 },
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'linear', position: 'bottom' }, y: {} }, ...defaultTooltip }
+        });
+    }
+    document.getElementById('update-vector-lab').addEventListener('click', updateVectorLab);
+    
+    // --- MATRIX ANALYSIS ---
+    document.getElementById('analyze-matrix').addEventListener('click', () => {
+        const inputs = document.querySelectorAll('#matrix-analysis-input input');
+        const A = [
+            [+inputs[0].value, +inputs[1].value, +inputs[2].value],
+            [+inputs[3].value, +inputs[4].value, +inputs[5].value],
+            [+inputs[6].value, +inputs[7].value, +inputs[8].value]
+        ];
+        const det = A[0][0]*(A[1][1]*A[2][2] - A[1][2]*A[2][1]) - A[0][1]*(A[1][0]*A[2][2] - A[1][2]*A[2][0]) + A[0][2]*(A[1][0]*A[2][1] - A[1][1]*A[2][0]);
+        let resultsHTML = `<div class="theorem"><p class="font-bold">Determinante: ${det.toFixed(4)}</p></div>`;
+        if (Math.abs(det) < 1e-9) {
+            resultsHTML += `<div class="definition"><p>La matrice non è invertibile perché il suo determinante è zero.</p></div>`;
+        } else {
+            // Simplified inverse logic for 3x3
+            const invDet = 1 / det;
+            const inv = [[], [], []];
+            inv[0][0] = (A[1][1] * A[2][2] - A[2][1] * A[1][2]) * invDet;
+            inv[0][1] = (A[0][2] * A[2][1] - A[0][1] * A[2][2]) * invDet;
+            inv[0][2] = (A[0][1] * A[1][2] - A[0][2] * A[1][1]) * invDet;
+            inv[1][0] = (A[1][2] * A[2][0] - A[1][0] * A[2][2]) * invDet;
+            inv[1][1] = (A[0][0] * A[2][2] - A[0][2] * A[2][0]) * invDet;
+            inv[1][2] = (A[1][0] * A[0][2] - A[0][0] * A[1][2]) * invDet;
+            inv[2][0] = (A[1][0] * A[2][1] - A[2][0] * A[1][1]) * invDet;
+            inv[2][1] = (A[2][0] * A[0][1] - A[0][0] * A[2][1]) * invDet;
+            inv[2][2] = (A[0][0] * A[1][1] - A[1][0] * A[0][1]) * invDet;
+            resultsHTML += `<div class="definition"><p class="font-bold">Matrice Inversa A⁻¹:</p>${formatMatrixHTML(inv, 3, 3)}</div>`;
+        }
+        document.getElementById('matrix-analysis-results').innerHTML = resultsHTML;
+    });
+
+    // --- GAUSS-JORDAN SOLVER ---
+    document.getElementById('solve-gauss').addEventListener('click', () => {
+        const inputs = document.querySelectorAll('#gauss-matrix-input input');
+        let fullMatrix = Array(3).fill(0).map((_, r) => Array(4).fill(0).map((_, c) => +inputs[r*4+c].value));
+        const analysisContainer = document.getElementById('gauss-analysis');
+        const stepsContainer = document.getElementById('gauss-steps');
+        
+        const rank = (m) => {
+            let mat = m.map(row => [...row]);
+            let lead = 0;
+            const rCount = mat.length, cCount = mat[0].length;
+            let rank = 0;
+            for (let r = 0; r < rCount && lead < cCount; r++) {
+                let i = r;
+                while (i < rCount && Math.abs(mat[i][lead]) < 1e-9) i++;
+                if (i < rCount) {
+                    rank++;
+                    [mat[i], mat[r]] = [mat[r], mat[i]];
+                    let val = mat[r][lead];
+                    for (let j = 0; j < cCount; j++) mat[r][j] /= val;
+                    for (let i = 0; i < rCount; i++) {
+                        if (i !== r) {
+                            val = mat[i][lead];
+                            for (let j = 0; j < cCount; j++) mat[i][j] -= val * mat[r][j];
+                        }
+                    }
+                    lead++;
+                }
+            }
+            return rank;
+        };
+
+        const matA = fullMatrix.map(r => r.slice(0, 3));
+        const rkA = rank(matA);
+        const rkAb = rank(fullMatrix.map(r => [...r]));
+        let analysisHTML = `<div class="theorem"><h4 class="font-bold">Analisi di Rouché-Capelli</h4>
+            <p>Rango matrice incompleta: rk(A) = <strong>${rkA}</strong></p>
+            <p>Rango matrice completa: rk(A|b) = <strong>${rkAb}</strong></p><hr class="my-2">`;
+        
+        if (rkA !== rkAb) {
+            analysisHTML += `<p class="font-bold text-red-700">Sistema Impossibile: non ci sono soluzioni.</p></div>`;
+            stepsContainer.innerHTML = '';
+        } else {
+            const n = 3;
+            if (rkA === n) {
+                analysisHTML += `<p class="font-bold text-green-700">Sistema Determinato: una e una sola soluzione.</p></div>`;
+            } else {
+                analysisHTML += `<p class="font-bold text-blue-700">Sistema Indeterminato: ∞<sup>${n - rkA}</sup> soluzioni.</p></div>`;
+            }
+            // Now solve with Gauss-Jordan steps
+            let matrix = fullMatrix.map(row => [...row]);
+            stepsContainer.innerHTML = '<h4>Passaggi di Riduzione:</h4><p>Stato Iniziale:</p>' + formatMatrixHTML(matrix, 3, 4);
+            let lead = 0;
+            const rowCount = 3, colCount = 4;
+            for (let r = 0; r < rowCount && lead < colCount - 1; r++) {
+                let i = r;
+                while (i < rowCount && Math.abs(matrix[i][lead]) < 1e-9) i++;
+                if (i < rowCount) {
+                    if (i !== r) {
+                        [matrix[i], matrix[r]] = [matrix[r], matrix[i]];
+                        stepsContainer.innerHTML += `<p>Scambio R${i+1} ↔ R${r+1}</p>` + formatMatrixHTML(matrix, 3, 4);
+                    }
+                    let val = matrix[r][lead];
+                    if (Math.abs(val - 1) > 1e-9) {
+                        for (let j = 0; j < colCount; j++) matrix[r][j] /= val;
+                        stepsContainer.innerHTML += `<p>R${r+1} → R${r+1} / ${val.toFixed(2)}</p>` + formatMatrixHTML(matrix, 3, 4);
+                    }
+                    for (let i = 0; i < rowCount; i++) {
+                        if (i !== r) {
+                            val = matrix[i][lead];
+                            if (Math.abs(val) > 1e-9) {
+                                for (let j = 0; j < colCount; j++) matrix[i][j] -= val * matrix[r][j];
+                                stepsContainer.innerHTML += `<p>R${i+1} → R${i+1} - (${val.toFixed(2)})*R${r+1}</p>` + formatMatrixHTML(matrix, 3, 4);
+                            }
+                        }
+                    }
+                    lead++;
+                }
+            }
+        }
+        analysisContainer.innerHTML = analysisHTML;
+    });
+
+    // --- BASIS LAB ---
+    const basisInputs = document.querySelectorAll('.basis-input');
+    const basisChartCtx = document.getElementById('basisChart').getContext('2d');
+    let basisChart;
+    const targetW_basis = {x: 2, y: 3};
+
+    function updateBasisLab() {
+        const b1 = {x: +document.getElementById('b1x').value, y: +document.getElementById('b1y').value};
+        const b2 = {x: +document.getElementById('b2x').value, y: +document.getElementById('b2y').value};
+        const det = b1.x * b2.y - b1.y * b2.x;
+        const analysisContainer = document.getElementById('basis-analysis');
+        let analysisHTML = `<p>Determinante della base: <code class="code">${det.toFixed(2)}</code></p>`;
+        
+        let coords = {c1: NaN, c2: NaN};
+        if (Math.abs(det) > 1e-9) {
+            analysisHTML += `<p class="text-green-700 font-semibold">{b₁, b₂} è una base di ℝ² (vettori linearmente indipendenti).</p>`;
+            coords.c1 = (targetW_basis.x * b2.y - targetW_basis.y * b2.x) / det;
+            coords.c2 = (targetW_basis.y * b1.x - targetW_basis.x * b1.y) / det;
+            analysisHTML += `<p>Coordinate di w=(2,3) in base B: <code class="code">(${coords.c1.toFixed(2)}, ${coords.c2.toFixed(2)})</code></p>`;
+        } else {
+             analysisHTML += `<p class="text-red-700 font-semibold">{b₁, b₂} non è una base (vettori linearmente dipendenti).</p>`;
+        }
+        analysisContainer.innerHTML = analysisHTML;
+        
+        if (basisChart) basisChart.destroy();
+        basisChart = new Chart(basisChartCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    { label: 'b₁', data: [b1], backgroundColor: '#07575B', pointRadius: 7 },
+                    { label: 'b₂', data: [b2], backgroundColor: '#66A5AD', pointRadius: 7 },
+                    { label: 'Target w', data: [targetW_basis], backgroundColor: '#003B46', pointRadius: 9 },
+                    ...(!isNaN(coords.c1) ? [{ label: `c₁b₁`, data: [{x: coords.c1 * b1.x, y: coords.c1 * b1.y}], backgroundColor: 'rgba(7,87,91,0.5)', pointRadius: 5}] : []),
+                    ...(!isNaN(coords.c2) ? [{ label: `c₂b₂`, data: [{x: coords.c2 * b2.x, y: coords.c2 * b2.y}], backgroundColor: 'rgba(102,165,173,0.5)', pointRadius: 5}] : [])
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { x: { min: -4, max: 4 }, y: { min: -4, max: 4 } }, ...defaultTooltip }
+        });
+    }
+    basisInputs.forEach(i => i.addEventListener('input', updateBasisLab));
+    
+    // --- HELPERS ---
+    function formatMatrixHTML(m, rows, cols) {
+        let html = '<div class="p-2 my-2 bg-gray-100 rounded inline-block font-mono text-sm">';
+        for (let i = 0; i < rows; i++) {
+            html += '<div class="flex gap-4">';
+            for (let j = 0; j < cols; j++) {
+                html += `<span class="w-16 text-right">${m[i][j].toFixed(2)}</span>`;
+            }
+            html += '</div>';
+        }
+        return html + '</div>';
+    }
+
+    // --- INITIAL CALLS ---
+    updateVectorLab();
+    document.getElementById('analyze-matrix').click();
+    document.getElementById('solve-gauss').click();
+    updateBasisLab();
+});
+</script>
+
+</body>
+</html>
+

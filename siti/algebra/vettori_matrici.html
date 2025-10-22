@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guida Interattiva all'Algebra Lineare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: Ho progettato l'applicazione con una navigazione laterale tematica (Vettori, Matrici, Sistemi Lineari, Spazi Vettoriali) invece di seguire linearmente i PDF. Questa struttura è più intuitiva per un principiante, partendo dal concetto visivo di vettore, passando all'organizzazione dei dati con le matrici, alla risoluzione di problemi pratici con i sistemi, e concludendo con l'astrazione degli spazi vettoriali. Ogni sezione combina teoria semplificata con un'applicazione interattiva ("laboratorio") per solidificare l'apprendimento attraverso la sperimentazione diretta, un approccio più efficace della semplice lettura per costruire una solida comprensione. -->
+    <!-- Visualization & Content Choices: Per ogni concetto chiave dei PDF, ho scelto la visualizzazione interattiva più adatta. Es: Somma di vettori -> Laboratorio di vettori 2D con Chart.js per mostrare la regola del parallelogramma in modo dinamico. Moltiplicazione di matrici -> Calcolatrice visuale che evidenzia righe e colonne usate in ogni step. Metodo di Gauss-Jordan -> Risolutore passo-passo che mostra le trasformazioni della matrice una alla volta. Spazi Vettoriali e Basi -> Simulatore di combinazioni lineari con slider per "costruire" vettori, rendendo tangibile un concetto astratto. Tutte le visualizzazioni sono realizzate con Chart.js su Canvas per garantire interattività e aderenza ai requisiti. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF6;
+            color: #4A4A4A;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #FDFBF6; }
+        ::-webkit-scrollbar-thumb { background: #D3C5B3; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #BFB3A2; }
+        .nav-link { transition: all 0.2s ease-in-out; }
+        .nav-link.active {
+            background-color: #EAE0D5;
+            color: #A1887F;
+            font-weight: 700;
+        }
+        .nav-link:not(.active):hover {
+            background-color: #F5EFE6;
+            transform: translateX(2px);
+        }
+        .interactive-card {
+            background-color: #FFFFFF;
+            border: 1px solid #EAE0D5;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+        .btn-primary {
+            background-color: #A1887F;
+            color: #FFFFFF;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #8D6E63;
+        }
+        .code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #F5EFE6;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .matrix-table {
+            border-collapse: collapse;
+            margin: 10px auto;
+        }
+        .matrix-table td {
+            border: 1px solid #D3C5B3;
+            padding: 5px 10px;
+            text-align: center;
+        }
+        .matrix-table td input {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #EAE0D5;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#F9F5F0] p-4 space-y-2 border-r border-gray-200/50 flex flex-col shrink-0 overflow-y-auto">
+        <h1 class="text-xl font-bold text-[#8D6E63] pb-4 border-b border-[#EAE0D5]">Algebra Lineare</h1>
+        <nav class="flex flex-col space-y-1">
+            <a href="#intro" class="nav-link active p-3 rounded-lg text-gray-700">🚀 Introduzione</a>
+            <a href="#vettori" class="nav-link p-3 rounded-lg text-gray-700">1. Vettori Geometrici</a>
+            <a href="#matrici" class="nav-link p-3 rounded-lg text-gray-700">2. Matrici</a>
+            <a href="#sistemi" class="nav-link p-3 rounded-lg text-gray-700">3. Sistemi Lineari</a>
+            <a href="#spazi" class="nav-link p-3 rounded-lg text-gray-700">4. Spazi Vettoriali</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content" class="flex-1 p-6 lg:p-10 overflow-y-auto">
+        <!-- Sezione Introduzione -->
+        <section id="intro" class="content-section space-y-6">
+            <h2 class="text-3xl font-bold text-[#A1887F]">Benvenuto nella Guida Interattiva all'Algebra Lineare!</h2>
+            <p class="text-lg">Ciao! Se sei qui, probabilmente stai per iniziare il tuo viaggio nell'affascinante mondo dell'Algebra Lineare. All'inizio può sembrare un po' astratta, con tutti questi vettori, matrici e spazi... ma non temere! Questa guida è pensata apposta per te, studente al primo anno.</p>
+            <div class="p-5 rounded-lg bg-white border border-gray-200/80 shadow-sm">
+                <h3 class="text-xl font-bold text-[#8D6E63] mb-2">Perché è così importante?</h3>
+                <p>L'algebra lineare è il linguaggio della computer science. È alla base di:</p>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li><strong class="font-semibold">Grafica 3D:</strong> ogni volta che giochi a un videogioco, il tuo computer sta facendo milioni di calcoli con vettori e matrici per muovere i personaggi e gli oggetti.</li>
+                    <li><strong class="font-semibold">Intelligenza Artificiale e Machine Learning:</strong> le reti neurali "imparano" modificando enormi matrici di numeri.</li>
+                    <li><strong class="font-semibold">Analisi dei Dati:</strong> per trovare pattern e informazioni utili in grandi dataset.</li>
+                </ul>
+            </div>
+            <p>In questa guida non ci limiteremo a leggere definizioni. In ogni sezione troverai un "laboratorio" interattivo dove potrai sperimentare e visualizzare i concetti. L'obiettivo è farti costruire un'intuizione solida, passo dopo passo. Iniziamo!</p>
+        </section>
+
+        <!-- Sezione Vettori -->
+        <section id="vettori" class="content-section hidden space-y-6">
+            <h2 class="text-3xl font-bold text-[#A1887F]">1. I Vettori: Le Frecce del Mondo Matematico</h2>
+            <p>Immagina un vettore come una freccia. Non è solo un numero, ma un oggetto che ha una <strong class="font-semibold">lunghezza</strong> (o magnitudine) e una <strong class="font-semibold">direzione</strong>. Nel piano, possiamo descrivere un vettore con due numeri: di quanto si sposta sull'asse X e di quanto sull'asse Y. Questi numeri sono le sue <strong class="font-semibold">componenti</strong>. Ad esempio, il vettore <code class="code">v = (3, 4)</code> significa "spostati di 3 a destra e 4 in alto".</p>
+            
+            <div class="interactive-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold text-[#8D6E63] mb-4">Laboratorio Vettori 2D</h3>
+                <p class="mb-4">Inserisci le componenti di due vettori per visualizzarli e calcolare la loro somma e il prodotto scalare.</p>
+                <div class="grid md:grid-cols-3 gap-6 items-center">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block font-medium mb-1">Vettore u (blu)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="ux" value="2" class="w-full p-2 border rounded">
+                                <input type="number" id="uy" value="3" class="w-full p-2 border rounded">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">Vettore v (rosso)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="vx" value="4" class="w-full p-2 border rounded">
+                                <input type="number" id="vy" value="1" class="w-full p-2 border rounded">
+                            </div>
+                        </div>
+                        <button id="update-vector-chart" class="w-full btn-primary font-bold py-2 px-4 rounded-lg">Visualizza</button>
+                    </div>
+                    <div class="md:col-span-2">
+                       <div class="chart-container">
+                            <canvas id="vectorChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                 <div id="vector-results" class="mt-4 p-4 bg-gray-50 rounded-lg border"></div>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-2xl font-bold text-[#8D6E63]">Operazioni Fondamentali</h3>
+                <div class="p-5 rounded-lg bg-white border border-gray-200/80 shadow-sm">
+                    <h4 class="text-xl font-semibold">Somma di Vettori (u + v)</h4>
+                    <p>Sommare due vettori è semplice: si sommano le componenti corrispondenti. Se <code class="code">u = (u₁, u₂)</code> e <code class="code">v = (v₁, v₂)</code>, allora <code class="code">u + v = (u₁ + v₁, u₂ + v₂)</code>. Graficamente, è come mettere la coda del secondo vettore sulla punta del primo. Il risultato (la somma) è la freccia che va dall'inizio del primo alla fine del secondo (regola del parallelogramma).</p>
+                </div>
+                <div class="p-5 rounded-lg bg-white border border-gray-200/80 shadow-sm">
+                    <h4 class="text-xl font-semibold">Prodotto Scalare (u · v)</h4>
+                    <p>Il prodotto scalare (o "dot product") non restituisce un vettore, ma un <strong class="font-semibold">numero</strong> (uno scalare, appunto). Si calcola moltiplicando le componenti corrispondenti e sommando i risultati: <code class="code">u · v = u₁*v₁ + u₂*v₂</code>.</p>
+                    <p class="mt-2">A cosa serve? Ci dà un'idea dell'angolo tra i due vettori:</p>
+                    <ul class="list-disc list-inside mt-1">
+                        <li>Se <code class="code">u · v > 0</code>, l'angolo è acuto (< 90°).</li>
+                        <li>Se <code class="code">u · v = 0</code>, i vettori sono perpendicolari (ortogonali). Questo è importantissimo!</li>
+                        <li>Se <code class="code">u · v < 0</code>, l'angolo è ottuso (> 90°).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Sezione Matrici -->
+        <section id="matrici" class="content-section hidden space-y-6">
+            <h2 class="text-3xl font-bold text-[#A1887F]">2. Matrici: I Contenitori di Dati</h2>
+            <p>Una matrice è semplicemente una tabella rettangolare di numeri, organizzata in <strong class="font-semibold">righe</strong> e <strong class="font-semibold">colonne</strong>. Una matrice con `m` righe e `n` colonne si dice di tipo <code class="code">(m, n)</code>. Le matrici sono fondamentali per organizzare dati e descrivere trasformazioni complesse (come rotazioni o ridimensionamenti in computer grafica).</p>
+
+            <div class="interactive-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold text-[#8D6E63] mb-4">Laboratorio Matrici</h3>
+                <p class="mb-4">Crea due matrici e calcola la loro somma e il loro prodotto. Per la moltiplicazione, le colonne della prima matrice devono essere uguali alle righe della seconda.</p>
+                <div class="flex justify-center gap-4 mb-4">
+                     <div>
+                        <label>Matrice A (righe x colonne)</label>
+                        <input type="number" id="a-rows" value="2" min="1" max="4" class="w-16 p-1 border rounded"> x
+                        <input type="number" id="a-cols" value="2" min="1" max="4" class="w-16 p-1 border rounded">
+                    </div>
+                     <div>
+                        <label>Matrice B (righe x colonne)</label>
+                        <input type="number" id="b-rows" value="2" min="1" max="4" class="w-16 p-1 border rounded"> x
+                        <input type="number" id="b-cols" value="2" min="1" max="4" class="w-16 p-1 border rounded">
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 text-center">
+                    <div>
+                        <h4 class="font-semibold">Matrice A</h4>
+                        <div id="matrix-a-container"></div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold">Matrice B</h4>
+                        <div id="matrix-b-container"></div>
+                    </div>
+                </div>
+                <div class="flex justify-center gap-4 mt-4">
+                    <button id="matrix-add" class="btn-primary font-bold py-2 px-4 rounded-lg">A + B</button>
+                    <button id="matrix-multiply" class="btn-primary font-bold py-2 px-4 rounded-lg">A * B</button>
+                </div>
+                <div class="mt-6 text-center">
+                     <h4 class="font-semibold text-xl">Risultato</h4>
+                     <div id="matrix-result-container" class="mt-2 inline-block"></div>
+                </div>
+            </div>
+             <div class="space-y-4">
+                <h3 class="text-2xl font-bold text-[#8D6E63]">Operazioni con le Matrici</h3>
+                <div class="p-5 rounded-lg bg-white border border-gray-200/80 shadow-sm">
+                    <h4 class="text-xl font-semibold">Somma di Matrici</h4>
+                    <p>Puoi sommare due matrici solo se hanno le <strong class="font-semibold">stesse dimensioni</strong>. L'operazione è identica a quella dei vettori: si sommano gli elementi che si trovano nella stessa posizione.</p>
+                </div>
+                <div class="p-5 rounded-lg bg-white border border-gray-200/80 shadow-sm">
+                    <h4 class="text-xl font-semibold">Prodotto tra Matrici (Riga per Colonna)</h4>
+                    <p>Questa è l'operazione più importante e meno intuitiva. Per moltiplicare A * B, il numero di <strong class="font-semibold">colonne di A</strong> deve essere uguale al numero di <strong class="font-semibold">righe di B</strong>.</p>
+                    <p class="mt-2">L'elemento nella riga `i` e colonna `j` della matrice risultato si ottiene facendo il <strong class="font-semibold">prodotto scalare</strong> tra la riga `i` di A e la colonna `j` di B. Prova nel laboratorio: è il modo migliore per capire il meccanismo "riga per colonna".</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sezione Sistemi Lineari -->
+        <section id="sistemi" class="content-section hidden space-y-6">
+            <h2 class="text-3xl font-bold text-[#A1887F]">3. Sistemi Lineari: Risolvere Enigmi Matematici</h2>
+            <p>Un sistema lineare è un insieme di equazioni di primo grado, come quelle che hai già visto alle superiori. Ad esempio:</p>
+            <div class="text-center my-4 p-3 bg-gray-50 border rounded-md text-lg">
+                <p>2x + 3y = 8</p>
+                <p>x - y = 1</p>
+            </div>
+            <p>Risolvere il sistema significa trovare i valori di `x` e `y` che soddisfano entrambe le equazioni contemporaneamente. L'algebra lineare ci dà un metodo potentissimo e universale per farlo: il <strong class="font-semibold">metodo di eliminazione di Gauss-Jordan</strong>, che funziona con le matrici.</p>
+            
+             <div class="interactive-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold text-[#8D6E63] mb-4">Risolutore di Sistemi con Gauss-Jordan</h3>
+                <p class="mb-4">Inserisci i coefficienti di un sistema 2x2 e risolvilo passo dopo passo.</p>
+                <div class="flex flex-col items-center gap-4">
+                    <div class="text-lg space-y-2">
+                        <div>
+                            <input type="number" id="s11" value="2" class="matrix-input w-12 text-center border rounded"> x + 
+                            <input type="number" id="s12" value="3" class="matrix-input w-12 text-center border rounded"> y = 
+                            <input type="number" id="s13" value="8" class="matrix-input w-12 text-center border rounded">
+                        </div>
+                         <div>
+                            <input type="number" id="s21" value="1" class="matrix-input w-12 text-center border rounded"> x + 
+                            <input type="number" id="s22" value="-1" class="matrix-input w-12 text-center border rounded"> y = 
+                            <input type="number" id="s23" value="1" class="matrix-input w-12 text-center border rounded">
+                        </div>
+                    </div>
+                    <button id="solve-system" class="btn-primary font-bold py-2 px-4 rounded-lg">Risolvi</button>
+                    <div id="gauss-steps" class="w-full mt-4 p-4 bg-gray-50 border rounded-lg">
+                       Qui compariranno i passaggi...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-5 rounded-lg bg-white border border-gray-200/80 shadow-sm">
+                <h4 class="text-xl font-semibold">Come funziona Gauss-Jordan?</h4>
+                <p>1. <strong class="font-semibold">Scrivi la Matrice Aumentata:</strong> Rappresentiamo il sistema con una matrice che contiene sia i coefficienti delle incognite sia i termini noti, separati da una linea. Per il sistema d'esempio: <code class="code">[[2, 3 | 8], [1, -1 | 1]]</code>.</p>
+                <p class="mt-2">2. <strong class="font-semibold">Applica le Operazioni Elementari sulle Righe:</strong> L'obiettivo è trasformare la parte sinistra della matrice in una "matrice identità" (quella con 1 sulla diagonale e 0 altrove). Per farlo, possiamo:</p>
+                <ul class="list-disc list-inside mt-1 ml-4">
+                    <li>Scambiare due righe.</li>
+                    <li>Moltiplicare una riga per un numero diverso da zero.</li>
+                    <li>Sommare a una riga un multiplo di un'altra riga.</li>
+                </ul>
+                 <p class="mt-2">3. <strong class="font-semibold">Leggi la Soluzione:</strong> Una volta che la parte sinistra è diventata la matrice identità, i numeri sulla destra sono la soluzione! Una matrice del tipo <code class="code">[[1, 0 | x₀], [0, 1 | y₀]]</code> ci dice che la soluzione è `x = x₀` e `y = y₀`.</p>
+            </div>
+        </section>
+        
+        <!-- Sezione Spazi Vettoriali -->
+        <section id="spazi" class="content-section hidden space-y-6">
+            <h2 class="text-3xl font-bold text-[#A1887F]">4. Spazi Vettoriali: I Mondi dei Vettori</h2>
+            <p>Questa è la parte più astratta, ma anche la più potente. Uno <strong class="font-semibold">spazio vettoriale</strong> è un "mondo" in cui vivono i vettori e in cui valgono le operazioni di somma e prodotto per scalare che abbiamo visto. Il piano 2D e lo spazio 3D sono gli esempi più semplici di spazi vettoriali.</p>
+            <p>Il concetto chiave è la <strong class="font-semibold">base</strong>. Una base di uno spazio vettoriale è un insieme di vettori "fondamentali" a partire dai quali possiamo costruire <strong class="font-semibold">tutti</strong> gli altri vettori dello spazio, tramite una <strong class="font-semibold">combinazione lineare</strong>.</p>
+            <p>Nel piano 2D, la base più comune (la "base canonica") è formata dai vettori <code class="code">i = (1, 0)</code> e <code class="code">j = (0, 1)</code>. Qualsiasi altro vettore <code class="code">(x, y)</code> può essere scritto come <code class="code">x*i + y*j</code>.</p>
+
+            <div class="interactive-card p-6 rounded-lg">
+                <h3 class="text-xl font-bold text-[#8D6E63] mb-4">Laboratorio di Combinazioni Lineari</h3>
+                <p class="mb-4">Usa gli slider per trovare i coefficienti `c₁` e `c₂` per costruire il vettore target (verde) come combinazione lineare dei vettori di base (blu e rosso).</p>
+                <div class="grid md:grid-cols-3 gap-6 items-center">
+                    <div class="space-y-4">
+                        <div>
+                           <label class="block font-medium mb-1">Vettore Target v: (<span id="target-x-label">3</span>, <span id="target-y-label">2</span>)</label>
+                        </div>
+                        <div>
+                           <label class="block font-medium mb-1">Base b₁ = (1, 0)</label>
+                           <label class="block font-medium mb-1">Base b₂ = (0, 1)</label>
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">c₁ (per b₁): <span id="c1-val">1</span></label>
+                            <input type="range" id="c1" min="-5" max="5" value="1" step="0.5" class="w-full">
+                        </div>
+                        <div>
+                            <label class="block font-medium mb-1">c₂ (per b₂): <span id="c2-val">1</span></label>
+                            <input type="range" id="c2" min="-5" max="5" value="1" step="0.5" class="w-full">
+                        </div>
+                        <div id="combination-result" class="p-3 text-center bg-gray-50 rounded-lg border"></div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <div class="chart-container">
+                            <canvas id="basisChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-5 rounded-lg bg-white border border-gray-200/80 shadow-sm mt-6">
+                <h4 class="text-xl font-semibold">Concetti Chiave</h4>
+                <ul class="list-disc list-inside mt-2 space-y-2">
+                    <li><strong class="font-semibold">Combinazione Lineare:</strong> Una somma pesata di vettori. <code class="code">c₁v₁ + c₂v₂ + ... + cₙvₙ</code>.</li>
+                    <li><strong class="font-semibold">Span:</strong> Lo span di un insieme di vettori è l'insieme di <strong class="font-semibold">tutti</strong> i vettori che puoi generare con le loro combinazioni lineari. Se lo span dei vettori di base è tutto lo spazio, allora hai una base valida.</li>
+                    <li><strong class="font-semibold">Indipendenza Lineare:</strong> Un insieme di vettori è linearmente indipendente se nessuno di essi può essere scritto come combinazione lineare degli altri. I vettori di una base devono essere linearmente indipendenti.</li>
+                    <li><strong class="font-semibold">Dimensione:</strong> Il numero di vettori in una base. Il piano ha dimensione 2, lo spazio ha dimensione 3.</li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.content-section');
+
+            // Navigation logic
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+
+                    sections.forEach(section => {
+                        if (section.id === targetId) {
+                            section.classList.remove('hidden');
+                        } else {
+                            section.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // --- VECTORS SECTION ---
+            const vectorChartCtx = document.getElementById('vectorChart').getContext('2d');
+            let vectorChart;
+
+            function createVectorChart() {
+                const ux = parseFloat(document.getElementById('ux').value) || 0;
+                const uy = parseFloat(document.getElementById('uy').value) || 0;
+                const vx = parseFloat(document.getElementById('vx').value) || 0;
+                const vy = parseFloat(document.getElementById('vy').value) || 0;
+
+                const sumX = ux + vx;
+                const sumY = uy + vy;
+                const dotProduct = ux * vx + uy * vy;
+
+                document.getElementById('vector-results').innerHTML = `
+                    <p><strong class="font-semibold">Somma (u+v):</strong> (${sumX}, ${sumY})</p>
+                    <p><strong class="font-semibold">Prodotto Scalare (u·v):</strong> ${dotProduct.toFixed(2)}</p>
+                    <p class="text-sm mt-1">${dotProduct > 0 ? 'Angolo acuto.' : dotProduct < 0 ? 'Angolo ottuso.' : 'Vettori ortogonali!'}</p>
+                `;
+
+                if (vectorChart) {
+                    vectorChart.destroy();
+                }
+
+                vectorChart = new Chart(vectorChartCtx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'Origine',
+                            data: [{x: 0, y: 0}],
+                            pointRadius: 5,
+                            backgroundColor: 'black'
+                        },{
+                            label: 'u',
+                            data: [{x: ux, y: uy}],
+                            backgroundColor: 'rgba(59, 130, 246, 1)',
+                            pointRadius: 7,
+                        }, {
+                            label: 'v',
+                            data: [{x: vx, y: vy}],
+                            backgroundColor: 'rgba(239, 68, 68, 1)',
+                             pointRadius: 7,
+                        }, {
+                            label: 'u+v',
+                            data: [{x: sumX, y: sumY}],
+                            backgroundColor: 'rgba(16, 185, 129, 1)',
+                             pointRadius: 7,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: {
+                                callbacks: { label: (context) => `(${context.parsed.x}, ${context.parsed.y})` }
+                            }
+                        },
+                        scales: {
+                            x: { type: 'linear', position: 'bottom', grid: { zeroLineColor: 'black' } },
+                            y: { grid: { zeroLineColor: 'black' } }
+                        },
+                        animation: {
+                            onComplete: ({ chart }) => {
+                                const ctx = chart.ctx;
+                                ctx.save();
+                                const metaU = chart.getDatasetMeta(1);
+                                const metaV = chart.getDatasetMeta(2);
+                                const metaS = chart.getDatasetMeta(3);
+                                
+                                drawArrow(ctx, chart.scales.x.getPixelForValue(0), chart.scales.y.getPixelForValue(0), metaU.data[0].x, metaU.data[0].y, 'rgba(59, 130, 246, 0.7)');
+                                drawArrow(ctx, chart.scales.x.getPixelForValue(0), chart.scales.y.getPixelForValue(0), metaV.data[0].x, metaV.data[0].y, 'rgba(239, 68, 68, 0.7)');
+                                drawArrow(ctx, chart.scales.x.getPixelForValue(0), chart.scales.y.getPixelForValue(0), metaS.data[0].x, metaS.data[0].y, 'rgba(16, 185, 129, 0.7)');
+                               
+                                ctx.restore();
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function drawArrow(ctx, fromx, fromy, tox, toy, color) {
+                const headlen = 10;
+                const angle = Math.atan2(toy - fromy, tox - fromx);
+                ctx.beginPath();
+                ctx.moveTo(fromx, fromy);
+                ctx.lineTo(tox, toy);
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(tox, toy);
+                ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+                ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+
+            document.getElementById('update-vector-chart').addEventListener('click', createVectorChart);
+            createVectorChart();
+
+            // --- MATRICES SECTION ---
+            const aRowsInput = document.getElementById('a-rows');
+            const aColsInput = document.getElementById('a-cols');
+            const bRowsInput = document.getElementById('b-rows');
+            const bColsInput = document.getElementById('b-cols');
+
+            function createMatrixInputs(rows, cols, containerId) {
+                const container = document.getElementById(containerId);
+                let table = '<table class="matrix-table">';
+                for (let i = 0; i < rows; i++) {
+                    table += '<tr>';
+                    for (let j = 0; j < cols; j++) {
+                        table += `<td><input type="number" value="${Math.floor(Math.random() * 5)}" data-row="${i}" data-col="${j}"></td>`;
+                    }
+                    table += '</tr>';
+                }
+                table += '</table>';
+                container.innerHTML = table;
+            }
+
+            function getMatrixValues(containerId, rows, cols) {
+                const matrix = [];
+                const inputs = document.querySelectorAll(`#${containerId} input`);
+                for (let i = 0; i < rows; i++) {
+                    matrix[i] = [];
+                    for (let j = 0; j < cols; j++) {
+                        const input = Array.from(inputs).find(inp => inp.dataset.row == i && inp.dataset.col == j);
+                        matrix[i][j] = parseFloat(input.value) || 0;
+                    }
+                }
+                return matrix;
+            }
+
+            function renderMatrix(matrix, containerId) {
+                const container = document.getElementById(containerId);
+                if (!matrix || matrix.length === 0) {
+                     container.innerHTML = '<p class="text-red-500">Operazione non valida.</p>';
+                     return;
+                }
+                let table = '<table class="matrix-table">';
+                matrix.forEach(row => {
+                    table += '<tr>';
+                    row.forEach(cell => {
+                        table += `<td>${cell.toFixed(2)}</td>`;
+                    });
+                    table += '</tr>';
+                });
+                table += '</table>';
+                container.innerHTML = table;
+            }
+
+            function setupMatrices() {
+                createMatrixInputs(aRowsInput.value, aColsInput.value, 'matrix-a-container');
+                createMatrixInputs(bRowsInput.value, bColsInput.value, 'matrix-b-container');
+            }
+
+            [aRowsInput, aColsInput, bRowsInput, bColsInput].forEach(input => input.addEventListener('change', setupMatrices));
+            
+            document.getElementById('matrix-add').addEventListener('click', () => {
+                const rA = parseInt(aRowsInput.value), cA = parseInt(aColsInput.value);
+                const rB = parseInt(bRowsInput.value), cB = parseInt(bColsInput.value);
+                if (rA !== rB || cA !== cB) {
+                    renderMatrix(null, 'matrix-result-container');
+                    return;
+                }
+                const matA = getMatrixValues('matrix-a-container', rA, cA);
+                const matB = getMatrixValues('matrix-b-container', rB, cB);
+                const result = matA.map((row, i) => row.map((val, j) => val + matB[i][j]));
+                renderMatrix(result, 'matrix-result-container');
+            });
+
+            document.getElementById('matrix-multiply').addEventListener('click', () => {
+                 const rA = parseInt(aRowsInput.value), cA = parseInt(aColsInput.value);
+                 const rB = parseInt(bRowsInput.value), cB = parseInt(bColsInput.value);
+                 if (cA !== rB) {
+                    renderMatrix(null, 'matrix-result-container');
+                    return;
+                 }
+                 const matA = getMatrixValues('matrix-a-container', rA, cA);
+                 const matB = getMatrixValues('matrix-b-container', rB, cB);
+                 const result = [];
+                 for (let i = 0; i < rA; i++) {
+                     result[i] = [];
+                     for (let j = 0; j < cB; j++) {
+                         let sum = 0;
+                         for (let k = 0; k < cA; k++) {
+                             sum += matA[i][k] * matB[k][j];
+                         }
+                         result[i][j] = sum;
+                     }
+                 }
+                 renderMatrix(result, 'matrix-result-container');
+            });
+            setupMatrices();
+
+             // --- GAUSS-JORDAN SECTION ---
+            document.getElementById('solve-system').addEventListener('click', () => {
+                let a11 = parseFloat(document.getElementById('s11').value);
+                let a12 = parseFloat(document.getElementById('s12').value);
+                let b1 = parseFloat(document.getElementById('s13').value);
+                let a21 = parseFloat(document.getElementById('s21').value);
+                let a22 = parseFloat(document.getElementById('s22').value);
+                let b2 = parseFloat(document.getElementById('s23').value);
+
+                const stepsContainer = document.getElementById('gauss-steps');
+                stepsContainer.innerHTML = '';
+
+                const addStep = (title, matrix) => {
+                    let html = `<p class="font-semibold mt-2">${title}</p><table class="matrix-table">`;
+                    html += `<tr><td>${matrix[0][0].toFixed(2)}</td><td>${matrix[0][1].toFixed(2)}</td><td>|</td><td>${matrix[0][2].toFixed(2)}</td></tr>`;
+                    html += `<tr><td>${matrix[1][0].toFixed(2)}</td><td>${matrix[1][1].toFixed(2)}</td><td>|</td><td>${matrix[1][2].toFixed(2)}</td></tr>`;
+                    html += `</table>`;
+                    stepsContainer.innerHTML += html;
+                };
+
+                let M = [[a11, a12, b1], [a21, a22, b2]];
+                addStep('1. Matrice iniziale:', M);
+                
+                // Make pivot in R1, C1 = 1
+                const factor1 = M[0][0];
+                if (factor1 === 0) { // Swap rows if pivot is 0
+                    [M[0], M[1]] = [M[1], M[0]];
+                    addStep('Scambio R1 e R2 per avere un pivot non nullo:', M);
+                }
+                
+                const f1 = M[0][0];
+                M[0] = M[0].map(x => x / f1);
+                addStep(`2. R1 -> R1 / ${f1.toFixed(2)}`, M);
+
+                // Make C1 in R2 = 0
+                const factor2 = M[1][0];
+                M[1] = M[1].map((x, i) => x - factor2 * M[0][i]);
+                addStep(`3. R2 -> R2 - ${factor2.toFixed(2)}*R1`, M);
+                
+                // Make pivot in R2, C2 = 1
+                if (M[1][1] !== 0) {
+                    const factor3 = M[1][1];
+                    M[1] = M[1].map(x => x / factor3);
+                    addStep(`4. R2 -> R2 / ${factor3.toFixed(2)}`, M);
+                    
+                    // Make C2 in R1 = 0
+                    const factor4 = M[0][1];
+                    M[0] = M[0].map((x, i) => x - factor4 * M[1][i]);
+                    addStep(`5. R1 -> R1 - ${factor4.toFixed(2)}*R2`, M);
+
+                    stepsContainer.innerHTML += `<p class="font-bold text-lg mt-4 text-green-700">Soluzione: x = ${M[0][2].toFixed(2)}, y = ${M[1][2].toFixed(2)}</p>`;
+                } else {
+                     stepsContainer.innerHTML += `<p class="font-bold text-lg mt-4 text-red-700">Il sistema non ha una soluzione unica.</p>`;
+                }
+            });
+
+            // --- VECTOR SPACES SECTION ---
+            const basisChartCtx = document.getElementById('basisChart').getContext('2d');
+            const c1Slider = document.getElementById('c1');
+            const c2Slider = document.getElementById('c2');
+            const c1Val = document.getElementById('c1-val');
+            const c2Val = document.getElementById('c2-val');
+            let basisChart;
+
+            const base1 = { x: 1, y: 0 };
+            const base2 = { x: 0, y: 1 };
+            const target = { x: 3, y: 2 };
+
+            function updateBasisChart() {
+                const c1 = parseFloat(c1Slider.value);
+                const c2 = parseFloat(c2Slider.value);
+                c1Val.textContent = c1;
+                c2Val.textContent = c2;
+
+                const comboX = c1 * base1.x + c2 * base2.x;
+                const comboY = c1 * base1.y + c2 * base2.y;
+                
+                document.getElementById('combination-result').innerHTML = `
+                  <p class="font-semibold">Vettore Costruito:</p>
+                  <p><code class="code">(${comboX.toFixed(1)}, ${comboY.toFixed(1)})</code></p>
+                `;
+
+                if (basisChart) {
+                    basisChart.destroy();
+                }
+
+                basisChart = new Chart(basisChartCtx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [
+                        {
+                            label: 'Base b₁',
+                            data: [base1],
+                            backgroundColor: 'rgba(59, 130, 246, 1)', pointRadius: 7
+                        },{
+                            label: 'Base b₂',
+                            data: [base2],
+                            backgroundColor: 'rgba(239, 68, 68, 1)', pointRadius: 7
+                        },{
+                            label: 'Target',
+                            data: [target],
+                            backgroundColor: 'rgba(16, 185, 129, 1)', pointRadius: 7
+                        },{
+                            label: 'Combinazione',
+                            data: [{x: comboX, y: comboY}],
+                            backgroundColor: 'rgba(168, 85, 247, 1)', pointRadius: 7,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { x: { min: -5, max: 5 }, y: { min: -5, max: 5 } },
+                         animation: {
+                            onComplete: ({ chart }) => {
+                                const ctx = chart.ctx;
+                                ctx.save();
+                                const metaTarget = chart.getDatasetMeta(2);
+                                const metaCombo = chart.getDatasetMeta(3);
+                                drawArrow(ctx, chart.scales.x.getPixelForValue(0), chart.scales.y.getPixelForValue(0), metaTarget.data[0].x, metaTarget.data[0].y, 'rgba(16, 185, 129, 0.7)');
+                                drawArrow(ctx, chart.scales.x.getPixelForValue(0), chart.scales.y.getPixelForValue(0), metaCombo.data[0].x, metaCombo.data[0].y, 'rgba(168, 85, 247, 0.7)');
+                                ctx.restore();
+                            }
+                        }
+                    }
+                });
+            }
+
+            [c1Slider, c2Slider].forEach(s => s.addEventListener('input', updateBasisChart));
+            updateBasisChart();
+        });
+    </script>
+
+</body>
+</html>

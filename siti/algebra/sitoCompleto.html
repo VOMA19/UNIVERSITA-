@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guida Completa all'Algebra Lineare</title>
+    <!-- Caricamento Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Caricamento Font Inter -->
+    <link rel"stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+    
+    <!-- Configurazione di MathJax per riconoscere i delimitatori $...$ e $$...$$ -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <!-- Caricamento di MathJax -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Stile per il link di navigazione attivo */
+        .nav-link.active {
+            background-color: #eff6ff; /* bg-blue-50 */
+            color: #2563eb; /* text-blue-700 */
+            font-weight: 600;
+        }
+        /* Nasconde la scrollbar per il contenitore del menu laterale */
+        .sidebar-nav::-webkit-scrollbar {
+            display: none;
+        }
+        .sidebar-nav {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Wrapper Principale -->
+    <div class="relative min-h-screen md:flex">
+
+        <!-- Header Mobile (visibile solo su mobile) -->
+        <header class="bg-white text-gray-900 p-4 fixed top-0 left-0 right-0 z-20 shadow-md md:hidden">
+            <h1 class="text-xl font-bold text-center text-blue-700">Algebra Lineare</h1>
+            <!-- Menu a tendina per mobile (opzionale, per ora solo titolo) -->
+        </header>
+
+        <!-- Navigazione Laterale (visibile su desktop) -->
+        <aside class="hidden md:block md:fixed md:inset-y-0 md:left-0 md:flex md:w-72 md:flex-col z-10">
+            <div class="flex flex-col grow gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4 sidebar-nav">
+                <div class="flex h-16 shrink-0 items-center">
+                    <h1 class="text-2xl font-bold text-blue-700">Algebra Lineare</h1>
+                </div>
+                <nav class="flex flex-1 flex-col">
+                    <ul role="list" class="flex flex-1 flex-col gap-y-7">
+                        <li>
+                            <ul role="list" class="-mx-2 space-y-1">
+                                <li>
+                                    <a href="#home" class="nav-link group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 active">
+                                        <svg class="h-6 w-6 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
+                                        Introduzione
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#capitolo1" class="nav-link group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                                        <svg class="h-6 w-6 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.01.216 1.49l-.51.766a2.25 2.25 0 01-1.161.886l-.143.048a1.107 1.107 0 00-.57 1.664c.369.555.169 1.307-.427 1.605L9 13.125l.423 1.059a.956.956 0 01-1.652.928l-.679-.906a1.125 1.125 0 00-1.906.172L4.5 15.75l-.612.153M12.75 3.031a9 9 0 00-8.862 10.819l-1.06 1.06a1.5 1.5 0 000 2.121l1.06 1.06a1.5 1.5 0 002.121 0l1.06-1.06a9 9 0 0010.819-8.862M12.75 3.031a9 9 0 016.363 6.363m-6.363-6.363L12.75 3.031z" /></svg>
+                                        Cap. 1: Dai Punti ai Vettori
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#capitolo2" class="nav-link group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                                        <svg class="h-6 w-6 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M90 21h12m-6 0v-6m-6 6h.01M6 21h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        Cap. 2: Prodotto Scalare
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#capitolo3" class="nav-link group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                                        <svg class="h-6 w-6 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>
+                                        Cap. 3: Prodotto Vettoriale e Misto
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#capitolo4" class="nav-link group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                                        <svg class="h-6 w-6 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125z" /></svg>
+                                        Cap. 4: Matrici e $\mathbb{R}^{n}$
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#capitolo5" class="nav-link group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                                        <svg class="h-6 w-6 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        Cap. 5: Sistemi di Equazioni
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#capitolo6" class="nav-link group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                                        <svg class="h-6 w-6 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" /></svg>
+                                        Cap. 6: Spazi Vettoriali
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Contenuto Principale -->
+        <main class="py-20 md:py-10 md:pl-72 w-full">
+            <div class="px-4 sm:px-6 lg:px-8">
+                
+                <!-- Sezione Home/Introduzione -->
+                <section id="home" class="scroll-mt-20 md:scroll-mt-10 mb-12">
+                    <div class="bg-white rounded-xl shadow-xl p-6 md:p-10">
+                        <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-6">Benvenuti nella Guida all'Algebra Lineare</h2>
+                        <div class="text-lg leading-relaxed text-gray-700 space-y-4">
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">1.1 Introduzione: Oltre i Numeri Singoli</h3>
+                            <p>Nella vita di tutti i giorni e nelle scienze, spesso un singolo numero non è sufficiente per descrivere una situazione in modo completo. Per descrivere la velocità di un aereo, non basta dire "800 km/h"; dobbiamo anche specificare la direzione e il verso (ad esempio, "verso nord-est"). Per descrivere una forza, non basta la sua intensità, ma anche dove è applicata e in che direzione agisce. L'algebra lineare nasce proprio dalla necessità di gestire e organizzare informazioni che possiedono più di una singola dimensione.</p>
+                            <p>Un esempio pratico che illustra questa necessità è la gestione di un portafoglio di azioni. Supponiamo di possedere azioni di tre diverse società: Google, Netflix e Apple. Il valore del nostro portafoglio dipende dal numero di azioni che possediamo per ciascuna società. Se ci viene detto di calcolare il valore per l'input (1, 2, 3), questa informazione è ambigua. Significa 1 azione di Google, 2 di Netflix e 3 di Apple, o un'altra combinazione? Per dare un senso a questi dati, dobbiamo stabilire un ordine, una struttura. Abbiamo bisogno di un oggetto matematico che possa contenere più numeri in un ordine preciso: un <strong>vettore</strong>.</p>
+                            <p>Questo semplice esempio ci insegna una lezione fondamentale: l'algebra lineare è, prima di tutto, una disciplina che si occupa di organizzare l'informazione in modo efficiente e non ambiguo.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Capitolo 1: Dai Punti ai Vettori -->
+                <section id="capitolo1" class="scroll-mt-20 md:scroll-mt-10 mb-12">
+                    <div class="bg-white rounded-xl shadow-xl p-6 md:p-10">
+                        <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-6">Capitolo 1: Dai Punti ai Vettori - Le Fondamenta Geometriche</h2>
+                        <div class="text-lg leading-relaxed text-gray-700 space-y-4">
+                            
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">1.2 Il Vettore Geometrico: Una Freccia nello Spazio</h3>
+                            <p>Il primo tipo di vettore che incontriamo è il vettore geometrico. Intuitivamente, possiamo pensarlo come una freccia che rappresenta uno spostamento da un punto di partenza A a un punto di arrivo B.</p>
+                            <p><strong>Definizione e Componenti</strong></p>
+                            <p>Formalmente, un vettore geometrico, che indicheremo con $\vec{AB}$, è definito da tre caratteristiche:</p>
+                            <ol class="list-decimal pl-6 space-y-2 my-4">
+                                <li><strong>Direzione</strong>: La retta su cui giace il segmento AB.</li>
+                                <li><strong>Verso</strong>: L'orientamento dello spostamento, da A verso B.</li>
+                                <li><strong>Lunghezza (o Modulo)</strong>: La distanza tra i punti A e B, indicata con $|\vec{AB}|$.</li>
+                            </ol>
+                            <p>Due vettori geometrici $\vec{AB}$ e $\vec{CD}$ sono considerati uguali (o equipollenti) se hanno la stessa direzione, lo stesso verso e la stessa lunghezza, anche se partono da punti diversi.</p>
+                            <p>Per lavorare con i vettori in modo algebrico, se $A=(x_{A},y_{A})$ e $B=(x_{B},y_{B})$, le componenti del vettore $\vec{AB}$ sono: $\vec{AB}=(x_{B}-x_{A},y_{B}-y_{A})$.</p>
+                            <p>Nello spazio tridimensionale: $\vec{AB}=(x_{B}-x_{A},y_{B}-y_{A},z_{B}-z_{A})$.</p>
+                            <p>Un caso speciale è il <strong>vettore nullo</strong>, $\vec{O}$, che rappresenta uno spostamento nullo (es. $\vec{AA}$). Le sue componenti sono tutte zero: $\vec{O}=(0,0)$ o $\vec{O}=(0,0,0)$.</p>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">1.3 Operazioni Fondamentali con i Vettori</h3>
+                            <p><strong>Somma di Vettori</strong></p>
+                            <ul class="list-disc pl-6 space-y-2 my-4">
+                                <li><strong>Approccio Algebrico</strong>: Si sommano le componenti corrispondenti. Se $\vec{v}=(v_{1},v_{2})$ e $\vec{w}=(w_{1},w_{2})$, la loro somma è: $\vec{v}+\vec{w}=(v_{1}+w_{1},v_{2}+w_{2})$.</li>
+                                <li><strong>Approccio Geometrico (Regola del Parallelogramma)</strong>: Se i due vettori $\vec{v}$ e $\vec{w}$ sono applicati nello stesso punto, la loro somma è la diagonale del parallelogramma che ha i due vettori come lati.</li>
+                                <li><strong>Approccio Geometrico (Regola Testa-Coda)</strong>: Per sommare $\vec{v}$ e $\vec{w}$, si posiziona la "coda" (inizio) di $\vec{w}$ sulla "testa" (fine) di $\vec{v}$. Il vettore somma è quello che va dalla coda di $\vec{v}$ alla testa di $\vec{w}$. Esempio: $\vec{AB}+\vec{BC}=\vec{AC}$.</li>
+                            </ul>
+                            
+                            <p><strong>Prodotto di un Vettore per uno Scalare</strong></p>
+                            <p>Moltiplicare un vettore per un numero reale $k$ (scalare) ne modifica la lunghezza e/o il verso.</p>
+                            <ul class="list-disc pl-6 space-y-2 my-4">
+                                <li><strong>Approccio Algebrico</strong>: $k\vec{v}=(kv_{1},kv_{2})$</li>
+                                <li><strong>Approccio Geometrico</strong>:
+                                    <ul class="list-circle pl-6 mt-2">
+                                        <li>Se $k>0$, $k\vec{v}$ ha stessa direzione e verso di $\vec{v}$, ma lunghezza moltiplicata per $k$.</li>
+                                        <li>Se $k<0$, $k\vec{v}$ ha stessa direzione ma verso opposto, e lunghezza moltiplicata per $|k|$.</li>
+                                        <li>Se $k=0$, il risultato è il vettore nullo $\vec{O}$.</li>
+                                    </ul>
+                                </li>
+                                <li>Il <strong>vettore opposto</strong> $-\vec{v}$ (ottenuto con $k=-1$) ha stessa lunghezza e direzione di $\vec{v}$ ma verso opposto. Se $\vec{v}=\vec{AB}$, allora $-\vec{v}=\vec{BA}$.</li>
+                            </ul>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">1.4 Usare i Vettori per Descrivere Rette e Piani</h3>
+                            <p><strong>Equazioni Parametriche di una Retta</strong></p>
+                            <p>Per definire una retta, servono un punto $P_{1}$ per cui passa e un vettore direzione $\vec{v}$.</p>
+                            <p>Formula Vettoriale: $\vec{OP}=\vec{OP}_{1}+t\vec{v}$</p>
+                            <p>Equazioni Parametriche (se $P=(x,y,z)$, $P_{1}=(x_{1},y_{1},z_{1})$ e $\vec{v}=(v_{x},v_{y},v_{z})$):</p>
+                            $$ \begin{cases}x=x_{1}+t\cdot v_{x}\\ y=y_{1}+t\cdot v_{y}\\ z=z_{1}+t\cdot v_{z}\end{cases} $$
+                            
+                            <p><strong>Equazioni Parametriche di un Piano</strong></p>
+                            <p>Per definire un piano, servono un punto $P_{1}$ e due direzioni indipendenti (vettori $\vec{v}$ e $\vec{w}$ non paralleli).</p>
+                            <p>Formula Vettoriale: $\vec{OP}=\vec{OP}_{1}+s\vec{v}+t\vec{w}$ (questa è una <strong>combinazione lineare</strong>)</p>
+                            <p>Equazioni Parametriche:</p>
+                            $$ \begin{cases}x=x_{1}+s\cdot v_{x}+t\cdot w_{x}\\ y=y_{1}+s\cdot v_{y}+t\cdot w_{y}\\ z=z_{1}+s\cdot v_{z}+t\cdot w_{z}\end{cases} $$
+                            
+                            <p><strong>Dalle Equazioni Parametriche alle Cartesiane</strong></p>
+                            <p>Eliminando algebricamente i parametri ($t$, o $s$ e $t$), si ottiene l'equazione cartesiana (es. $ax+by=c$ per una retta nel piano, $ax+by+cz=d$ per un piano nello spazio).</p>
+                            <p>Questo approccio è "costruttivo": invece di descrivere una retta per la condizione che soddisfa (es. $ax+by+c=0$), la descriviamo *generando* tutti i suoi punti. Questo è fondamentale in computer grafica, fisica e ingegneria.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Capitolo 2: Prodotto Scalare -->
+                <section id="capitolo2" class="scroll-mt-20 md:scroll-mt-10 mb-12">
+                    <div class="bg-white rounded-xl shadow-xl p-6 md:p-10">
+                        <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-6">Capitolo 2: Misurare i Vettori - Prodotto Scalare, Lunghezze e Angoli</h2>
+                        <div class="text-lg leading-relaxed text-gray-700 space-y-4">
+                            
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">2.1 La Necessità di una Misura: Lunghezza e Distanza</h3>
+                            <p>La lunghezza (norma o modulo) di un vettore $\vec{v}=(v_{1},v_{2},v_{3})$, indicata con $|\vec{v}|$ o $||\vec{v}||$, si calcola con il Teorema di Pitagora:</p>
+                            $$ |\vec{v}|=\sqrt{v_{1}^{2}+v_{2}^{2}+v_{3}^{2}} $$
+                            <p>Il quadrato della lunghezza è legato al prodotto scalare: $|\vec{v}|^{2}=\vec{v}\cdot\vec{v}$.</p>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">2.2 Il Prodotto Scalare (Dot Product)</h3>
+                            <p>Il prodotto scalare prende due vettori e restituisce un singolo numero (scalare).</p>
+                            <ul class="list-disc pl-6 space-y-2 my-4">
+                                <li><strong>Definizione Algebrica</strong>: Dati $\vec{v}=(v_{1},v_{2},v_{3})$ e $\vec{w}=(w_{1},w_{2},w_{3})$, il loro prodotto scalare è:
+                                    $$ \vec{v}\cdot\vec{w}=v_{1}w_{1}+v_{2}w_{2}+v_{3}w_{3} $$
+                                </li>
+                                <li><strong>Significato Geometrico</strong>: È uguale al prodotto delle lunghezze per il coseno dell'angolo $\theta$ compreso tra di essi:
+                                    $$ \vec{v}\cdot\vec{w}=|\vec{v}||\vec{w}|\cos(\theta) $$
+                                </li>
+                                <li><strong>Proiezione Scalare</strong>: Il termine $|\vec{w}|\cos(\theta)$ è la lunghezza della proiezione ortogonale di $\vec{w}$ sulla direzione di $\vec{v}$. Il prodotto scalare misura "quanto due vettori puntano nella stessa direzione".</li>
+                                <li><strong>Proprietà</strong>: È commutativo ($\vec{v}\cdot\vec{w}=\vec{w}\cdot\vec{v}$) e distributivo ($\vec{u}\cdot(\vec{v}+\vec{w})=\vec{u}\cdot\vec{v}+\vec{u}\cdot\vec{w}$).</li>
+                            </ul>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">2.3 Ortogonalità: L'Importanza dell'Angolo Retto</h3>
+                            <p>Se l'angolo $\theta$ tra due vettori non nulli è $90^{\circ}$, allora $\cos(\theta)=0$.</p>
+                            <p class="font-semibold text-gray-900 bg-blue-50 p-4 rounded-lg">Due vettori $\vec{v}$ e $\vec{w}$ sono ortogonali se e solo se il loro prodotto scalare è zero: $\vec{v}\cdot\vec{w}=0$.</p>
+                            <p><strong>Applicazione (Vettori Normali)</strong>:</p>
+                            <ul class="list-disc pl-6 space-y-2 my-4">
+                                <li>Nell'equazione cartesiana di una retta $ax+by=c$, il vettore $\vec{n}=(a,b)$ è normale (ortogonale) alla retta.</li>
+                                <li>Nell'equazione di un piano $ax+by+cz=d$, il vettore $\vec{n}=(a,b,c)$ è normale al piano.</li>
+                            </ul>
+                            <p><strong>Interpretazione come Similarità</strong>:</p>
+                            <ul class="list-disc pl-6 space-y-2 my-4">
+                                <li>Se $\vec{v}\cdot\vec{w}>0$, l'angolo è acuto (direzione "simile").</li>
+                                <li>Se $\vec{v}\cdot\vec{w}<0$, l'angolo è ottuso (direzioni "generalmente opposte").</li>
+                                <li>Se $\vec{v}\cdot\vec{w}=0$, sono ortogonali ("massimamente dissimili").</li>
+                            </ul>
+                            <p>Questo concetto (similarità coseno) è usato nei moderni sistemi di raccomandazione (es. Netflix) per confrontare i gusti degli utenti (vettori) con i prodotti (altri vettori).</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Capitolo 3: Prodotto Vettoriale e Misto -->
+                <section id="capitolo3" class="scroll-mt-20 md:scroll-mt-10 mb-12">
+                    <div class="bg-white rounded-xl shadow-xl p-6 md:p-10">
+                        <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-6">Capitolo 3: Operazioni Nello Spazio Tridimensionale - Prodotto Vettoriale e Misto</h2>
+                        <div class="text-lg leading-relaxed text-gray-700 space-y-4">
+                            
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">3.1 Il Prodotto Vettoriale (Cross Product)</h3>
+                            <p>Il prodotto vettoriale $\vec{v}\times\vec{w}$ è definito solo in $\mathbb{R}^{3}$ e il suo risultato è un <strong>vettore</strong>.</p>
+                            <p><strong>Formula Algebrica</strong>: Dati $\vec{v}=(v_{1},v_{2},v_{3})$ e $\vec{w}=(w_{1},w_{2},w_{3})$:</p>
+                            $$ \vec{v}\times\vec{w}=(v_{2}w_{3}-v_{3}w_{2},v_{3}w_{1}-v_{1}w_{3},v_{1}w_{2}-v_{2}w_{1}) $$
+                            <p>Si può ricordare usando il determinante simbolico:</p>
+                            $$ \vec{v}\times\vec{w}=\begin{vmatrix}\vec{i}&\vec{j}&\vec{k}\\ v_{1}&v_{2}&v_{3}\\ w_{1}&w_{2}&w_{3}\end{vmatrix} $$
+                            <p><strong>Proprietà Geometriche Fondamentali</strong>:</p>
+                            <ol class="list-decimal pl-6 space-y-2 my-4">
+                                <li><strong>Modulo = Area</strong>: La lunghezza $|\vec{v}\times\vec{w}|$ è uguale all'area del parallelogramma formato da $\vec{v}$ e $\vec{w}$. ($|\vec{v}\times\vec{w}|=|\vec{v}||\vec{w}|\sin(\theta)$).</li>
+                                <li><strong>Direzione = Ortogonalità</strong>: Il vettore $\vec{v}\times\vec{w}$ è sempre perpendicolare sia a $\vec{v}$ che a $\vec{w}$.</li>
+                                <li><strong>Verso = Regola della Mano Destra</strong>: Pollice($\vec{v}$) + Indice($\vec{w}$) = Medio($\vec{v}\times\vec{w}$).</li>
+                            </ol>
+                            <p><strong>Proprietà Algebriche</strong>: È anticommutativo: $\vec{w}\times\vec{v}=-(\vec{v}\times\vec{w})$.</p>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">3.2 Il Prodotto Misto: Dal Piano al Volume</h3>
+                            <p>Il prodotto misto combina prodotto scalare e vettoriale per misurare il volume.</p>
+                            <p><strong>Definizione</strong>: Dati $\vec{u}$, $\vec{v}$, $\vec{w}$ in $\mathbb{R}^{3}$, il prodotto misto è lo scalare: $\vec{u}\cdot(\vec{v}\times\vec{w})$</p>
+                            <p><strong>Significato Geometrico</strong>: Il suo valore assoluto, $|\vec{u}\cdot(\vec{v}\times\vec{w})|$, rappresenta il <strong>volume del parallelepipedo</strong> che ha i tre vettori come spigoli.</p>
+                            <p><strong>Complanarità</strong>: Se il prodotto misto è zero, il volume è nullo. Questo accade se e solo se i tre vettori giacciono sullo stesso piano (sono complanari).</p>
+
+                            <!-- Tabella Riepilogo Operazioni Vettoriali -->
+                            <h4 class="text-xl font-semibold text-gray-800 mt-6 mb-3">Tabella 1: Riepilogo delle Operazioni Vettoriali</h4>
+                            <div class="overflow-x-auto rounded-lg shadow-md border border-gray-200">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operazione</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notazione</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Input</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Output</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Significato Geometrico</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Prodotto Scalare</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$\vec{v}\cdot\vec{w}$</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Due vettori</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><strong>Scalare</strong></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Misura dell'angolo/allineamento</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Prodotto Vettoriale</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$\vec{v}\times\vec{w}$</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Due vettori (in $\mathbb{R}^{3}$)</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><strong>Vettore</strong></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Vettore ortogonale con modulo = Area</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Prodotto Misto</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$\vec{u}\cdot(\vec{v}\times\vec{w})$</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tre vettori (in $\mathbb{R}^{3}$)</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><strong>Scalare</strong></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Volume del parallelepipedo</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Capitolo 4: Matrici e R^n -->
+                <section id="capitolo4" class="scroll-mt-20 md:scroll-mt-10 mb-12">
+                    <div class="bg-white rounded-xl shadow-xl p-6 md:p-10">
+                        <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-6">Capitolo 4: L'Astrazione - Da Vettori a n-uple e Matrici</h2>
+                        <div class="text-lg leading-relaxed text-gray-700 space-y-4">
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">4.1 Generalizzazione: Lo Spazio $\mathbb{R}^{n}$</h3>
+                            <p>Una <strong>n-upla</strong> è una lista ordinata di $n$ numeri reali: $(a_{1},a_{2},...,a_{n})$. L'insieme di tutte le n-uple è lo spazio $\mathbb{R}^{n}$.</p>
+                            <p>Le operazioni si estendono naturalmente:</p>
+                            <ul class="list-disc pl-6 space-y-2 my-4">
+                                <li><strong>Somma</strong>: $\vec{a}+\vec{b}=(a_{1}+b_{1},...,a_{n}+b_{n})$</li>
+                                <li><strong>Prodotto per scalare</strong>: $k\vec{a}=(ka_{1},...,ka_{n})$</li>
+                                <li><strong>Prodotto Scalare in $\mathbb{R}^{n}$</strong>: $\vec{a}\cdot\vec{b}=\sum_{i=1}^{n}a_{i}b_{i}=a_{1}b_{1}+\cdot\cdot\cdot+a_{n}b_{n}$</li>
+                            </ul>
+                            <p>Questo permette di definire in $\mathbb{R}^{n}$ concetti come <strong>Norma</strong> ($||\vec{a}||=\sqrt{\vec{a}\cdot\vec{a}}$), <strong>Distanza</strong> ($d(\vec{a},\vec{b})=||\vec{a}-\vec{b}||$) e <strong>Ortogonalità</strong> ($\vec{a}\cdot\vec{b}=0$).</p>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">4.2 Le Matrici: Fogli di Calcolo per la Matematica</h3>
+                            <p>Una matrice è una tabella rettangolare di numeri, organizzata in righe e colonne (tipo $m \times n$). $A=[a_{ij}]$, dove $i$ è l'indice di riga e $j$ quello di colonna.</p>
+                            <p>Tipi speciali: <strong>Matrice Quadrata</strong> ($m=n$), <strong>Vettore Riga</strong> ($1 \times n$), <strong>Vettore Colonna</strong> ($m \times 1$).</p>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">4.3 Operazioni Elementari con le Matrici</h3>
+                            <p><strong>Somma di Matrici</strong>: $A+B=[a_{ij}+b_{ij}]$ (devono avere lo stesso tipo).</p>
+                            <p><strong>Prodotto per uno Scalare</strong>: $kA=[ka_{ij}]$.</p>
+                            
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">4.4 Il Prodotto tra Matrici: "Righe per Colonne"</h3>
+                            <p>Date A di tipo $(m, n)$ e B di tipo $(n, l)$, il loro prodotto $C=AB$ è una matrice di tipo $(m, l)$.</p>
+                            <p>L'elemento $c_{ik}$ (riga $i$, colonna $k$ di C) si calcola facendo il <strong>prodotto scalare</strong> della $i$-esima riga di A con la $k$-esima colonna di B:</p>
+                            $$ c_{ik}=\sum_{h=1}^{n}a_{ih}b_{hk}=a_{i1}b_{1k}+\cdot\cdot\cdot+a_{in}b_{nk} $$
+                            <p><strong>Condizione di Conformabilità</strong>: Il numero di colonne di A deve essere uguale al numero di righe di B ($n$).</p>
+                            <p><strong>Intuizione Chiave</strong>:</p>
+                            <ol class="list-decimal pl-6 space-y-2 my-4">
+                                <li>Permette di scrivere sistemi lineari in forma compatta: $A\vec{x}=\vec{b}$.</li>
+                                <li>Rappresenta la <strong>composizione di trasformazioni</strong>. Se $\vec{w}=B\vec{v}$ e $\vec{z}=A\vec{w}$, allora $\vec{z}=(AB)\vec{v}$.</li>
+                            </ol>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">4.5 Proprietà e Oggetti Speciali</h3>
+                            <ul class="list-disc pl-6 space-y-2 my-4">
+                                <li><strong>Non Commutatività</strong>: In generale, $AB \ne BA$.</li>
+                                <li><strong>Matrice Identità ($I_{n}$)</strong>: Matrice quadrata con 1 sulla diagonale e 0 altrove. È l'elemento neutro del prodotto ($AI=A$).</li>
+                                <li><strong>Matrice Inversa ($A^{-1}$)</strong>: Se esiste, è quella matrice tale che $AA^{-1}=A^{-1}A=I$. Non tutte le matrici quadrate sono invertibili.</li>
+                                <li><strong>Matrice Trasposta ($A^{T}$)</strong>: Ottenuta scambiando le righe con le colonne.</li>
+                            </ul>
+
+                            <!-- Tabella Confronto Algebra -->
+                            <h4 class="text-xl font-semibold text-gray-800 mt-6 mb-3">Tabella 2: Confronto tra Algebra dei Numeri e Algebra delle Matrici</h4>
+                            <div class="overflow-x-auto rounded-lg shadow-md border border-gray-200">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Proprietà</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Numeri Reali (a,b)</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matrici (A,B)</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Commento</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Commutatività Prodotto</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$ab=ba$ (Sempre)</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$AB \ne BA$ (In generale)</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">L'ordine delle operazioni conta!</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Legge Annullamento Prodotto</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$ab=0 \Rightarrow a=0$ o $b=0$</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$AB=O$ non implica $A=O$ o $B=O$</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Esistono "divisori dello zero".</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Esistenza Inverso</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Ogni $a \ne 0$ ha inverso $1/a$</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Solo alcune matrici quadrate</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">L'invertibilità è speciale.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Capitolo 5: Sistemi di Equazioni -->
+                <section id="capitolo5" class="scroll-mt-20 md:scroll-mt-10 mb-12">
+                    <div class="bg-white rounded-xl shadow-xl p-6 md:p-10">
+                        <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-6">Capitolo 5: Il Cuore dell'Algebra Lineare - Risolvere Sistemi di Equazioni</h2>
+                        <div class="text-lg leading-relaxed text-gray-700 space-y-4">
+                            
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">5.1 Il Problema Centrale: $A\vec{x}=\vec{b}$</h3>
+                            <p>Un sistema di $m$ equazioni lineari in $n$ incognite può essere scritto in forma matriciale come $A\vec{x}=\vec{b}$. Si utilizza la <strong>matrice completa (o aumentata)</strong> $[A|b]$.</p>
+                            <p>Interpretazioni:</p>
+                            <ol class="list-decimal pl-6 space-y-2 my-4">
+                                <li><strong>Prospettiva delle Righe</strong>: Ogni riga è un'equazione.</li>
+                                <li><strong>Prospettiva delle Colonne</strong>: Il vettore $\vec{b}$ è una <strong>combinazione lineare</strong> delle colonne di A, con coefficienti (pesi) $x_1, ..., x_n$. Il sistema ha soluzione se $\vec{b}$ "appartiene" allo spazio generato dalle colonne di A.</li>
+                            </ol>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">5.2 Il Metodo di Eliminazione di Gauss-Jordan</h3>
+                            <p>Trasforma un sistema complicato in uno equivalente (stesse soluzioni) ma facile da risolvere, applicando <strong>operazioni elementari sulle righe</strong>:</p>
+                            <ol class="list-decimal pl-6 space-y-2 my-4">
+                                <li><strong>Scambio</strong>: Scambiare due righe.</li>
+                                <li><strong>Moltiplicazione</strong>: Moltiplicare una riga per uno scalare non nullo.</li>
+                                <li><strong>Somma</strong>: Sommare a una riga un multiplo di un'altra.</li>
+                            </ol>
+                            <p><strong>Fase 1: Eliminazione in Avanti (Gauss)</strong>: Trasforma la matrice in <strong>forma a scalini (row echelon form)</strong>. Si usa ogni <strong>pivot</strong> (primo elemento non nullo di una riga) per azzerare gli elementi sottostanti.</p>
+                            <p><strong>Fase 2: Sostituzione all'Indietro (Gauss-Jordan)</strong>: Trasforma la matrice in <strong>forma a scalini ridotta (rref)</strong>. Ogni pivot è 1 ed è l'unico elemento non nullo nella sua colonna. La soluzione si legge direttamente.</p>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">5.3 Analizzare le Soluzioni: Il Teorema di Rouché-Capelli</h3>
+                            <p><strong>Definizione di Rango</strong>: Il rango di A, $rg(A)$, è il numero di pivot (o righe non nulle) nella sua forma a scalini. Misura le equazioni "essenziali".</p>
+                            <p class="font-semibold text-gray-900 bg-blue-50 p-4 rounded-lg"><strong>Il Teorema</strong>: Un sistema $A\vec{x}=\vec{b}$ ammette soluzioni se e solo se $rg(A) = rg([A|b])$.</p>
+                            <ul class="list-disc pl-6 space-y-2 my-4">
+                                <li>Se $rg(A) < rg([A|b])$, il sistema è <strong>incompatibile</strong> (Nessuna Soluzione). (Si genera una riga $[0 0 ... | k]$ con $k \ne 0$).</li>
+                                <li>Se $rg(A) = rg([A|b]) = r$, il sistema è <strong>compatibile</strong>.
+                                    <ul class="list-circle pl-6 mt-2">
+                                        <li>Se $r=n$ (n=numero incognite): <strong>Soluzione Unica</strong>.</li>
+                                        <li>Se $r<n$: <strong>Infinite Soluzioni</strong>. Ci sono $n-r$ variabili libere (le colonne senza pivot).</li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">5.4 Struttura dell'Insieme delle Soluzioni</h3>
+                            <ul class="list-disc pl-6 space-y-2 my-4">
+                                <li><strong>Sistemi Omogenei ($A\vec{x}=\vec{0}$)</strong>: Sempre compatibili (almeno la soluzione $\vec{x}=\vec{0}$). L'insieme delle soluzioni è un <strong>sottospazio vettoriale</strong>.</li>
+                                <li><strong>Sistemi Non Omogenei ($A\vec{x}=\vec{b}$)</strong>: Se compatibile, la soluzione generale è $\vec{x} = \vec{x}_{p} + \vec{x}_{h}$, dove $\vec{x}_{p}$ è una soluzione particolare del completo e $\vec{x}_{h}$ è la soluzione generale dell'omogeneo associato.</li>
+                            </ul>
+
+                            <!-- Tabella Diagramma di Flusso -->
+                            <h4 class="text-xl font-semibold text-gray-800 mt-6 mb-3">Tabella 3: Guida alla Risoluzione dei Sistemi (Diagramma di Flusso)</h4>
+                            <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 space-y-4">
+                                <p><strong>1. Inizio:</strong> Dato $A\vec{x}=\vec{b}$.</p>
+                                <p><strong>2. Passo 1:</strong> Scrivere la matrice aumentata $[A|b]$.</p>
+                                <p><strong>3. Passo 2:</strong> Ridurre $[A|b]$ in forma a scalini.</p>
+                                <p><strong>4. Decisione 1:</strong> Esiste una riga $[0 0 ... | k]$ con $k \ne 0$?</p>
+                                <p class="pl-4"><span class="font-bold text-red-600">SÌ:</span> Sistema <strong>Incompatibile</strong> (Nessuna Soluzione). FINE.</p>
+                                <p class="pl-4"><span class="font-bold text-green-600">NO:</span> Sistema <strong>Compatibile</strong>. Vai al passo 5.</p>
+                                <p><strong>5. Passo 3:</strong> Contare i pivot $r=rg(A)$ e le incognite $n$.</p>
+                                <p><strong>6. Decisione 2:</strong> È vero che $r=n$?</p>
+                                <p class="pl-4"><span class="font-bold text-green-600">SÌ:</span> <strong>Soluzione Unica</strong>. Risolvere con sostituzione all'indietro. FINE.</p>
+                                <p class="pl-4"><span class="font-bold text-blue-600">NO:</span> <strong>Infinite Soluzioni</strong>. Ci sono $n-r$ variabili libere. FINE.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Capitolo 6: Spazi Vettoriali -->
+                <section id="capitolo6" class="scroll-mt-20 md:scroll-mt-10 mb-12">
+                    <div class="bg-white rounded-xl shadow-xl p-6 md:p-10">
+                        <h2 class="text-3xl font-bold tracking-tight text-blue-700 sm:text-4xl mb-6">Capitolo 6: La Struttura Astratta - Spazi e Sottospazi Vettoriali</h2>
+                        <div class="text-lg leading-relaxed text-gray-700 space-y-4">
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">6.1 Definizione di Spazio Vettoriale</h3>
+                            <p>Uno spazio vettoriale è un insieme $V$ con due operazioni (somma di vettori e prodotto per scalare) che soddisfano 8 assiomi fondamentali (associatività, commutatività, elemento neutro, opposto, distributività, ecc.).</p>
+                            <p>Questo astrae le proprietà comuni di $\mathbb{R}^{n}$, matrici, polinomi, funzioni, ecc.</p>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">6.2 Sottospazi Vettoriali</h3>
+                            <p>Un sottospazio $W$ è un sottoinsieme di $V$ che è "chiuso" rispetto alle due operazioni:</p>
+                            <ol class="list-decimal pl-6 space-y-2 my-4">
+                                <li><strong>Chiusura rispetto alla somma</strong>: Se $\vec{w}_{1}, \vec{w}_{2} \in W$, allora $\vec{w}_{1}+\vec{w}_{2} \in W$.</li>
+                                <li><strong>Chiusura rispetto al prodotto per scalare</strong>: Se $\vec{w} \in W$ e $k$ è uno scalare, allora $k\vec{w} \in W$.</li>
+                            </ol>
+                            <p>Un sottospazio deve sempre contenere il vettore nullo $\vec{0}$.</p>
+                            <p><strong>Esempio fondamentale</strong>: L'insieme delle soluzioni di un sistema omogeneo $A\vec{x}=\vec{0}$ è un sottospazio di $\mathbb{R}^{n}$.</p>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">6.3 Combinazioni Lineari e Span</h3>
+                            <ul class="list-disc pl-6 space-y-2 my-4">
+                                <li><strong>Combinazione Lineare</strong>: Un'espressione della forma $c_{1}\vec{v}_{1}+\cdot\cdot\cdot+c_{k}\vec{v}_{k}$.</li>
+                                <li><strong>Span</strong>: Lo $span\{\vec{v}_{1},...,\vec{v}_{k}\}$ è l'insieme di <strong>tutte</strong> le possibili combinazioni lineari di questi vettori. È sempre un sottospazio vettoriale. Rappresenta "tutto ciò che si può raggiungere" usando quei vettori.</li>
+                            </ul>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">6.4 Indipendenza Lineare</h3>
+                            <p>Un insieme di vettori $\{\vec{v}_{1},...,\vec{v}_{k}\}$ è <strong>linearmente indipendente</strong> se l'unica combinazione lineare che dà il vettore nullo è quella con tutti i coefficienti nulli:</p>
+                            $$ c_{1}\vec{v}_{1}+\cdot\cdot\cdot+c_{k}\vec{v}_{k}=\vec{0} \implies c_{1}=c_{2}=\cdot\cdot\cdot=c_{k}=0 $$
+                            <p>Se non sono indipendenti, sono <strong>linearmente dipendenti</strong>, il che significa che almeno un vettore è "ridondante" (è combinazione lineare degli altri).</p>
+
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">6.5 La Base e la Dimensione</h3>
+                            <p>Una <strong>base</strong> di uno spazio vettoriale $V$ è un insieme di vettori che soddisfa due condizioni:</p>
+                            <ol class="list-decimal pl-6 space-y-2 my-4">
+                                <li>È <strong>linearmente indipendente</strong> (non ci sono ridondanze).</li>
+                                <li><strong>Genera</strong> lo spazio $V$ (il suo span è l'intero $V$).</li>
+                            </ol>
+                            <p>Una base è l'insieme "perfetto": il numero minimo di vettori necessari per generare l'intero spazio. Ogni vettore in $V$ può essere scritto come combinazione lineare della base in un <strong>unico modo</strong> (le sue coordinate).</p>
+                            <p><strong>Dimensione</strong>: Tutte le basi di uno spazio hanno lo stesso numero di elementi. Questo numero è la <strong>dimensione</strong> dello spazio, $dim(V)$. (Es: $dim(\mathbb{R}^{3})=3$).</p>
+                            
+                            <h3 class="text-2xl font-semibold text-gray-800 mt-6 mb-3">6.6 Il Rango Rivisitato: La Dimensione in Pratica</h3>
+                            <p>Il <strong>rango</strong> di una matrice A è la dimensione dello spazio generato dalle sue colonne (spazio delle colonne) ed è anche la dimensione dello spazio generato dalle sue righe (spazio delle righe).</p>
+                            <p>L'algoritmo di Gauss-Jordan ci permette di trovare le basi per gli spazi fondamentali di A:</p>
+                            <ul class="list-disc pl-6 space-y-2 my-4">
+                                <li><strong>Base Spazio Colonne</strong>: Le colonne della matrice <strong>originale</strong> A che corrispondono ai pivot nella forma ridotta.</li>
+                                <li><strong>Base Spazio Righe</strong>: Le righe non nulle della matrice <strong>ridotta</strong> a scalini.</li>
+                                <li><strong>Base Spazio Nullo ($N(A)$)</strong>: Le soluzioni di base del sistema omogeneo $A\vec{x}=\vec{0}$. La sua dimensione è la <strong>nullità</strong>, $n-rg(A)$.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <!-- Navigazione Mobile (visibile solo su mobile) -->
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-inner z-20">
+            <div class="flex justify-around items-center h-16">
+                <a href="#home" class="nav-link-mobile flex flex-col items-center justify-center text-gray-600 hover:text-blue-600 p-2 rounded-lg" data-section="home">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
+                    <span class="text-xs font-medium">Inizio</span>
+                </a>
+                <a href="#capitolo1" class="nav-link-mobile flex flex-col items-center justify-center text-gray-600 hover:text-blue-600 p-2 rounded-lg" data-section="capitolo1">
+                    <span class="text-lg font-bold">1</span>
+                    <span class="text-xs font-medium">Vettori</span>
+                </a>
+                <a href="#capitolo2" class="nav-link-mobile flex flex-col items-center justify-center text-gray-600 hover:text-blue-600 p-2 rounded-lg" data-section="capitolo2">
+                    <span class="text-lg font-bold">2</span>
+                    <span class="text-xs font-medium">Scalare</span>
+                </a>
+                <a href="#capitolo3" class="nav-link-mobile flex flex-col items-center justify-center text-gray-600 hover:text-blue-600 p-2 rounded-lg" data-section="capitolo3">
+                    <span class="text-lg font-bold">3</span>
+                    <span class="text-xs font-medium">Vettor.</span>
+                </a>
+                <a href="#capitolo4" class="nav-link-mobile flex flex-col items-center justify-center text-gray-600 hover:text-blue-600 p-2 rounded-lg" data-section="capitolo4">
+                    <span class="text-lg font-bold">4</span>
+                    <span class="text-xs font-medium">Matrici</span>
+                </a>
+                <a href="#capitolo5" class="nav-link-mobile flex flex-col items-center justify-center text-gray-600 hover:text-blue-600 p-2 rounded-lg" data-section="capitolo5">
+                    <span class="text-lg font-bold">5</span>
+                    <span class="text-xs font-medium">Sistemi</span>
+                </a>
+                <a href="#capitolo6" class="nav-link-mobile flex flex-col items-center justify-center text-gray-600 hover:text-blue-600 p-2 rounded-lg" data-section="capitolo6">
+                    <span class="text-lg font-bold">6</span>
+                    <span class="text-xs font-medium">Spazi</span>
+                </a>
+            </div>
+        </nav>
+        
+    </div>
+
+    <!-- Bottone "Torna su" -->
+    <a id="scrollTopBtn" href="#home" class="fixed bottom-20 md:bottom-6 right-6 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-opacity duration-300 opacity-0 z-30">
+        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+        </svg>
+    </a>
+
+    <!-- Script per interattività -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const mobileNavLinks = document.querySelectorAll('.nav-link-mobile');
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+            // Funzione per aggiornare il link attivo (ScrollSpy)
+            const updateActiveLink = () => {
+                let currentSectionId = 'home';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    // Definiamo un offset per l'header mobile/desktop
+                    const offset = window.innerWidth < 768 ? 100 : 50; 
+                    if (window.scrollY >= sectionTop - offset) {
+                        currentSectionId = section.getAttribute('id');
+                    }
+                });
+
+                // Aggiorna navigazione desktop
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${currentSectionId}`) {
+                        link.classList.add('active');
+                    }
+                });
+                
+                // Aggiorna navigazione mobile
+                mobileNavLinks.forEach(link => {
+                    link.classList.remove('text-blue-600', 'font-bold');
+                    if (link.dataset.section === currentSectionId) {
+                        link.classList.add('text-blue-600', 'font-bold');
+                    }
+                });
+
+                // Gestione bottone "Torna su"
+                if (window.scrollY > 300) {
+                    scrollTopBtn.classList.remove('opacity-0');
+                    scrollTopBtn.classList.add('opacity-100');
+                } else {
+                    scrollTopBtn.classList.remove('opacity-100');
+                    scrollTopBtn.classList.add('opacity-0');
+                }
+            };
+
+            // Listener per lo scroll
+            window.addEventListener('scroll', updateActiveLink);
+            
+            // Esegui al caricamento
+            updateActiveLink();
+        });
+    </script>
+
+</body>
+</html>

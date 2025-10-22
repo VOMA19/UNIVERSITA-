@@ -1,0 +1,2313 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario Interattivo di Algebra Lineare</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX (per rendering LaTeX) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMmg9fzsidHFryQeIO8G5qcscODUGc8kCHRivfaLMSzprGjQn" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIOvGkYEuKKFUDdfjXIf7AcdiChDGRkgpLhrkuOtmivAFGyrSPw" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURPlLJSytX1omGihIJ0zVabvsZCFhCkeBP9S/LUBJMYHILnz8Wp2I5" crossorigin="anonymous"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- Three.js (per grafici 3D) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        /* Font Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Stili per KaTeX (per garantire coerenza font) */
+        .katex {
+            font-size: 1.1em !important;
+        }
+
+        /* Stili Dark Mode */
+        .dark body {
+            background-color: #0f172a; /* slate-900 */
+            color: #e2e8f0; /* slate-200 */
+        }
+        .dark .sidebar {
+            background-color: #1e293b; /* slate-800 */
+            border-right-color: #334155; /* slate-700 */
+        }
+        .dark .main-content {
+            background-color: #0f172a; /* slate-900 */
+        }
+        .dark .card {
+            background-color: #1e293b; /* slate-800 */
+            border-color: #334155; /* slate-700 */
+        }
+        .dark .card-header {
+            border-bottom-color: #334155; /* slate-700 */
+        }
+        .dark .card-title {
+            color: #f1f5f9; /* slate-100 */
+        }
+        .dark .tab-button {
+            color: #94a3b8; /* slate-400 */
+        }
+        .dark .tab-button[aria-selected="true"] {
+            color: #38bdf8; /* sky-400 */
+            border-color: #38bdf8; /* sky-400 */
+        }
+        .dark .tab-pane {
+            background-color: #0f172a; /* slate-900 */
+            border-color: #334155; /* slate-700 */
+        }
+        .dark .approfondisci summary {
+            color: #94a3b8; /* slate-400 */
+        }
+        .dark .approfondisci div {
+            background-color: #020617; /* slate-950 */
+            border-color: #334155; /* slate-700 */
+        }
+        .dark input[type="text"], .dark input[type="number"] {
+            background-color: #334155; /* slate-700 */
+            border-color: #475569; /* slate-600 */
+            color: #f1f5f9; /* slate-100 */
+        }
+        .dark .sidebar-link {
+            color: #cbd5e1; /* slate-300 */
+        }
+        .dark .sidebar-link.active {
+            color: #38bdf8; /* sky-400 */
+            font-weight: 600;
+        }
+        .dark .search-bar {
+            background-color: #334155; /* slate-700 */
+            border-color: #475569; /* slate-600 */
+        }
+        .dark .search-bar input {
+            background-color: transparent;
+            color: #f1f5f9; /* slate-100 */
+        }
+        .dark .search-bar svg {
+            color: #94a3b8; /* slate-400 */
+        }
+    </style>
+</head>
+<body class="bg-slate-100">
+
+    <div class="flex">
+        <!-- ===== Sidebar ===== -->
+        <nav class="sidebar fixed top-0 left-0 w-64 h-screen bg-white shadow-lg p-6 overflow-y-auto transition-colors duration-300 border-r border-slate-200 z-10">
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-xl font-bold text-sky-600">Algebra Lineare</h1>
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <i data-lucide="moon" class="hidden dark:block"></i>
+                    <i data-lucide="sun" class="block dark:hidden"></i>
+                </button>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-bar relative mb-6 flex items-center bg-slate-100 border border-slate-300 rounded-lg">
+                <input type="text" id="search-input" placeholder="Cerca termine..." class="w-full bg-transparent p-2 pl-10 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500">
+                <i data-lucide="search" class="absolute left-3 w-4 h-4 text-slate-500"></i>
+            </div>
+
+            <!-- Navigation Links -->
+            <ul class="space-y-3" id="sidebar-nav">
+                <li><a href="#cap1" class="sidebar-link text-slate-700 hover:text-sky-600 transition-colors flex items-center"><i data-lucide="move" class="w-4 h-4 mr-3"></i>Cap. 1: Dai punti ai vettori</a></li>
+                <li><a href="#cap2" class="sidebar-link text-slate-700 hover:text-sky-600 transition-colors flex items-center"><i data-lucide="ruler" class="w-4 h-4 mr-3"></i>Cap. 2: Misurare i vettori</a></li>
+                <li><a href="#cap3" class="sidebar-link text-slate-700 hover:text-sky-600 transition-colors flex items-center"><i data-lucide="box" class="w-4 h-4 mr-3"></i>Cap. 3: Operazioni 3D</a></li>
+                <li><a href="#cap4" class="sidebar-link text-slate-700 hover:text-sky-600 transition-colors flex items-center"><i data-lucide="table" class="w-4 h-4 mr-3"></i>Cap. 4: n-uple e Matrici</a></li>
+                <li><a href="#cap5" class="sidebar-link text-slate-700 hover:text-sky-600 transition-colors flex items-center"><i data-lucide="align-left" class="w-4 h-4 mr-3"></i>Cap. 5: Sistemi Lineari</a></li>
+                <li><a href="#cap6" class="sidebar-link text-slate-700 hover:text-sky-600 transition-colors flex items-center"><i data-lucide="network" class="w-4 h-4 mr-3"></i>Cap. 6: Spazi Vettoriali</a></li>
+            </ul>
+        </nav>
+
+        <!-- ===== Main Content ===== -->
+        <main class="main-content ml-64 p-8 md:p-12 w-full min-h-screen transition-colors duration-300">
+            
+            <header class="mb-10">
+                <h1 class="text-4xl font-bold text-slate-800 dark:text-slate-100">Formulario Completo e Interattivo</h1>
+                <p class="text-xl text-slate-600 dark:text-slate-400">Guida Visuale e Pratica dal Vettore allo Spazio Vettoriale</p>
+            </header>
+
+            <!-- ======================================= -->
+            <!--   CAPITOLO 1: DAI PUNTI AI VETTORI   -->
+            <!-- ======================================= -->
+            <section id="cap1" class="card mb-12 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <header class="card-header p-6 border-b border-slate-200">
+                    <h2 class="card-title text-3xl font-bold text-sky-700 dark:text-sky-500">Capitolo 1 – Dai punti ai vettori: le fondamenta geometriche</h2>
+                </header>
+                
+                <div class="p-6 space-y-8">
+                    
+                    <!-- === 1.1 Introduzione: Oltre i numeri singoli === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">1.1 Introduzione: Oltre i numeri singoli</h3>
+                        <p class="text-slate-600 dark:text-slate-400 mb-4">
+                            L'algebra lineare nasce dalla necessità di gestire informazioni con più dimensioni. Un singolo numero non basta per descrivere una velocità o un portafoglio azionario; serve un <strong>vettore</strong>.
+                        </p>
+                        
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap1-1" data-tab-target="pane-sintesi-1-1" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap1-1" data-tab-target="pane-esempio-1-1" role="tab" aria-selected="false">Esempio Pratico</button>
+                            </nav>
+                        </div>
+                        
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-1-1" class="tab-pane" data-tab-group="cap1-1" role="tabpanel">
+                                <p>Molte grandezze (velocità, forze) o insiemi di dati (portafogli azionari) non possono essere descritti da un solo numero. Richiedono un insieme ordinato di numeri per catturare tutte le loro proprietà (es. intensità e direzione). L'algebra lineare fornisce gli strumenti per organizzare e manipolare queste informazioni multi-dimensionali.</p>
+                            </div>
+                            <div id="pane-esempio-1-1" class="tab-pane hidden" data-tab-group="cap1-1" role="tabpanel">
+                                <p class="font-medium mb-2">Esempio: Portafoglio Azionario</p>
+                                <p>Supponiamo di possedere azioni di 3 società: Google, Netflix, Apple. Per descrivere il nostro portafoglio, dobbiamo specificare quante azioni abbiamo di *ciascuna* società e in un ordine preciso. L'input $\(1, 2, 3\)$ è ambiguo. Un vettore $\vec{p} = (10, 5, 20)$ potrebbe rappresentare in modo non ambiguo:
+                                    <ul class="list-disc list-inside ml-4 mt-2">
+                                        <li>10 azioni di Google</li>
+                                        <li>5 azioni di Netflix</li>
+                                        <li>20 azioni di Apple</li>
+                                    </ul>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <p>Nella vita di tutti i giorni e nelle scienze, spesso un singolo numero non è sufficiente per descrivere una situazione in modo completo. Per descrivere la velocità di un aereo, non basta dire "800 km/h"; dobbiamo anche specificare la direzione e il verso (ad esempio, "verso nord-est"). Per descrivere una forza, non basta la sua intensità, ma anche dove è applicata e in che direzione agisce. L'algebra lineare nasce proprio dalla necessità di gestire e organizzare informazioni che possiedono più di una singola dimensione.</p>
+                                <p class="mt-2">Un esempio pratico che illustra questa necessità è la gestione di un portafoglio di azioni. Supponiamo di possedere azioni di tre diverse società: Google, Netflix e Apple. Il valore del nostro portafoglio dipende dal numero di azioni che possediamo per ciascuna società. Se ci viene detto di calcolare il valore per l'input (1, 2, 3), questa informazione è ambigua. Significa 1 azione di Google, 2 di Netflix e 3 di Apple, o un'altra combinazione? Per dare un senso a questi dati, dobbiamo stabilire un ordine, una struttura. Abbiamo bisogno di un oggetto matematico che possa contenere più numeri in un ordine preciso: un vettore. Questo semplice esempio ci insegna una lezione fondamentale: l'algebra lineare è, prima di tutto, una disciplina che si occupa di organizzare l'informazione in modo efficiente e non ambiguo.</p>
+                            </div>
+                        </details>
+                    </div>
+                    
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 1.2 Il vettore geometrico === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">1.2 Il Vettore Geometrico: Una Freccia nello Spazio</h3>
+                        
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap1-2" data-tab-target="pane-sintesi-1-2" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap1-2" data-tab-target="pane-formule-1-2" role="tab" aria-selected="false">Formule Chiave</button>
+                                <button class="tab-button" data-tab-group="cap1-2" data-tab-target="pane-visualizza-1-2" role="tab" aria-selected="false">Visualizzatore 2D</button>
+                            </nav>
+                        </div>
+                        
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-1-2" class="tab-pane" data-tab-group="cap1-2" role="tabpanel">
+                                <p>Un vettore geometrico è una "freccia" che rappresenta uno spostamento da un punto A a un punto B. È definito da 3 caratteristiche:
+                                    <ul class="list-disc list-inside ml-4 mt-2">
+                                        <li><strong>Direzione:</strong> La retta su cui giace.</li>
+                                        <li><strong>Verso:</strong> L'orientamento (da A a B).</li>
+                                        <li><strong>Lunghezza (Modulo):</strong> La distanza tra A e B.</li>
+                                    </ul>
+                                    In un sistema di coordinate, un vettore è rappresentato dalle sue <strong>componenti</strong>, calcolate come (Punto di Arrivo - Punto di Partenza).
+                                </p>
+                            </div>
+                            <div id="pane-formule-1-2" class="tab-pane hidden" data-tab-group="cap1-2" role="tabpanel">
+                                <p>Dati due punti $A = (x_A, y_A)$ e $B = (x_B, y_B)$, il vettore $\vec{v} = \vec{AB}$ è:
+                                $$ \vec{v} = (x_B - x_A, y_B - y_A) $$
+                                Nello spazio 3D, dati $A = (x_A, y_A, z_A)$ e $B = (x_B, y_B, z_B)$:
+                                $$ \vec{v} = \vec{AB} = (x_B - x_A, y_B - y_A, z_B - z_A) $$
+                                <strong>Vettore Nullo:</strong> Rappresenta uno spostamento nullo ($\vec{AA}$).
+                                $$ \vec{0} = (0, 0) \quad \text{o} \quad \vec{0} = (0, 0, 0) $$
+                                </p>
+                            </div>
+                            <div id="pane-visualizza-1-2" class="tab-pane hidden" data-tab-group="cap1-2" role="tabpanel">
+                                <p class="mb-4">Disegna un vettore $\vec{v} = (x, y)$ con partenza dall'origine $(0, 0)$.</p>
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <label>x: <input id="vec-x-1-2" type="number" value="3" class="w-20 p-2 border border-slate-300 rounded-md"></label>
+                                    <label>y: <input id="vec-y-1-2" type="number" value="2" class="w-20 p-2 border border-slate-300 rounded-md"></label>
+                                    <button id="btn-draw-1-2" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700">Disegna</button>
+                                </div>
+                                <canvas id="canvas-1-2" width="400" height="300" class="bg-white border border-slate-400 rounded-md"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <p>Il primo tipo di vettore che incontriamo è il vettore geometrico. Intuitivamente, possiamo pensarlo come una freccia che rappresenta uno spostamento da un punto di partenza A a un punto di arrivo B.</p>
+                                <h5 class="font-semibold mt-2">Definizione e Componenti</h5>
+                                <p>Formalmente, un vettore geometrico, che indicheremo con $\vec{AB}$, è definito da tre caratteristiche:</p>
+                                <ol class="list-decimal list-inside ml-4">
+                                    <li>Direzione: La retta su cui giace il segmento AB.</li>
+                                    <li>Verso: L'orientamento dello spostamento, da A verso B.</li>
+                                    <li>Lunghezza (o Modulo): La distanza tra i punti A e B, indicata con $|\vec{AB}|$.</li>
+                                </ol>
+                                <p class="mt-2">Due vettori geometrici $\vec{AB}$ e $\vec{CD}$ sono considerati uguali (o equipollenti) se hanno la stessa direzione, lo stesso verso e la stessa lunghezza, anche se partono da punti diversi.</p>
+                                <p class="mt-2">Per lavorare con i vettori in modo algebrico, dobbiamo tradurre queste idee geometriche in numeri. Lo facciamo introducendo un sistema di coordinate cartesiane. Se il punto di partenza è $A=(x_{A},y_{A})$ e il punto di arrivo è $B=(x_{B},y_{B})$, le componenti del vettore $\vec{AB}$ sono calcolate come la differenza tra le coordinate del punto di arrivo e quelle del punto di partenza:
+                                $$ \vec{AB}=(x_{B}-x_{A},y_{B}-y_{A}) $$
+                                Questa coppia ordinata di numeri rappresenta lo spostamento netto lungo l'asse x e l'asse y. Nello spazio tridimensionale, il concetto è identico, ma con tre componenti:
+                                $$ \vec{AB}=(x_{B}-x_{A},y_{B}-y_{A},z_{B}-z_{A}) $$
+                                Un caso speciale è il vettore nullo, $\vec{0}$, che rappresenta uno spostamento nullo (il punto di partenza e di arrivo coincidono, $\vec{AA}$). Le sue componenti sono tutte zero: $\vec{0}=(0,0)$ nel piano o $\vec{0}=(0,0,0)$ nello spazio. Questo vettore sarà l'elemento neutro per l'operazione di somma.</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 1.3 Operazioni fondamentali === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">1.3 Operazioni Fondamentali con i Vettori</h3>
+                        
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap1-3" data-tab-target="pane-sintesi-1-3" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap1-3" data-tab-target="pane-formule-1-3" role="tab" aria-selected="false">Formule Chiave</button>
+                                <button class="tab-button" data-tab-group="cap1-3" data-tab-target="pane-visualizza-1-3" role="tab" aria-selected="false">Visualizzatore Somma</button>
+                            </nav>
+                        </div>
+                        
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-1-3" class="tab-pane" data-tab-group="cap1-3" role="tabpanel">
+                                <p>Le due operazioni base sono la <strong>somma di vettori</strong> e il <strong>prodotto per scalare</strong>.</p>
+                                <ul class="list-disc list-inside ml-4 mt-2 space-y-2">
+                                    <li><strong>Somma (Algebrica):</strong> Si sommano le componenti corrispondenti. $\vec{v} + \vec{w} = (v_1+w_1, v_2+w_2)$.</li>
+                                    <li><strong>Somma (Geometrica):</strong> Si usano la <em>Regola del Parallelogramma</em> (i vettori partono dallo stesso punto, la somma è la diagonale) o la <em>Regola Testa-Coda</em> (si attacca la coda del secondo vettore alla testa del primo).</li>
+                                    <li><strong>Prodotto per Scalare:</strong> Si moltiplica ogni componente per un numero (scalare) $k$. $k\vec{v} = (kv_1, kv_2)$. Geometricamente, questo allunga o accorcia il vettore e può invertirne il verso se $k < 0$.</li>
+                                </ul>
+                            </div>
+                            <div id="pane-formule-1-3" class="tab-pane hidden" data-tab-group="cap1-3" role="tabpanel">
+                                <p>Dati $\vec{v}=(v_{1},v_{2})$ e $\vec{w}=(w_{1},w_{2})$ e uno scalare $k \in \mathbb{R}$:</p>
+                                <p class="font-medium mt-4">Somma di Vettori:</p>
+                                $$ \vec{v}+\vec{w}=(v_{1}+w_{1},v_{2}+w_{2}) $$
+                                <p class="font-medium mt-4">Prodotto per Scalare:</p>
+                                $$ k\vec{v}=(kv_{1},kv_{2}) $$
+                                <p class="font-medium mt-4">Vettore Opposto ($k=-1$):</p>
+                                $$ -\vec{v} = (-v_1, -v_2) $$
+                            </div>
+                            <div id="pane-visualizza-1-3" class="tab-pane hidden" data-tab-group="cap1-3" role="tabpanel">
+                                <p class="mb-4">Visualizza la somma $\vec{u} = \vec{v} + \vec{w}$ (in blu) usando la regola testa-coda.</p>
+                                <div class="flex flex-wrap items-center gap-4 mb-4">
+                                    <label>$\vec{v}$: ( <input id="vec-v-x-1-3" type="number" value="2" class="w-16 p-2 border border-slate-300 rounded-md"> , <input id="vec-v-y-1-3" type="number" value="3" class="w-16 p-2 border border-slate-300 rounded-md"> )</label>
+                                    <label>$\vec{w}$: ( <input id="vec-w-x-1-3" type="number" value="4" class="w-16 p-2 border border-slate-300 rounded-md"> , <input id="vec-w-y-1-3" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md"> )</label>
+                                    <button id="btn-draw-1-3" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700">Disegna Somma</button>
+                                </div>
+                                <canvas id="canvas-1-3" width="400" height="300" class="bg-white border border-slate-400 rounded-md"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 1.3 -->
+                                <h5 class="font-semibold">Somma di Vettori</h5>
+                                <p>La somma di due vettori può essere vista sia algebricamente che geometricamente.</p>
+                                <ul class="list-disc list-inside ml-4">
+                                    <li><strong>Approccio Algebrico:</strong> Per sommare due vettori, si sommano le loro componenti corrispondenti. Se $\vec{v}=(v_{1},v_{2})$ e $\vec{w}=(w_{1},w_{2})$ la loro somma è: $\vec{v}+\vec{w}=(v_{1}+w_{1},v_{2}+w_{2})$. Questo metodo è diretto e facile da calcolare.</li>
+                                    <li><strong>Approccio Geometrico:</strong> L'interpretazione geometrica ci fornisce l'intuizione del significato della somma. Esistono due regole equivalenti:
+                                        <ol class="list-decimal list-inside ml-6">
+                                            <li><strong>Regola del Parallelogramma:</strong> Se i due vettori $\vec{v}$ e $\vec{w}$ sono applicati nello stesso punto di partenza, la loro somma è la diagonale del parallelogramma che ha i due vettori come lati. Questa regola è molto utile per visualizzare la composizione di forze che agiscono su un unico punto.</li>
+                                            <li><strong>Regola Testa-Coda (o Relazione di Chasles):</strong> Per sommare $\vec{v}$ e $\vec{w}$, si posiziona la "coda" (punto di partenza) di $\vec{w}$ sulla "testa" (punto di arrivo) di $\vec{v}$. Il vettore somma è quello che va dalla coda di $\vec{v}$ alla testa di $\vec{w}$. Questo metodo corrisponde all'idea di eseguire due spostamenti in sequenza. Ad esempio, lo spostamento da A a B seguito dallo spostamento da B a C è equivalente allo spostamento diretto da A a C: $\vec{AB}+\vec{BC}=\vec{AC}$.</li>
+                                        </ol>
+                                    </li>
+                                </ul>
+                                <h5 class="font-semibold mt-4">Prodotto di un Vettore per uno Scalare</h5>
+                                <p>Moltiplicare un vettore per un numero reale k (uno scalare) ne modifica la lunghezza e, eventualmente, il verso.</p>
+                                <ul class="list-disc list-inside ml-4">
+                                    <li><strong>Approccio Algebrico:</strong> Per moltiplicare un vettore $\vec{v}=(v_{1},v_{2})$ per uno scalare k, si moltiplica ogni sua componente per k: $k\vec{v}=(kv_{1},kv_{2})$.</li>
+                                    <li><strong>Approccio Geometrico:</strong> L'operazione di "scalare" un vettore ha un significato visivo immediato:
+                                        <ul class="list-disc list-inside ml-6">
+                                            <li>Se $k>0$, il vettore $k\vec{v}$ ha la stessa direzione e lo stesso verso di $\vec{v}$, ma la sua lunghezza è moltiplicata per k.</li>
+                                            <li>Se $k<0$, il vettore $k\vec{v}$ ha la stessa direzione ma verso opposto, e la sua lunghezza è moltiplicata per $|k|$.</li>
+                                            <li>Se $k=0$, il risultato è il vettore nullo $\vec{0}$.</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <p class="mt-2">Un caso speciale importante è la moltiplicazione per $k=-1$. Il vettore $-\vec{v}=(-1)\vec{v}$ è chiamato vettore opposto di $\vec{v}$. Ha la stessa lunghezza e direzione di $\vec{v}$ ma verso opposto. Geometricamente, se $\vec{v}=\vec{AB}$, allora $-\vec{v}=\vec{BA}$.</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 1.4 Rette e Piani === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">1.4 Usare i Vettori per Descrivere Rette e Piani</h3>
+                        
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap1-4" data-tab-target="pane-sintesi-1-4" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap1-4" data-tab-target="pane-formule-1-4" role="tab" aria-selected="false">Formule Parametriche</button>
+                                <button class="tab-button" data-tab-group="cap1-4" data-tab-target="pane-visualizza-1-4" role="tab" aria-selected="false">Visualizzatore Retta</button>
+                            </nav>
+                        </div>
+                        
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-1-4" class="tab-pane" data-tab-group="cap1-4" role="tabpanel">
+                                <p>I vettori permettono di "costruire" oggetti geometrici.
+                                    <ul class="list-disc list-inside ml-4 mt-2 space-y-2">
+                                        <li><strong>Retta Parametrica:</strong> Si definisce con un <strong>punto di partenza $P_1$</strong> e un <strong>vettore direzione $\vec{v}$</strong>. Ogni punto $P$ sulla retta si ottiene "camminando" lungo $\vec{v}$ di una quantità $t$: $P = P_1 + t\vec{v}$.</li>
+                                        <li><strong>Piano Parametrico:</strong> Si definisce con un <strong>punto di partenza $P_1$</strong> e <strong>due vettori direzione non paralleli $\vec{v}$ e $\vec{w}$</strong>. Ogni punto $P$ sul piano si ottiene sommando spostamenti lungo entrambe le direzioni: $P = P_1 + s\vec{v} + t\vec{w}$.</li>
+                                    </ul>
+                                    Eliminando i parametri $s, t$ si ottengono le equazioni cartesiane ($ax+by+cz=d$).
+                                </p>
+                            </div>
+                            <div id="pane-formule-1-4" class="tab-pane hidden" data-tab-group="cap1-4" role="tabpanel">
+                                <p class="font-medium">Retta in $\mathbb{R}^3$</p>
+                                <p>Dati $P_1=(x_1, y_1, z_1)$ e $\vec{v}=(v_x, v_y, v_z)$:</p>
+                                <p>Equazione Vettoriale: $\vec{OP} = \vec{OP_1} + t\vec{v}$</p>
+                                <p>Equazioni Parametriche:
+                                $$ \begin{cases} x = x_1 + t \cdot v_x \\ y = y_1 + t \cdot v_y \\ z = z_1 + t \cdot v_z \end{cases} \quad t \in \mathbb{R} $$
+                                </p>
+                                <p class="font-medium mt-6">Piano in $\mathbb{R}^3$</p>
+                                <p>Dati $P_1=(x_1, y_1, z_1)$, $\vec{v}=(v_x, v_y, v_z)$ e $\vec{w}=(w_x, w_y, w_z)$:</p>
+                                <p>Equazione Vettoriale: $\vec{OP} = \vec{OP_1} + s\vec{v} + t\vec{w}$</p>
+                                <p>Equazioni Parametriche:
+                                $$ \begin{cases} x = x_1 + s v_x + t w_x \\ y = y_1 + s v_y + t w_y \\ z = z_1 + s v_z + t w_z \end{cases} \quad s, t \in \mathbb{R} $$
+                                </p>
+                            </div>
+                            <div id="pane-visualizza-1-4" class="tab-pane hidden" data-tab-group="cap1-4" role="tabpanel">
+                                <p class="mb-4">Visualizza una retta 2D passante per $P_1$ con direzione $\vec{v}$.</p>
+                                <div class="flex flex-wrap items-center gap-4 mb-4">
+                                    <label>$P_1$: ( <input id="vec-p1-x-1-4" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md"> , <input id="vec-p1-y-1-4" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md"> )</label>
+                                    <label>$\vec{v}$: ( <input id="vec-v-x-1-4" type="number" value="2" class="w-16 p-2 border border-slate-300 rounded-md"> , <input id="vec-v-y-1-4" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md"> )</label>
+                                    <button id="btn-draw-1-4" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700">Disegna Retta</button>
+                                </div>
+                                <canvas id="canvas-1-4" width="400" height="300" class="bg-white border border-slate-400 rounded-md"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 1.4 -->
+                                <p>La vera potenza dei vettori si manifesta quando li usiamo per descrivere oggetti geometrici complessi come rette e piani. L'approccio vettoriale ci permette di "costruire" questi oggetti punto per punto.</p>
+                                <h5 class="font-semibold mt-2">Equazioni Parametriche di una Retta</h5>
+                                <p>Per definire univocamente una retta nello spazio, abbiamo bisogno di due informazioni: un punto per cui passa e la sua direzione.</p>
+                                <ul class="list-disc list-inside ml-4">
+                                    <li><strong>L'Idea Chiave:</strong> Scegliamo un punto di partenza $P_1$ sulla retta e un vettore $\vec{v}$ che ne indichi la direzione (chiamato vettore direzione). Un qualsiasi altro punto P sulla retta può essere raggiunto partendo da $P_1$ e "camminando" lungo la direzione di $\vec{v}$ per una certa quantità. Questa quantità è determinata da un parametro reale, che chiameremo t.</li>
+                                    <li><strong>La Formula Vettoriale:</strong> $\vec{OP}=\vec{OP}_{1}+t\vec{v}$</li>
+                                    <li><strong>Le Equazioni Parametriche:</strong> (Testo omesso per brevità, ma presente nel PDF)</li>
+                                </ul>
+                                <h5 class="font-semibold mt-4">Equazioni Parametriche di un Piano</h5>
+                                <p>In modo analogo, per definire un piano abbiamo bisogno di un punto di partenza e di due direzioni indipendenti (cioè, due vettori non paralleli).</p>
+                                <ul class="list-disc list-inside ml-4">
+                                     <li><strong>L'Idea Chiave:</strong> Scegliamo un punto $P_1$ sul piano e due vettori $\vec{v}$, $\vec{w}$ che giacciono sul piano ma non sono paralleli tra loro. Qualsiasi punto P del piano può essere raggiunto partendo da $P_1$ e sommando uno spostamento nella direzione di $\vec{v}$ (scalato di un fattore s) e uno spostamento nella direzione di $\vec{w}$ (scalato di un fattore t). Questa operazione $s\vec{v}+t\vec{w}$ è la nostra prima introduzione intuitiva al concetto di combinazione lineare.</li>
+                                     <li><strong>La Formula Vettoriale:</strong> $\vec{OP}=\vec{OP}_{1}+s\vec{v}+t\vec{w}$</li>
+                                     <li><strong>Le Equazioni Parametriche:</strong> (Testo omesso per brevità, ma presente nel PDF)</li>
+                                </ul>
+                                <h5 class="font-semibold mt-4">Dalle Equazioni Parametriche alle Cartesiane</h5>
+                                <p>Le equazioni parametriche non sono l'unico modo per descrivere una retta o un piano. Eliminando algebricamente i parametri (t, s), possiamo ottenere una singola equazione (o un sistema di equazioni) che lega le coordinate x, y, z. Questa è l'equazione cartesiana. Ad esempio, per una retta nel piano, eliminando t si ottiene un'equazione della forma $ax+by=c$. Per un piano nello spazio, eliminando set si ottiene un'equazione del tipo $ax+by+cz=d$. Questo ci mostra che lo stesso oggetto geometrico può essere descritto da diverse rappresentazioni algebriche, ciascuna con i suoi vantaggi.</p>
+                                <p class="mt-2 italic">La vera potenza dei vettori emerge quando li usiamo per tradurre la geometria (punti, rette, piani) in algebra (equazioni). [...] Questo modo di pensare è fondamentale in computer grafica per muovere oggetti, in fisica per descrivere traiettorie e in ingegneria per modellare sistemi dinamici.</p>
+                            </div>
+                        </details>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ======================================= -->
+            <!--     CAPITOLO 2: MISURARE I VETTORI      -->
+            <!-- ======================================= -->
+            <section id="cap2" class="card mb-12 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <header class="card-header p-6 border-b border-slate-200">
+                    <h2 class="card-title text-3xl font-bold text-sky-700 dark:text-sky-500">Capitolo 2 – Misurare i vettori: prodotto scalare, lunghezze e angoli</h2>
+                </header>
+                
+                <div class="p-6 space-y-8">
+                    <!-- === 2.1 Lunghezza e distanza === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">2.1 Lunghezza e Distanza di un Vettore</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap2-1" data-tab-target="pane-formule-2-1" role="tab" aria-selected="true">Formula (Norma)</button>
+                                <button class="tab-button" data-tab-group="cap2-1" data-tab-target="pane-esempio-2-1" role="tab" aria-selected="false">Calcolatore</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-formule-2-1" class="tab-pane" data-tab-group="cap2-1" role="tabpanel">
+                                <p>La lunghezza (o <strong>norma</strong>) di un vettore $\vec{v}=(v_1, v_2, v_3)$ si calcola con il Teorema di Pitagora generalizzato:</p>
+                                $$ ||\vec{v}|| = \sqrt{v_1^2 + v_2^2 + v_3^2} $$
+                                <p class="mt-4">Si può anche scrivere come la radice del prodotto scalare del vettore con se stesso:</p>
+                                $$ ||\vec{v}|| = \sqrt{\vec{v} \cdot \vec{v}} $$
+                            </div>
+                            <div id="pane-esempio-2-1" class="tab-pane hidden" data-tab-group="cap2-1" role="tabpanel">
+                                <p class="mb-4">Calcola la norma di un vettore $\vec{v} = (x, y, z)$</p>
+                                <div class="flex items-center space-x-2 mb-4">
+                                    <label>x: <input id="vec-x-2-1" type="number" value="2" class="w-20 p-2 border border-slate-300 rounded-md"></label>
+                                    <label>y: <input id="vec-y-2-1" type="number" value="3" class="w-20 p-2 border border-slate-300 rounded-md"></label>
+                                    <label>z: <input id="vec-z-2-1" type="number" value="1" class="w-20 p-2 border border-slate-300 rounded-md"></label>
+                                    <button id="btn-calc-2-1" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700">Calcola</button>
+                                </div>
+                                <div id="result-2-1" class="text-lg font-semibold h-8"></div>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 2.1 -->
+                                <p>La nozione più basilare associata a un vettore geometrico è la sua lunghezza.</p>
+                                <p>La lunghezza di un vettore $\vec{v}=(v_{1},v_{2},v_{3})$, nota anche come norma o modulo e indicata con $|\vec{v}|$ o $||\vec{v}||$, è calcolata applicando il Teorema di Pitagora nello spazio. La formula è:
+                                $$ ||\vec{v}||=\sqrt{v_{1}^{2}+v_{2}^{2}+v_{3}^{2}} $$
+                                Questa formula ci fornisce un numero reale non negativo che quantifica la "grandezza" dello spostamento rappresentato dal vettore. Come vedremo tra poco, questa espressione è intimamente legata al prodotto scalare: il quadrato della lunghezza di un vettore è semplicemente il prodotto scalare del vettore con se stesso, $||\vec{v}||^{2}=\vec{v}\cdot\vec{v}$.</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 2.2 Prodotto Scalare === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">2.2 Il Prodotto Scalare (Dot Product)</h3>
+                         <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap2-2" data-tab-target="pane-sintesi-2-2" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap2-2" data-tab-target="pane-formule-2-2" role="tab" aria-selected="false">Definizioni</button>
+                                <button class="tab-button" data-tab-group="cap2-2" data-tab-target="pane-visualizza-2-2" role="tab" aria-selected="false">Visualizzatore Angolo</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-2-2" class="tab-pane" data-tab-group="cap2-2" role="tabpanel">
+                                <p>Il prodotto scalare prende due vettori e restituisce un <strong>singolo numero (scalare)</strong>. Questo numero misura "quanto i due vettori puntano nella stessa direzione".</p>
+                                <ul class="list-disc list-inside ml-4 mt-2 space-y-2">
+                                    <li><strong>Definizione Algebrica:</strong> È la somma dei prodotti delle componenti.</li>
+                                    <li><strong>Definizione Geometrica:</strong> È il prodotto delle lunghezze dei vettori per il <strong>coseno</strong> dell'angolo $\theta$ compreso tra loro.</li>
+                                    <li><strong>Significato:</strong> Può essere visto come il prodotto della lunghezza di un vettore per la <strong>proiezione</strong> dell'altro su di esso.</li>
+                                </ul>
+                            </div>
+                            <div id="pane-formule-2-2" class="tab-pane hidden" data-tab-group="cap2-2" role="tabpanel">
+                                <p class="font-medium">Definizione Algebrica (in $\mathbb{R}^3$)</p>
+                                <p>Dati $\vec{v}=(v_1, v_2, v_3)$ e $\vec{w}=(w_1, w_2, w_3)$:</p>
+                                $$ \vec{v} \cdot \vec{w} = v_1 w_1 + v_2 w_2 + v_3 w_3 $$
+                                
+                                <p class="font-medium mt-6">Definizione Geometrica</p>
+                                <p>Dato $\theta$, l'angolo compreso tra $\vec{v}$ e $\vec{w}$:</p>
+                                $$ \vec{v} \cdot \vec{w} = ||\vec{v}|| \cdot ||\vec{w}|| \cdot \cos(\theta) $$
+                                
+                                <p class="font-medium mt-6">Calcolo dell'Angolo</p>
+                                $$ \cos(\theta) = \frac{\vec{v} \cdot \vec{w}}{||\vec{v}|| \cdot ||\vec{w}||} $$
+                            </div>
+                            <div id="pane-visualizza-2-2" class="tab-pane hidden" data-tab-group="cap2-2" role="tabpanel">
+                                <p class="mb-4">Calcola l'angolo $\theta$ tra due vettori 2D $\vec{v}$ e $\vec{w}$.</p>
+                                <div class="flex flex-wrap items-center gap-4 mb-4">
+                                    <label>$\vec{v}$: ( <input id="vec-v-x-2-2" type="number" value="3" class="w-16 p-2 border border-slate-300 rounded-md"> , <input id="vec-v-y-2-2" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md"> )</label>
+                                    <label>$\vec{w}$: ( <input id="vec-w-x-2-2" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md"> , <input id="vec-w-y-2-2" type="number" value="2" class="w-16 p-2 border border-slate-300 rounded-md"> )</label>
+                                    <button id="btn-calc-2-2" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700">Calcola e Disegna</button>
+                                </div>
+                                <canvas id="canvas-2-2" width="400" height="300" class="bg-white border border-slate-400 rounded-md mb-2"></canvas>
+                                <div id="result-2-2" class="text-lg font-semibold h-8"></div>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 2.2 -->
+                                <p>Il prodotto scalare è un'operazione che prende due vettori e restituisce un singolo numero (uno scalare), da cui il nome. Questo numero, tuttavia, racchiude una ricca informazione geometrica sulla relazione tra i due vettori.</p>
+                                <ul class="list-disc list-inside ml-4 mt-2">
+                                    <li><strong>Definizione Algebrica:</strong> Dati due vettori $\vec{v}=(v_{1},v_{2},v_{3})$ e $\vec{w}=(w_{1},w_{2},w_{3})$, il loro prodotto scalare, indicato con $\vec{v}\cdot\vec{w}$, è la somma dei prodotti delle componenti corrispondenti:
+                                    $$ \vec{v}\cdot\vec{w}=v_{1}w_{1}+v_{2}w_{2}+v_{3}w_{3} $$
+                                    È fondamentale notare che il risultato è uno scalare, non un vettore.</li>
+                                    <li class="mt-2"><strong>Significato Geometrico (L'Intuizione Profonda):</strong> Il vero potere del prodotto scalare risiede nella sua interpretazione geometrica. Si può dimostrare che il prodotto scalare è anche uguale al prodotto delle lunghezze dei due vettori per il coseno dell'angolo $\theta$ compreso tra di essi:
+                                    $$ \vec{v}\cdot\vec{w}=||\vec{v}|| \cdot ||\vec{w}|| \cos(\theta) $$
+                                    Questa formula è la chiave per comprendere il significato del prodotto scalare: esso misura "quanto due vettori puntano nella stessa direzione".</li>
+                                    <li class="mt-2"><strong>Proiezione Scalare:</strong> Il termine $||\vec{w}||\cos(\theta)$ rappresenta la lunghezza della proiezione ortogonale del vettore $\vec{w}$ sulla direzione del vettore $\vec{v}$. Quindi, il prodotto scalare può essere interpretato come il prodotto della lunghezza di un vettore per la proiezione dell'altro su di esso. Questo concetto è estremamente utile per scomporre forze o velocità lungo direzioni specifiche.</li>
+                                </ul>
+                                <!-- ... (testo "Osservazione: Il Prodotto Scalare come Test di Similarità") -->
+                            </div>
+                        </details>
+                    </div>
+                    
+                    <!-- ... Altri argomenti del Capitolo 2 ... -->
+                    <hr class="border-slate-200 dark:border-slate-700">
+                    <!-- === 2.3 Ortogonalità === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">2.3 Ortogonalità e Applicazioni</h3>
+                        <p class="text-slate-600 dark:text-slate-400 mb-4">
+                            Una delle applicazioni più potenti del prodotto scalare è determinare se due vettori sono perpendicolari (ortogonali).
+                        </p>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap2-3" data-tab-target="pane-formule-2-3" role="tab" aria-selected="true">Test di Ortogonalità</button>
+                                <button class="tab-button" data-tab-group="cap2-3" data-tab-target="pane-esempio-2-3" role="tab" aria-selected="false">Esempio (Vettore Normale)</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-formule-2-3" class="tab-pane" data-tab-group="cap2-3" role="tabpanel">
+                                <p>Se l'angolo $\theta$ tra due vettori è $90^\circ$, allora $\cos(90^\circ) = 0$.</p>
+                                <p>Dalla formula geometrica, questo porta alla "condizione d'oro":</p>
+                                <div class="p-4 bg-sky-50 dark:bg-sky-900 border border-sky-200 dark:border-sky-700 rounded-md mt-2">
+                                    <p class="font-medium text-lg">Due vettori $\vec{v}$ e $\vec{w}$ sono ortogonali se e solo se il loro prodotto scalare è zero:</p>
+                                    <div class="text-center text-xl font-mono my-2">
+                                        $\vec{v} \cdot \vec{w} = 0$
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="pane-esempio-2-3" class="tab-pane hidden" data-tab-group="cap2-3" role="tabpanel">
+                                <p class="font-medium">Vettore Normale a un Piano</p>
+                                <p>Un piano in $\mathbb{R}^3$ ha equazione cartesiana $ax + by + cz = d$.</p>
+                                <p>Il vettore $\vec{n} = (a, b, c)$ è un vettore <strong>normale</strong> (cioè ortogonale) al piano stesso. Qualsiasi vettore giacente sul piano è perpendicolare a $\vec{n}$.</p>
+                                <p class="font-medium mt-4">Esempio:</p>
+                                <p>Dato il piano $2x - 3y + z = 5$, il suo vettore normale è $\vec{n} = (2, -3, 1)$.</p>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 2.3 -->
+                                <h5 class="font-semibold">La Condizione d'Oro</h5>
+                                <p>Dalla formula geometrica, se l'angolo $\theta$ tra due vettori non nulli è $90^{\circ}$ (o $\pi/2$ radianti), allora $\cos(\theta)=0$. Questo porta a una conclusione fondamentale: Due vettori $\vec{v}$ e $\vec{w}$ sono ortogonali se e solo se il loro prodotto scalare è zero: $\vec{v}\cdot\vec{w}=0$.</p>
+                                <p class="mt-2">Questa semplice condizione algebrica ci permette di verificare una proprietà geometrica cruciale senza dover calcolare angoli.</p>
+                                <h5 class="font-semibold mt-2">Applicazione: Vettori Normali a Rette e Piani</h5>
+                                <p>Questo principio ha un'applicazione immediata nella geometria analitica.</p>
+                                <ul class="list-disc list-inside ml-4">
+                                    <li>Consideriamo l'equazione cartesiana di una retta nel piano, $ax+by=c$. Il vettore $\vec{n}=(a,b)$ è un vettore normale (cioè ortogonale) alla retta. [...]</li>
+                                    <li>Questo si generalizza ai piani nello spazio: un piano di equazione $ax+by+cz=d$ ha come vettore normale $\vec{n}=(a,b,c)$.</li>
+                                </ul>
+                                <h5 class="font-semibold mt-2">Esempio Pratico</h5>
+                                <p>Supponiamo di voler trovare le equazioni parametriche della retta passante per l'origine e perpendicolare al piano di equazione $2x-3y+z=2$.</p>
+                                <ol class="list-decimal list-inside ml-4">
+                                    <li>Identifichiamo il vettore normale al piano: $\vec{n}=(2,-3,1)$.</li>
+                                    <li>Poiché la retta deve essere perpendicolare al piano, la sua direzione deve essere parallela al vettore normale del piano. Quindi, possiamo usare $\vec{n}$ come vettore direzione della retta.</li>
+                                    <li>La retta passa per l'origine $P_0=(0,0,0)$.</li>
+                                    <li>Usando la formula parametrica, otteniamo:
+                                    $$ \begin{cases} x = 0+t \cdot 2 = 2t \\ y = 0+t \cdot (-3) = -3t \\ z = 0+t \cdot 1 = t \end{cases} $$
+                                    </li>
+                                </ol>
+                            </div>
+                        </details>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ======================================= -->
+            <!--     CAPITOLO 3: OPERAZIONI 3D         -->
+            <!-- ======================================= -->
+            <section id="cap3" class="card mb-12 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <header class="card-header p-6 border-b border-slate-200">
+                    <h2 class="card-title text-3xl font-bold text-sky-700 dark:text-sky-500">Capitolo 3 – Operazioni nello spazio tridimensionale</h2>
+                </header>
+                
+                <div class="p-6 space-y-8">
+                    <!-- === 3.1 Prodotto Vettoriale === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">3.1 Il Prodotto Vettoriale (Cross Product)</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap3-1" data-tab-target="pane-sintesi-3-1" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap3-1" data-tab-target="pane-formule-3-1" role="tab" aria-selected="false">Formula (Determinante)</button>
+                                <button class="tab-button" data-tab-group="cap3-1" data-tab-target="pane-visualizza-3-1" role="tab" aria-selected="false">Visualizzatore 3D</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-3-1" class="tab-pane" data-tab-group="cap3-1" role="tabpanel">
+                                <p>Il prodotto vettoriale (definito solo in $\mathbb{R}^3$) prende due vettori $\vec{v}$ e $\vec{w}$ e restituisce un <strong>nuovo vettore</strong> $\vec{u} = \vec{v} \times \vec{w}$.</p>
+                                <p>Questo nuovo vettore ha 3 proprietà geometriche fondamentali:</p>
+                                <ul class="list-disc list-inside ml-4 mt-2 space-y-2">
+                                    <li><strong>1. Direzione:</strong> È <strong>ortogonale</strong> sia a $\vec{v}$ che a $\vec{w}$.</li>
+                                    <li><strong>2. Modulo:</strong> La sua lunghezza, $||\vec{v} \times \vec{w}||$, è uguale all'<strong>area del parallelogramma</strong> formato da $\vec{v}$ e $\vec{w}$.</li>
+                                    <li><strong>3. Verso:</strong> È dato dalla <strong>Regola della Mano Destra</strong>.</li>
+                                </ul>
+                                <p class="mt-2">Nota: è anticommutativo, $\vec{w} \times \vec{v} = -(\vec{v} \times \vec{w})$.</p>
+                            </div>
+                            <div id="pane-formule-3-1" class="tab-pane hidden" data-tab-group="cap3-1" role="tabpanel">
+                                <p>Dati $\vec{v}=(v_1, v_2, v_3)$ e $\vec{w}=(w_1, w_2, w_3)$.</p>
+                                <p class="font-medium mt-4">Formula Algebrica (Componenti):</p>
+                                $$ \vec{v} \times \vec{w} = (v_2 w_3 - v_3 w_2, v_3 w_1 - v_1 w_3, v_1 w_2 - v_2 w_1) $$
+
+                                <p class="font-medium mt-6">Metodo Mnemonico (Determinante Simbolico):</p>
+                                $$ \vec{v} \times \vec{w} = 
+                                \begin{vmatrix}
+                                    \vec{i} & \vec{j} & \vec{k} \\
+                                    v_1 & v_2 & v_3 \\
+                                    w_1 & w_2 & w_3
+                                \end{vmatrix}
+                                $$
+                                <p>dove $\vec{i}=(1,0,0)$, $\vec{j}=(0,1,0)$, $\vec{k}=(0,0,1)$ sono i versori della base canonica.</p>
+                                <p class="font-medium mt-6">Proprietà Geometrica (Modulo):</p>
+                                $$ ||\vec{v} \times \vec{w}|| = ||\vec{v}|| \cdot ||\vec{w}|| \cdot \sin(\theta) $$
+                            </div>
+                            <div id="pane-visualizza-3-1" class="tab-pane hidden" data-tab-group="cap3-1" role="tabpanel">
+                                <p class="mb-4">Visualizza il prodotto vettoriale $\vec{u} = \vec{v} \times \vec{w}$.</p>
+                                <div class="flex flex-wrap items-center gap-4 mb-4">
+                                    <label>$\vec{v}$: ( 
+                                        <input id="vec-v-x-3-1" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md">, 
+                                        <input id="vec-v-y-3-1" type="number" value="0" class="w-16 p-2 border border-slate-300 rounded-md">, 
+                                        <input id="vec-v-z-3-1" type="number" value="0" class="w-16 p-2 border border-slate-300 rounded-md"> )
+                                    </label>
+                                    <label>$\vec{w}$: ( 
+                                        <input id="vec-w-x-3-1" type="number" value="0" class="w-16 p-2 border border-slate-300 rounded-md">, 
+                                        <input id="vec-w-y-3-1" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md">, 
+                                        <input id="vec-w-z-3-1" type="number" value="0" class="w-16 p-2 border border-slate-300 rounded-md"> )
+                                    </label>
+                                    <button id="btn-draw-3-1" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700">Disegna 3D</button>
+                                </div>
+                                <!-- Contenitore per il renderer Three.js -->
+                                <div id="canvas-container-3-1" class="w-full h-96 border border-slate-400 rounded-md relative bg-white dark:bg-black">
+                                    <div id="result-3-1" class="absolute top-2 left-2 p-2 bg-white/80 dark:bg-black/80 rounded text-sm"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 3.1 -->
+                                <p>Il prodotto vettoriale, indicato con $\vec{v}\times\vec{w}$, è un'operazione definita solo per vettori in $\mathbb{R}^{3}$. A differenza del prodotto scalare, il suo risultato non è un numero, ma un nuovo vettore.</p>
+                                <h5 class="font-semibold mt-2">Formula Algebrica</h5>
+                                <p>Dati $\vec{v}=(v_{1},v_{2},v_{3})$ e $\vec{w}=(w_{1},w_{2},w_{3})$, il prodotto vettoriale è definito come:
+                                $$ \vec{v}\times\vec{w}=(v_{2}w_{3}-v_{3}w_{2},v_{3}w_{1}-v_{1}w_{3},v_{1}w_{2}-v_{2}w_{1}) $$
+                                Un trucco mnemonico molto comune per calcolarla è usare il determinante simbolico di una matrice $3\times3$:
+                                $$ \vec{v}\times\vec{w}= 
+                                \begin{vmatrix}
+                                    \vec{i} & \vec{j} & \vec{k} \\
+                                    v_1 & v_2 & v_3 \\
+                                    w_1 & w_2 & w_3
+                                \end{vmatrix}
+                                $$</p>
+                                <h5 class="font-semibold mt-2">Proprietà Geometriche Fondamentali</h5>
+                                <p>La vera essenza del prodotto vettoriale risiede nelle sue tre proprietà geometriche:</p>
+                                <ol class="list-decimal list-inside ml-4">
+                                    <li><strong>Modulo = Area:</strong> La lunghezza del vettore $|\vec{v}\times\vec{w}|$ è uguale all'area del parallelogramma formato dai vettori $\vec{v}$ e $\vec{w}$. Matematicamente, $|\vec{v}\times\vec{w}|=|\vec{v}||\vec{w}|\sin(\theta)$.</li>
+                                    <li><strong>Direzione = Ortogonalità:</strong> Il vettore $\vec{v}\times\vec{w}$ è sempre perpendicolare sia a $\vec{v}$ che a $\vec{w}$.</li>
+                                    <li><strong>Verso = Regola della Mano Destra:</strong> Il verso del vettore risultante è dato dalla regola della mano destra.</li>
+                                </ol>
+                                <h5 class="font-semibold mt-2">Proprietà Algebriche</h5>
+                                <p>A differenza del prodotto scalare, il prodotto vettoriale non è commutativo. Anzi, è anticommutativo: $\vec{w}\times\vec{v}=-(\vec{v}\times\vec{w})$.</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 3.2 Prodotto Misto === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">3.2 Il Prodotto Misto: Dal Piano al Volume</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap3-2" data-tab-target="pane-sintesi-3-2" role="tab" aria-selected="true">Sintesi e Formula</button>
+                                <button class="tab-button" data-tab-group="cap3-2" data-tab-target="pane-esempio-3-2" role="tab" aria-selected="false">Calcolatore Volume</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-3-2" class="tab-pane" data-tab-group="cap3-2" role="tabpanel">
+                                <p>Il prodotto misto combina prodotto scalare e vettoriale. Prende tre vettori e restituisce uno <strong>scalare</strong>.</p>
+                                <p class="font-medium mt-4">Definizione:</p>
+                                $$ \vec{u} \cdot (\vec{v} \times \vec{w}) $$
+                                <p class="font-medium mt-4">Significato Geometrico:</p>
+                                <p>Il suo valore assoluto, $|\vec{u} \cdot (\vec{v} \times \vec{w})|$, rappresenta il <strong>volume del parallelepipedo</strong> formato dai tre vettori.</p>
+                                <p class="font-medium mt-4">Applicazione (Test di Complanarità):</p>
+                                <p>Se il prodotto misto è <strong>zero</strong>, il volume è nullo. Questo significa che i tre vettori giacciono sullo stesso piano, cioè sono <strong>complanari</strong>.</p>
+                            </div>
+                            <div id="pane-esempio-3-2" class="tab-pane hidden" data-tab-group="cap3-2" role="tabpanel">
+                                <p class="mb-4">Calcola il volume del parallelepipedo formato da $\vec{u}$, $\vec{v}$, $\vec{w}$.</p>
+                                <div class="space-y-2 mb-4">
+                                    <label>$\vec{u}$: ( 
+                                        <input id="vec-u-x-3-2" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md">, 
+                                        <input id="vec-u-y-3-2" type="number" value="0" class="w-16 p-2 border border-slate-300 rounded-md">, 
+                                        <input id="vec-u-z-3-2" type="number" value="0" class="w-16 p-2 border border-slate-300 rounded-md"> )
+                                    </label><br>
+                                    <label>$\vec{v}$: ( 
+                                        <input id="vec-v-x-3-2" type="number" value="0" class="w-16 p-2 border border-slate-300 rounded-md">, 
+                                        <input id="vec-v-y-3-2" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md">, 
+                                        <input id="vec-v-z-3-2" type="number" value="0" class="w-16 p-2 border border-slate-300 rounded-md"> )
+                                    </label><br>
+                                    <label>$\vec{w}$: ( 
+                                        <input id="vec-w-x-3-2" type="number" value="0" class="w-16 p-2 border border-slate-300 rounded-md">, 
+                                        <input id="vec-w-y-3-2" type="number" value="0" class="w-16 p-2 border border-slate-300 rounded-md">, 
+                                        <input id="vec-w-z-3-2" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md"> )
+                                    </label>
+                                </div>
+                                <button id="btn-calc-3-2" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700">Calcola Volume</button>
+                                <div id="result-3-2" class="text-lg font-semibold h-8 mt-2"></div>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 3.2 -->
+                                <p>Il prodotto misto combina le due operazioni che abbiamo visto, il prodotto scalare e quello vettoriale, per misurare il volume.</p>
+                                <h5 class="font-semibold mt-2">Definizione</h5>
+                                <p>Dati tre vettori $\vec{u}$, $\vec{v}$, $\vec{w}$ in $\mathbb{R}^{3}$, il loro prodotto misto è lo scalare ottenuto calcolando il prodotto scalare di $\vec{u}$ con il prodotto vettoriale di $\vec{v}$ e $\vec{w}$:
+                                $$ \vec{u}\cdot(\vec{v}\times\vec{w}) $$</p>
+                                <h5 class="font-semibold mt-2">Significato Geometrico</h5>
+                                <p>Il valore assoluto del prodotto misto, $|\vec{u}\cdot(\vec{v}\times\vec{w})|$, rappresenta il volume del parallelepipedo che ha i tre vettori come spigoli concorrenti.</p>
+                                <h5 class="font-semibold mt-2">Spiegazione Intuitiva</h5>
+                                <p>Il calcolo riflette perfettamente la formula geometrica del volume (Area di base $\times$ altezza). Il vettore $\vec{n}=\vec{v}\times\vec{w}$ ha una lunghezza pari all'area del parallelogramma di base (formato da $\vec{v}$ e $\vec{w}$) ed è perpendicolare a tale base. Il prodotto scalare $\vec{u}\cdot\vec{n}$ calcola la proiezione di $\vec{u}$ sulla direzione normale $\vec{n}$ (l'altezza del parallelepipedo) e la moltiplica per l'area di base $||\vec{n}||$.</p>
+                                <h5 class="font-semibold mt-2">Complanarità</h5>
+                                <p>Una conseguenza diretta è che se il prodotto misto di tre vettori è zero, il volume del parallelepipedo da essi generato è nullo. Questo accade se e solo se i tre vettori giacciono sullo stesso piano, ovvero sono complanari.</p>
+                            </div>
+                        </details>
+                    </div>
+
+                </div>
+            </section>
+            
+            <!-- ======================================= -->
+            <!--     CAPITOLO 4: MATRICI (Implementato)   -->
+            <!-- ======================================= -->
+            <section id="cap4" class="card mb-12 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <header class="card-header p-6 border-b border-slate-200">
+                    <h2 class="card-title text-3xl font-bold text-sky-700 dark:text-sky-500">Capitolo 4 – Dalle n-uple alle matrici</h2>
+                </header>
+                <div class="p-6 space-y-8">
+                    
+                    <!-- === 4.1 Lo spazio Rⁿ === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">4.1 Generalizzazione: Lo Spazio $\mathbb{R}^n$</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap4-1" data-tab-target="pane-sintesi-4-1" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap4-1" data-tab-target="pane-formule-4-1" role="tab" aria-selected="false">Formule $\mathbb{R}^n$</button>
+                                <button class="tab-button" data-tab-group="cap4-1" data-tab-target="pane-esempio-4-1" role="tab" aria-selected="false">Calcolatore $\mathbb{R}^n$</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-4-1" class="tab-pane" data-tab-group="cap4-1" role="tabpanel">
+                                <p>Si astrae il concetto di vettore da 2 o 3 dimensioni a $n$ dimensioni. Un <strong>vettore</strong> in $\mathbb{R}^n$ è una <strong>n-upla</strong>, ovvero una lista ordinata di $n$ numeri reali: $\vec{v} = (v_1, v_2, ..., v_n)$.</p>
+                                <p class="mt-2">Tutte le operazioni (somma, prodotto per scalare) e i concetti (prodotto scalare, norma, ortogonalità) si estendono in modo naturale sommando o moltiplicando le componenti $n$ volte.</p>
+                            </div>
+                            <div id="pane-formule-4-1" class="tab-pane hidden" data-tab-group="cap4-1" role="tabpanel">
+                                <p>Dati $\vec{a}=(a_1, ..., a_n)$, $\vec{b}=(b_1, ..., b_n)$ in $\mathbb{R}^n$ e $k \in \mathbb{R}$:</p>
+                                <p class="font-medium mt-4">Somma:</p>
+                                $$ \vec{a}+\vec{b}=(a_{1}+b_{1}, ..., a_{n}+b_{n}) $$
+                                <p class="font-medium mt-4">Prodotto per Scalare:</p>
+                                $$ k\vec{a}=(ka_{1}, ..., ka_{n}) $$
+                                <p class="font-medium mt-4">Prodotto Scalare:</p>
+                                $$ \vec{a} \cdot \vec{b} = \sum_{i=1}^{n} a_i b_i = a_1 b_1 + ... + a_n b_n $$
+                                <p class="font-medium mt-4">Norma e Ortogonalità:</p>
+                                $$ ||\vec{a}|| = \sqrt{\vec{a} \cdot \vec{a}} = \sqrt{a_1^2 + ... + a_n^2} $$
+                                $$ \vec{a} \perp \vec{b} \iff \vec{a} \cdot \vec{b} = 0 $$
+                            </div>
+                            <div id="pane-esempio-4-1" class="tab-pane hidden" data-tab-group="cap4-1" role="tabpanel">
+                                <p class="mb-4">Calcola il prodotto scalare $\vec{a} \cdot \vec{b}$ in $\mathbb{R}^n$. Inserisci i vettori come numeri separati da virgole.</p>
+                                <div class="space-y-2 mb-4">
+                                    <label>$\vec{a}$: <input id="vec-a-4-1" type="text" value="1, 2, 3, 4" class="w-full p-2 border border-slate-300 rounded-md"></label>
+                                    <label>$\vec{b}$: <input id="vec-b-4-1" type="text" value="2, 0, -1, 5" class="w-full p-2 border border-slate-300 rounded-md"></label>
+                                </div>
+                                <button id="btn-calc-4-1" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700">Calcola Prodotto Scalare</button>
+                                <div id="result-4-1" class="text-lg font-semibold h-8 mt-2"></div>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 4.1 -->
+                                <p>L'idea di una coppia (x, y) o di una terna (x, y, z) di numeri reali può essere estesa a una sequenza ordinata di un numero qualsiasi, n, di elementi.</p>
+                                <h5 class="font-semibold mt-2">Definizione di n-upla</h5>
+                                <p>Una n-upla è una lista ordinata di n numeri reali, scritta come $(a_{1},a_{2},...,a_{n})$. L'insieme di tutte le possibili n-uple di numeri reali è chiamato spazio $\mathbb{R}^{n}$. Gli elementi di questo spazio sono anche detti vettori numerici.</p>
+                                <h5 class="font-semibold mt-2">Operazioni in $\mathbb{R}^{n}$</h5>
+                                <p>Le operazioni di somma e prodotto per uno scalare che abbiamo definito per i vettori geometrici si estendono in modo naturale a $\mathbb{R}^{n}$. [...]</p>
+                                <h5 class="font-semibold mt-2">Prodotto Scalare in $\mathbb{R}^{n}$</h5>
+                                <p>Anche il prodotto scalare si generalizza facilmente. Il prodotto scalare (euclideo) di $\vec{a}$ e $\vec{b}$ in $\mathbb{R}^{n}$ è:
+                                $$ \vec{a}\cdot\vec{b}=\sum_{i=1}^{n}a_{i}b_{i}=a_{1}b_{1}+a_{2}b_{2}+\cdot\cdot\cdot+a_{n}b_{n} $$
+                                Con questa definizione, possiamo estendere anche i concetti di norma (lunghezza), distanza e ortogonalità a spazi di qualsiasi dimensione: [...]</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+                    
+                    <!-- === 4.2 Le matrici === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">4.2 Le Matrici: Fogli di Calcolo per la Matematica</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap4-2" data-tab-target="pane-sintesi-4-2" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap4-2" data-tab-target="pane-definizioni-4-2" role="tab" aria-selected="false">Definizioni</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-4-2" class="tab-pane" data-tab-group="cap4-2" role="tabpanel">
+                                <p>Una <strong>matrice</strong> è una tabella rettangolare di numeri, organizzata in <strong>righe</strong> e <strong>colonne</strong>. Una matrice con $m$ righe e $n$ colonne è di tipo $(m, n)$. Si indica con $A = [a_{ij}]$, dove $i$ è l'indice di riga e $j$ è l'indice di colonna.</p>
+                            </div>
+                            <div id="pane-definizioni-4-2" class="tab-pane hidden" data-tab-group="cap4-2" role="tabpanel">
+                                <p>Esempio di matrice $A$ di tipo $(2, 3)$:</p>
+                                $$ A = \begin{pmatrix} a_{11} & a_{12} & a_{13} \\ a_{21} & a_{22} & a_{23} \end{pmatrix} $$
+                                <p class="font-medium mt-4">Tipi Speciali:</p>
+                                <ul class="list-disc list-inside ml-4 mt-2">
+                                    <li><strong>Matrice Quadrata:</strong> Numero di righe = numero di colonne ($m=n$).</li>
+                                    <li><strong>Vettore Riga:</strong> Matrice con una sola riga (tipo $1 \times n$).</li>
+                                    <li><strong>Vettore Colonna:</strong> Matrice con una sola colonna (tipo $m \times 1$).</li>
+                                </ul>
+                            </div>
+                        </div>
+                         <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 4.2 -->
+                                <p>Una matrice è una tabella rettangolare di numeri, organizzata in righe e colonne. Una matrice con m righe e n colonne è detta di tipo (m, n) o $m \times n$. Useremo la notazione $A=[a_{ij}]$ per indicare una matrice i cui elementi sono $a_{ij}$, dove i è l'indice di riga e j è l'indice di colonna.</p>
+                                <p class="mt-2">Possiamo pensare a una matrice in modi diversi, a seconda del contesto: [come Foglio di Calcolo, come Dati vs. Operazioni].</p>
+                                <p class="mt-2">Esistono tipi speciali di matrici: [Matrice Quadrata, Vettore Riga, Vettore Colonna].</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 4.3 Operazioni con le matrici === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">4.3 Operazioni Elementari con le Matrici</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap4-3" data-tab-target="pane-sintesi-4-3" role="tab" aria-selected="true">Sintesi e Formule</button>
+                                <button class="tab-button" data-tab-group="cap4-3" data-tab-target="pane-esempio-4-3" role="tab" aria-selected="false">Calcolatore Somma 2x2</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-4-3" class="tab-pane" data-tab-group="cap4-3" role="tabpanel">
+                                <p>Somma e prodotto per scalare si eseguono "componente per componente", come per i vettori. Le matrici devono essere dello stesso tipo per essere sommate.</p>
+                                <p class="font-medium mt-4">Somma di Matrici ($A, B$ di tipo $m \times n$):</p>
+                                $$ A+B = [a_{ij} + b_{ij}] $$
+                                <p class="font-medium mt-4">Prodotto per Scalare ($k \in \mathbb{R}$):</p>
+                                $$ kA = [k a_{ij}] $$
+                            </div>
+                            <div id="pane-esempio-4-3" class="tab-pane hidden" data-tab-group="cap4-3" role="tabpanel">
+                                <p class="mb-4">Calcola $A + B$ per matrici 2x2.</p>
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="grid grid-cols-2 gap-2 w-24">
+                                        <input id="a11-4-3" type="number" value="1" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                        <input id="a12-4-3" type="number" value="2" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                        <input id="a21-4-3" type="number" value="3" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                        <input id="a22-4-3" type="number" value="4" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                    </div>
+                                    <span class="text-2xl">+</span>
+                                    <div class="grid grid-cols-2 gap-2 w-24">
+                                        <input id="b11-4-3" type="number" value="5" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                        <input id="b12-4-3" type="number" value="6" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                        <input id="b21-4-3" type="number" value="7" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                        <input id="b22-4-3" type="number" value="8" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                    </div>
+                                    <button id="btn-calc-4-3" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700"> = </button>
+                                </div>
+                                <div id="result-4-3" class="text-lg font-semibold h-16"></div>
+                            </div>
+                        </div>
+                         <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 4.3 -->
+                                <p>Le operazioni di base, somma e prodotto per scalare, sono definite in modo molto intuitivo, componente per componente, proprio come per le n-uple.</p>
+                                <ul class="list-disc list-inside ml-4">
+                                    <li><strong>Somma di Matrici:</strong> Date due matrici $A=[a_{ij}]$ e $B=[b_{ij}]$ dello stesso tipo (m, n), la loro somma è la matrice $A+B=[a_{ij}+b_{ij}]$.</li>
+                                    <li><strong>Prodotto per uno Scalare:</strong> Dato uno scalare k e una matrice $A=[a_{ij}]$, il prodotto è $kA=[ka_{ij}]$.</li>
+                                </ul>
+                                <p class="mt-2">Queste operazioni ereditano le proprietà dei numeri reali, come la commutatività ($A+B=B+A$) e l'associatività della somma.</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 4.4 Prodotto tra Matrici === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">4.4 Il Prodotto tra Matrici: "Righe per Colonne"</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap4-4" data-tab-target="pane-sintesi-4-4" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap4-4" data-tab-target="pane-formule-4-4" role="tab" aria-selected="false">Formula</button>
+                                <button class="tab-button" data-tab-group="cap4-4" data-tab-target="pane-esempio-4-4" role="tab" aria-selected="false">Calcolatore Prodotto 2x2</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-4-4" class="tab-pane" data-tab-group="cap4-4" role="tabpanel">
+                                <p>Il prodotto tra matrici $C = A \cdot B$ è l'operazione più importante. Non è una moltiplicazione componente per componente.</p>
+                                <p class="mt-2">Si calcola con la regola <strong>"Righe per Colonne"</strong>: l'elemento $c_{ik}$ (riga $i$, colonna $k$ della matrice risultato C) si ottiene facendo il <strong>prodotto scalare</strong> della <strong>riga $i$</strong> di A con la <strong>colonna $k$</strong> di B.</p>
+                                <p class="font-medium mt-2">Condizione: Il numero di <strong>colonne di A</strong> deve essere uguale al numero di <strong>righe di B</strong>.</p>
+                                <p class="mt-2">Se $A$ è $(m \times n)$ e $B$ è $(n \times l)$, la matrice risultato $C$ sarà $(m \times l)$.</p>
+                            </div>
+                            <div id="pane-formule-4-4" class="tab-pane hidden" data-tab-group="cap4-4" role="tabpanel">
+                                <p>Dati $A$ di tipo $(m, n)$ e $B$ di tipo $(n, l)$, il loro prodotto $C=AB$ è di tipo $(m, l)$.</p>
+                                <p>L'elemento $c_{ik}$ sulla riga $i$ e colonna $k$ di $C$ è:</p>
+                                $$ c_{ik} = \sum_{h=1}^{n} a_{ih}b_{hk} = a_{i1}b_{1k} + a_{i2}b_{2k} + \dots + a_{in}b_{nk} $$
+                                <p class="font-medium mt-4">Proprietà Chiave:</p>
+                                <ul class="list-disc list-inside ml-4 mt-2">
+                                    <li><strong>Non è commutativo:</strong> In generale, $AB \neq BA$.</li>
+                                    <li>È associativo: $(AB)C = A(BC)$.</li>
+                                    <li>È distributivo: $A(B+C) = AB + AC$.</li>
+                                </ul>
+                            </div>
+                            <div id="pane-esempio-4-4" class="tab-pane hidden" data-tab-group="cap4-4" role="tabpanel">
+                                <p class="mb-4">Calcola $C = A \cdot B$ per matrici 2x2.</p>
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="grid grid-cols-2 gap-2 w-24">
+                                        <input id="a11-4-4" type="number" value="1" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                        <input id="a12-4-4" type="number" value="2" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                        <input id="a21-4-4" type="number" value="3" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                        <input id="a22-4-4" type="number" value="4" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                    </div>
+                                    <span class="text-2xl">$\times$</span>
+                                    <div class="grid grid-cols-2 gap-2 w-24">
+                                        <input id="b11-4-4" type="number" value="2" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                        <input id="b12-4-4" type="number" value="0" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                        <input id="b21-4-4" type="number" value="1" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                        <input id="b22-4-4" type="number" value="3" class="w-full p-1 border border-slate-300 rounded-md text-center">
+                                    </div>
+                                    <button id="btn-calc-4-4" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700"> = </button>
+                                </div>
+                                <div id="result-4-4" class="text-lg font-semibold h-24"></div>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 4.4 -->
+                                <p>Il prodotto tra matrici è un'operazione meno intuitiva ma estremamente potente. È definito in un modo molto specifico che lo rende lo strumento perfetto per descrivere sistemi di equazioni e la composizione di trasformazioni.</p>
+                                <h5 class="font-semibold mt-2">La Meccanica</h5>
+                                <p>Date due matrici A di tipo (m, n) e B di tipo (n, l), il loro prodotto $C=AB$ è una matrice di tipo (m, l). L'elemento $c_{ik}$ (che si trova nella riga i e colonna k di C) si calcola facendo il prodotto scalare della i-esima riga di A con la k-esima colonna di B.
+                                $$ c_{ik}=\sum_{h=1}^{n}a_{ih}b_{hk}=a_{i1}b_{1k}+a_{i2}b_{2k}+\cdot\cdot\cdot+a_{in}b_{nk} $$</p>
+                                <h5 class="font-semibold mt-2">Condizione di Conformabilità</h5>
+                                <p>Affinché il prodotto AB sia definito, il numero di colonne di A deve essere uguale al numero di righe di B. [...]</p>
+                                <h5 class="font-semibold mt-2">L'Intuizione Chiave: Perché questa definizione?</h5>
+                                <ol class="list-decimal list-inside ml-4">
+                                    <li><strong>Sistemi di Equazioni Lineari:</strong> La definizione di prodotto "righe per colonne" permette di scrivere un intero sistema di equazioni lineari in una forma incredibilmente compatta: $A\vec{x}=\vec{b}$. [...]</li>
+                                    <li><strong>Composizione di Trasformazioni:</strong> Questa è l'intuizione più profonda. Se una matrice B trasforma un vettore $\vec{v}$ in un nuovo vettore $\vec{w}=B\vec{v}$, e un'altra matrice A trasforma $\vec{w}$ in $\vec{z}=A\vec{w}$, allora la trasformazione complessiva che porta da $\vec{v}$ a $\vec{z}$ è rappresentata dalla matrice prodotto $C=AB$. [...]</li>
+                                </ol>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 4.5 Proprietà e Oggetti Speciali === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">4.5 Proprietà e Oggetti Speciali</h3>
+                         <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap4-5" data-tab-target="pane-definizioni-4-5" role="tab" aria-selected="true">Definizioni Chiave</button>
+                                <button class="tab-button" data-tab-group="cap4-5" data-tab-target="pane-confronto-4-5" role="tab" aria-selected="false">Confronto Numeri vs Matrici</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-definizioni-4-5" class="tab-pane" data-tab-group="cap4-5" role="tabpanel">
+                                <ul class="list-disc list-inside ml-4 space-y-2">
+                                    <li><strong>Matrice Identità ($I_n$):</strong> Matrice quadrata con 1 sulla diagonale e 0 altrove. È l'elemento neutro del prodotto: $AI = IA = A$.</li>
+                                    <li><strong>Matrice Inversa ($A^{-1}$):</strong> Se esiste, è quella matrice tale che $AA^{-1} = A^{-1}A = I$. Solo alcune matrici quadrate sono invertibili.</li>
+                                    <li><strong>Matrice Trasposta ($A^T$):</strong> Ottenuta scambiando le righe con le colonne. Se $A = [a_{ij}]$, allora $A^T = [a_{ji}]$.</li>
+                                    <li><strong>Matrice Simmetrica:</strong> Matrice quadrata tale che $A = A^T$.</li>
+                                </ul>
+                            </div>
+                            <div id="pane-confronto-4-5" class="tab-pane hidden" data-tab-group="cap4-5" role="tabpanel">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-100 dark:bg-slate-800">
+                                            <th class="p-2 border border-slate-300 dark:border-slate-600">Proprietà</th>
+                                            <th class="p-2 border border-slate-300 dark:border-slate-600">Numeri Reali (a, b)</th>
+                                            <th class="p-2 border border-slate-300 dark:border-slate-600">Matrici (A, B)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="p-2 border border-slate-300 dark:border-slate-600">Commutatività Prodotto</td>
+                                            <td class="p-2 border border-slate-300 dark:border-slate-600">$ab = ba$ (Sempre)</td>
+                                            <td class="p-2 border border-slate-300 dark:border-slate-600">$AB \neq BA$ (In generale)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 border border-slate-300 dark:border-slate-600">Legge Annullamento</td>
+                                            <td class="p-2 border border-slate-300 dark:border-slate-600">$ab=0 \Rightarrow a=0$ o $b=0$</td>
+                                            <td class="p-2 border border-slate-300 dark:border-slate-600">$AB=O$ non implica $A=O$ o $B=O$</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 border border-slate-300 dark:border-slate-600">Inverso Moltiplicativo</td>
+                                            <td class="p-2 border border-slate-300 dark:border-slate-600">Esiste per ogni $a \neq 0$</td>
+                                            <td class="p-2 border border-slate-300 dark:border-slate-600">Esiste solo per alcune matrici quadrate</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 4.5 -->
+                                <p>L'algebra delle matrici ha alcune proprietà sorprendenti che la differenziano dall'algebra dei numeri reali.</p>
+                                <p class="mt-2"><strong>Non Commutatività:</strong> In generale, $AB \neq BA$. L'ordine della moltiplicazione è fondamentale. [...]</p>
+                                <p class="mt-2"><strong>Matrice Identità ($I_n$):</strong> È una matrice quadrata con 1 sulla diagonale principale e 0 altrove. È l'elemento neutro del prodotto: $AI=A$ e $IA=A$. [...]</p>
+                                <p class="mt-2"><strong>Matrice Inversa ($A^{-1}$):</strong> Per una matrice quadrata A, la sua inversa $A^{-1}$ (se esiste) è quella matrice tale che $AA^{-1}=A^{-1}A=I$. L'inversa "annulla" la trasformazione di A. Non tutte le matrici quadrate sono invertibili.</p>
+                                <p class="mt-2"><strong>Matrice Trasposta ($A^T$):</strong> È la matrice ottenuta scambiando le righe con le colonne. Una matrice quadrata è simmetrica se coincide con la sua trasposta ($A=A^T$).</p>
+                                <!-- ... (testo "Osservazione: Matrici come Operatori") -->
+                            </div>
+                        </details>
+                    </div>
+
+                </div>
+            </section>
+            
+            <!-- ======================================= -->
+            <!--   CAPITOLO 5: SISTEMI (Implementato)   -->
+            <!-- ======================================= -->
+            <section id="cap5" class="card mb-12 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <header class="card-header p-6 border-b border-slate-200">
+                    <h2 class="card-title text-3xl font-bold text-sky-700 dark:text-sky-500">Capitolo 5 – Risolvere sistemi lineari</h2>
+                </header>
+                <div class="p-6 space-y-8">
+                     
+                    <!-- === 5.1 Forma matriciale A·x = b === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">5.1 Forma Matriciale $A\vec{x} = \vec{b}$</h3>
+                         <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap5-1" data-tab-target="pane-sintesi-5-1" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap5-1" data-tab-target="pane-esempio-5-1" role="tab" aria-selected="false">Esempio e Prospettive</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-5-1" class="tab-pane" data-tab-group="cap5-1" role="tabpanel">
+                                <p>Un intero sistema di $m$ equazioni lineari in $n$ incognite può essere scritto in modo compatto come un'unica equazione matriciale:</p>
+                                $$ A\vec{x} = \vec{b} $$
+                                <ul class="list-disc list-inside ml-4 mt-2">
+                                    <li>$A$: Matrice dei coefficienti (tipo $m \times n$).</li>
+                                    <li>$\vec{x}$: Vettore colonna delle incognite (tipo $n \times 1$).</li>
+                                    <li>$\vec{b}$: Vettore colonna dei termini noti (tipo $m \times 1$).</li>
+                                </ul>
+                                <p class="mt-2">Per risolvere il sistema, si lavora sulla <strong>matrice completa (o aumentata)</strong> $[A|b]$.</p>
+                            </div>
+                            <div id="pane-esempio-5-1" class="tab-pane hidden" data-tab-group="cap5-1" role="tabpanel">
+                                <p>Il sistema: $ \begin{cases} 2x + 3y = 7 \\ 1x - 4y = 2 \end{cases} $ diventa:
+                                $$ \underset{A}{\begin{pmatrix} 2 & 3 \\ 1 & -4 \end{pmatrix}} \underset{\vec{x}}{\begin{pmatrix} x \\ y \end{pmatrix}} = \underset{\vec{b}}{\begin{pmatrix} 7 \\ 2 \end{pmatrix}} $$
+                                <p class="font-medium mt-4">Due Prospettive:</p>
+                                <ol class="list-decimal list-inside ml-4">
+                                    <li><strong>Prospettiva Righe:</strong> Ogni riga è un'equazione. $(2, 3) \cdot (x, y) = 7$.</li>
+                                    <li><strong>Prospettiva Colonne:</strong> $\vec{b}$ è una combinazione lineare delle colonne di A.
+                                    $$ x \begin{pmatrix} 2 \\ 1 \end{pmatrix} + y \begin{pmatrix} 3 \\ -4 \end{pmatrix} = \begin{pmatrix} 7 \\ 2 \end{pmatrix} $$
+                                    Risolvere il sistema significa trovare i "pesi" $x, y$ giusti.</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 5.1 -->
+                                <p>Un sistema di m equazioni lineari in n incognite può essere scritto in forma matriciale come $A\vec{x}=\vec{b}$, dove A è la matrice dei coefficienti $(m \times n)$, $\vec{x}$ è il vettore colonna delle incognite $(n \times 1)$ e $\vec{b}$ è il vettore colonna dei termini noti $(m \times 1)$. Per analizzare e risolvere il sistema, si utilizza la matrice completa (o aumentata) $[A|b]$, che contiene tutte le informazioni del sistema in un'unica struttura.</p>
+                                <p class="mt-2">L'equazione $A\vec{x}=\vec{b}$ può essere interpretata in due modi complementari e potenti:</p>
+                                <ol class="list-decimal list-inside ml-4">
+                                    <li><strong>Prospettiva delle Righe:</strong> Ogni riga della matrice A rappresenta i coefficienti di una singola equazione. [...]</li>
+                                    <li><strong>Prospettiva delle Colonne:</strong> Il vettore dei termini noti $\vec{b}$ è visto come una combinazione lineare delle colonne della matrice A. Le incognite $x_1, ..., x_n$ sono i "pesi" (coefficienti) di questa combinazione. [...] un sistema ha soluzione se e solo se il vettore dei termini noti "appartiene" allo spazio generato dalle colonne della matrice dei coefficienti.</li>
+                                </ol>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 5.2 Metodo di Gauss-Jordan === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">5.2 Metodo di Eliminazione di Gauss-Jordan</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap5-2" data-tab-target="pane-sintesi-5-2" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap5-2" data-tab-target="pane-formule-5-2" role="tab" aria-selected="false">Operazioni Elementari</button>
+                                <button class="tab-button" data-tab-group="cap5-2" data-tab-target="pane-esempio-5-2" role="tab" aria-selected="false">Esempio Passaggi</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-5-2" class="tab-pane" data-tab-group="cap5-2" role="tabpanel">
+                                <p>È un algoritmo per trasformare un sistema in uno equivalente (stesse soluzioni) ma più semplice, applicando <strong>Operazioni Elementari sulle Righe</strong> alla matrice aumentata $[A|b]$.</p>
+                                <p class="font-medium mt-2">Obiettivo:</p>
+                                <ol class="list-decimal list-inside ml-4">
+                                    <li><strong>Fase 1 (Gauss):</strong> Arrivare a una <strong>Forma a Scalini</strong> (Row Echelon Form). I <strong>pivot</strong> (primo elemento non nullo di ogni riga) sono usati per azzerare gli elementi sottostanti.</li>
+                                    <li><strong>Fase 2 (Gauss-Jordan):</strong> Arrivare a una <strong>Forma a Scalini Ridotta</strong> (RREF). Ogni pivot è 1 ed è l'unico elemento non nullo nella sua colonna.</li>
+                                </ol>
+                                <p class="mt-2">In forma RREF, la soluzione del sistema si legge direttamente.</p>
+                            </div>
+                            <div id="pane-formule-5-2" class="tab-pane hidden" data-tab-group="cap5-2" role="tabpanel">
+                                <p>Le 3 Operazioni Elementari di Riga (che non cambiano le soluzioni del sistema):</p>
+                                <ol class="list-decimal list-inside ml-4 mt-2 space-y-2">
+                                    <li><strong>Scambio ($S_{ij}$):</strong> Scambiare la riga $i$ con la riga $j$.</li>
+                                    <li><strong>Moltiplicazione ($D_i(c)$):</strong> Moltiplicare la riga $i$ per uno scalare $c \neq 0$.</li>
+                                    <li><strong>Somma ($E_{ij}(c)$):</strong> Sommare alla riga $i$ la riga $j$ moltiplicata per $c$. (Es: $R_i \leftarrow R_i + c \cdot R_j$)</li>
+                                </ol>
+                            </div>
+                            <div id="pane-esempio-5-2" class="tab-pane hidden" data-tab-group="cap5-2" role="tabpanel">
+                                <p class="font-medium">Risolviamo: $ \begin{cases} x + 2y = 5 \\ 2x + 3y = 8 \end{cases} $</p>
+                                <p>Matrice Aumentata:</p>
+                                $$ \left[ \begin{array}{cc|c} 1 & 2 & 5 \\ 2 & 3 & 8 \end{array} \right] $$
+                                <p><strong>Fase 1 (Gauss):</strong> Azzeriamo l'elemento sotto il primo pivot (l'1 in alto a sx). Usiamo $E_{21}(-2)$, cioè $R_2 \leftarrow R_2 - 2 \cdot R_1$:</p>
+                                $$ \left[ \begin{array}{cc|c} 1 & 2 & 5 \\ 2 - 2(1) & 3 - 2(2) & 8 - 2(5) \end{array} \right] = \left[ \begin{array}{cc|c} 1 & 2 & 5 \\ 0 & -1 & -2 \end{array} \right] $$
+                                <p><strong>Fase 2 (Gauss-Jordan):</strong> Rendiamo i pivot uguali a 1. Usiamo $D_2(-1)$:</p>
+                                $$ \left[ \begin{array}{cc|c} 1 & 2 & 5 \\ 0 & 1 & 2 \end{array} \right] $$
+                                <p>Azzeriamo gli elementi sopra il secondo pivot. Usiamo $E_{12}(-2)$, cioè $R_1 \leftarrow R_1 - 2 \cdot R_2$:</p>
+                                $$ \left[ \begin{array}{cc|c} 1 - 2(0) & 2 - 2(1) & 5 - 2(2) \\ 0 & 1 & 2 \end{array} \right] = \left[ \begin{array}{cc|c} 1 & 0 & 1 \\ 0 & 1 & 2 \end{array} \right] $$
+                                <p><strong>Soluzione (RREF):</strong> Leggiamo direttamente: $1x + 0y = 1 \Rightarrow x=1$. E $0x + 1y = 2 \Rightarrow y=2$.</p>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 5.2 -->
+                                <p>L'idea alla base del metodo di Gauss-Jordan è semplice: trasformare un sistema complicato in un sistema equivalente (cioè con lo stesso insieme di soluzioni) che sia però molto più facile da risolvere, idealmente uno in cui la soluzione sia immediata. Questo si ottiene applicando sistematicamente tre operazioni elementari sulle righe della matrice aumentata, che corrispondono a manipolazioni algebriche lecite sulle equazioni:</p>
+                                <ol class="list-decimal list-inside ml-4">
+                                    <li>Scambio: Scambiare due righe ($S_{ij}$).</li>
+                                    <li>Moltiplicazione: Moltiplicare una riga per uno scalare non nullo ($D_i(c)$).</li>
+                                    <li>Somma: Sommare a una riga un multiplo di un'altra riga ($E_{ij}(c)$).</li>
+                                </ol>
+                                <p class="mt-2">Il processo si articola in due fasi. [...] <strong>Fase 1: Eliminazione in Avanti (Metodo di Gauss)</strong> [...] <strong>Fase 2: Sostituzione all'Indietro (Completamento di Gauss-Jordan)</strong> [...]</p>
+                                <p class="mt-2">Il Vantaggio: Una volta che la matrice è in forma rref, la soluzione del sistema si legge direttamente. [...]</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 5.3 Teorema di Rouché-Capelli === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">5.3 Analizzare le Soluzioni: Il Teorema di Rouché-Capelli</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap5-3" data-tab-target="pane-sintesi-5-3" role="tab" aria-selected="true">Il Teorema</button>
+                                <button class="tab-button" data-tab-group="cap5-3" data-tab-target="pane-esempio-5-3" role="tab" aria-selected="false">Test Interattivo</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-5-3" class="tab-pane" data-tab-group="cap5-3" role="tabpanel">
+                                <p>Questo teorema ci dice quante soluzioni ha un sistema $A\vec{x} = \vec{b}$ <strong>senza risolverlo</strong>, ma solo confrontando i ranghi.</p>
+                                <p>Definizioni:
+                                    <ul class="list-disc list-inside ml-4 mt-2">
+                                        <li><strong>Rango ($rg(A)$):</strong> Numero di pivot (righe non nulle) nella forma a scalini di A.</li>
+                                        <li>$n$: Numero di incognite (colonne di A).</li>
+                                    </ul>
+                                </p>
+                                <p class="font-medium mt-4">Il Teorema:</p>
+                                <ol class="list-decimal list-inside ml-4 mt-2 space-y-2">
+                                    <li>Se $rg(A) < rg([A|b])$, il sistema è <strong>INCOMPATIBILE</strong> (0 Soluzioni).
+                                        <br><span class="text-sm text-slate-500">(Questo accade quando si ottiene una riga $[0\ 0\ ...\ |\ k]$ con $k \neq 0$).</span>
+                                    </li>
+                                    <li>Se $rg(A) = rg([A|b]) = r$, il sistema è <strong>COMPATIBILE</strong> (Almeno 1 soluzione).
+                                        <ul class="list-disc list-inside ml-6">
+                                            <li>Se $r = n$ (rango = num. incognite) $\Rightarrow$ <strong>1 Soluzione Unica</strong>.</li>
+                                            <li>Se $r < n$ (rango < num. incognite) $\Rightarrow$ <strong>$\infty$ Soluzioni</strong> (dipendenti da $n - r$ variabili libere).</li>
+                                        </ul>
+                                    </li>
+                                </ol>
+                            </div>
+                            <div id="pane-esempio-5-3" class="tab-pane hidden" data-tab-group="cap5-3" role="tabpanel">
+                                <p class="mb-4">Inserisci i ranghi del tuo sistema e il numero di incognite $n$.</p>
+                                <div class="flex flex-wrap items-center gap-4 mb-4">
+                                    <label>$rg(A)$: <input id="rank-a-5-3" type="number" value="2" class="w-20 p-2 border border-slate-300 rounded-md"></label>
+                                    <label>$rg([A|b])$: <input id="rank-ab-5-3" type="number" value="2" class="w-20 p-2 border border-slate-300 rounded-md"></label>
+                                    <label>$n$ (incognite): <input id="num-n-5-3" type="number" value="2" class="w-20 p-2 border border-slate-300 rounded-md"></label>
+                                    <button id="btn-calc-5-3" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700">Verifica Soluzioni</button>
+                                </div>
+                                <div id="result-5-3" class="text-lg font-semibold h-8"></div>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 5.3 -->
+                                <p>Il metodo di Gauss non solo risolve il sistema, ma ci dice anche se una soluzione esiste e di che tipo è. Il Teorema di Rouché-Capelli formalizza questo risultato.</p>
+                                <h5 class="font-semibold mt-2">Definizione di Rango</h5>
+                                <p>Il rango di una matrice A, denotato con $rg(A)$, è il numero di pivot (o, equivalentemente, il numero di righe non nulle) nella sua forma a scalini. [...]</p>
+                                <h5 class="font-semibold mt-2">Il Teorema</h5>
+                                <p>Un sistema $A\vec{x}=\vec{b}$ ammette soluzioni se e solo se il rango della matrice dei coefficienti è uguale al rango della matrice completa: $rg(A)=rg([A|b])$.</p>
+                                <p class="mt-2"><strong>Interpretazione Intuitiva:</strong> Se $rg(A)<rg([A|b])$, significa che durante l'eliminazione di Gauss si è generata una riga della forma $[0\ 0\ ...\ 0\ |\ k]$ con $k \neq 0$. Questa riga corrisponde all'equazione impossibile $0=k$. Di conseguenza, il sistema è incompatibile (non ha soluzioni).</p>
+                                <p class="mt-2">Se il sistema è compatibile ($rg(A)=rg([A|b])=r$), il numero di soluzioni dipende dal confronto tra il rango r e il numero di incognite n: [...]</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 5.4 Analisi delle soluzioni === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">5.4 Struttura dell'Insieme delle Soluzioni</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap5-4" data-tab-target="pane-sintesi-5-4" role="tab" aria-selected="true">Omogenei vs Non Omogenei</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-5-4" class="tab-pane" data-tab-group="cap5-4" role="tabpanel">
+                                <p class="font-medium">Sistemi Omogenei ($A\vec{x} = \vec{0}$):</p>
+                                <ul class="list-disc list-inside ml-4 mt-2">
+                                    <li>Sono <strong>sempre compatibili</strong> (hanno almeno la soluzione banale $\vec{x} = \vec{0}$).</li>
+                                    <li>L'insieme delle soluzioni è un <strong>sottospazio vettoriale</strong>.</li>
+                                </ul>
+                                <p class="font-medium mt-4">Sistemi Non Omogenei ($A\vec{x} = \vec{b}$, con $\vec{b} \neq \vec{0}$):</p>
+                                <ul class="list-disc list-inside ml-4 mt-2">
+                                    <li>Possono essere incompatibili.</li>
+                                    <li>Se compatibili, la soluzione generale è la somma di una <strong>soluzione particolare</strong> $\vec{x}_p$ e della <strong>soluzione generale omogenea</strong> $\vec{x}_h$.</li>
+                                </ul>
+                                <p class="text-center text-xl font-mono my-2"> $\vec{x} = \vec{x}_p + \vec{x}_h $ </p>
+                                <p>Geometricamente, l'insieme delle soluzioni è una "traslazione" del sottospazio delle soluzioni omogenee (es. una retta o un piano che non passa per l'origine).</p>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 5.4 -->
+                                <h5 class="font-semibold mt-2">Sistemi Omogenei ($A\vec{x}=\vec{0}$)</h5>
+                                <p>Questi sistemi sono sempre compatibili, perché ammettono almeno la soluzione banale $\vec{x}=\vec{0}$. L'insieme delle loro soluzioni ha una struttura speciale: è un sottospazio vettoriale. [...]</p>
+                                <h5 class="font-semibold mt-2">Sistemi Non Omogenei ($A\vec{x}=\vec{b}$)</h5>
+                                <p>Se un sistema non omogeneo è compatibile, la sua soluzione generale può essere scritta nella forma:
+                                $$ \vec{x}=\vec{x}_{p}+\vec{x}_{h} $$
+                                dove $\vec{x}_p$ è una qualsiasi soluzione particolare del sistema completo ($A\vec{x}_p=\vec{b}$) e $\vec{x}_h$ è la soluzione generale del sistema omogeneo associato ($A\vec{x}_h=\vec{0}$).</p>
+                                <p class="mt-2"><strong>Interpretazione Geometrica:</strong> L'insieme delle soluzioni di un sistema non omogeneo non è un sottospazio (perché non contiene il vettore nullo), ma è una sua "traslazione". [...]</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 5.5 Applicazioni === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">5.5 Applicazioni Pratiche: Calcolo dell'Inversa</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap5-5" data-tab-target="pane-sintesi-5-5" role="tab" aria-selected="true">Metodo di Calcolo Inversa</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-5-5" class="tab-pane" data-tab-group="cap5-5" role="tabpanel">
+                                <p>Il metodo di Gauss-Jordan può essere usato per calcolare l'inversa $A^{-1}$ di una matrice quadrata $A$ (se esiste).</p>
+                                <p class="font-medium mt-4">Algoritmo:</p>
+                                <ol class="list-decimal list-inside ml-4 mt-2">
+                                    <li>Costruire la matrice aumentata $[A | I]$, affiancando ad A la matrice identità $I$.</li>
+                                    <li>Usare le operazioni elementari di riga (Gauss-Jordan) per trasformare il blocco di sinistra $A$ in $I$.</li>
+                                    <li>Le stesse operazioni, applicate al blocco di destra, trasformeranno $I$ in $A^{-1}$.</li>
+                                </ol>
+                                <p class="text-center text-xl font-mono my-2"> $[A | I] \xrightarrow{\text{Gauss-Jordan}} [I | A^{-1}] $ </p>
+                                <p>Se è impossibile trasformare $A$ in $I$ (es. si ottiene una riga di zeri), allora $A$ non è invertibile.</p>
+                            </div>
+                        </div>
+                         <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 5.5 -->
+                                <p>Il metodo di Gauss-Jordan è un vero e proprio "coltellino svizzero" algebrico.</p>
+                                <h5 class="font-semibold mt-2">Calcolo della Matrice Inversa</h5>
+                                <p>Per calcolare l'inversa di una matrice quadrata A (se esiste), si affianca ad A la matrice identità I, formando la matrice aumentata $[A|I]$. Si applica l'algoritmo di Gauss-Jordan per trasformare il blocco di sinistra A in I. Le stesse operazioni, applicate al blocco di destra, trasformeranno I in $A^{-1}$. Il risultato finale sarà la matrice $[I|A^{-1}]$.</p>
+                                <h5 class="font-semibold mt-2">Analisi di Circuiti Elettrici</h5>
+                                <p>Le leggi di Kirchhoff per i circuiti elettrici (legge dei nodi e legge delle maglie) generano naturalmente sistemi di equazioni lineari, dove le incognite sono le correnti che circolano nei vari rami del circuito. [...]</p>
+                            </div>
+                        </details>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ======================================= -->
+            <!--    CAPITOLO 6: SPAZI (Implementato)    -->
+            <!-- ======================================= -->
+            <section id="cap6" class="card mb-12 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <header class="card-header p-6 border-b border-slate-200">
+                    <h2 class="card-title text-3xl font-bold text-sky-700 dark:text-sky-500">Capitolo 6 – Spazi e sottospazi vettoriali</h2>
+                </header>
+                <div class="p-6 space-y-8">
+                    
+                    <!-- === 6.1 Spazio Vettoriale === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">6.1 Definizione di Spazio Vettoriale</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap6-1" data-tab-target="pane-sintesi-6-1" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap6-1" data-tab-target="pane-formule-6-1" role="tab" aria-selected="false">Gli 8 Assiomi</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-6-1" class="tab-pane" data-tab-group="cap6-1" role="tabpanel">
+                                <p>Uno <strong>spazio vettoriale</strong> è un concetto astratto che generalizza le proprietà dei vettori. È un insieme $V$ di elementi (chiamati "vettori", che possono essere n-uple, matrici, polinomi, funzioni...) su cui sono definite due operazioni:</p>
+                                <ol class="list-decimal list-inside ml-4 mt-2">
+                                    <li><strong>Somma di Vettori:</strong> $\vec{u} + \vec{v}$</li>
+                                    <li><strong>Prodotto per Scalare:</strong> $k\vec{v}$</li>
+                                </ol>
+                                <p class="mt-2">Queste operazioni devono soddisfare <strong>8 assiomi</strong> (regole) fondamentali, come la commutatività e l'associatività della somma, la distributività, ecc.</p>
+                            </div>
+                            <div id="pane-formule-6-1" class="tab-pane hidden" data-tab-group="cap6-1" role="tabpanel">
+                                <p class="font-medium">Un insieme $V$ è uno spazio vettoriale se valgono:</p>
+                                <ol class="list-decimal list-inside ml-4 mt-2 space-y-1">
+                                    <li>$(\vec{u}+\vec{v})+\vec{w} = \vec{u}+(\vec{v}+\vec{w})$ (Associatività somma)</li>
+                                    <li>$\vec{u}+\vec{v} = \vec{v}+\vec{u}$ (Commutatività somma)</li>
+                                    <li>Esiste $\vec{0} \in V$ tale che $\vec{v}+\vec{0} = \vec{v}$ (Elemento neutro)</li>
+                                    <li>Per ogni $\vec{v}$, esiste $-\vec{v}$ tale che $\vec{v}+(-\vec{v}) = \vec{0}$ (Opposto)</li>
+                                    <li>$k(\vec{u}+\vec{v}) = k\vec{u}+k\vec{v}$ (Distributività)</li>
+                                    <li>$(k_1+k_2)\vec{v} = k_1\vec{v}+k_2\vec{v}$ (Distributività)</li>
+                                    <li>$(k_1 k_2)\vec{v} = k_1(k_2\vec{v})$ (Associatività prodotto)</li>
+                                    <li>$1\vec{v} = \vec{v}$ (Elemento neutro prodotto)</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 6.1 -->
+                                <p>L'idea di uno spazio vettoriale è quella di definire una struttura algebrica generale i cui elementi (che chiameremo genericamente "vettori") possono essere sommati tra loro e moltiplicati per scalari, obbedendo a un insieme di regole di base (assiomi). [...]</p>
+                                <h5 class="font-semibold mt-2">Definizione Formale</h5>
+                                <p>Uno spazio vettoriale su un campo di scalari K (solitamente i numeri reali R) è un insieme non vuoto V su cui sono definite due operazioni: [Somma e Prodotto per Scalare].</p>
+                                <p class="mt-2">Queste operazioni devono soddisfare otto assiomi fondamentali. [...]</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 6.2 Sottospazi Vettoriali === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">6.2 Sottospazi Vettoriali</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap6-2" data-tab-target="pane-sintesi-6-2" role="tab" aria-selected="true">Sintesi e Test</button>
+                                <button class="tab-button" data-tab-group="cap6-2" data-tab-target="pane-esempio-6-2" role="tab" aria-selected="false">Esempi Fondamentali</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-6-2" class="tab-pane" data-tab-group="cap6-2" role="tabpanel">
+                                <p>Un <strong>sottospazio vettoriale</strong> $W$ è un sottoinsieme di uno spazio vettoriale $V$ che è "chiuso" rispetto alle operazioni di $V$. Significa che sommando due vettori di $W$, o moltiplicandoli per uno scalare, si rimane dentro $W$.</p>
+                                <p class="mt-2">(Nota: ogni sottospazio deve contenere il vettore nullo $\vec{0}$).</p>
+                                <p class="font-medium mt-4">Test Semplificato per Sottospazi:</p>
+                                <p>Per verificare se $W \subseteq V$ (non vuoto) è un sottospazio, basta controllare 2 condizioni:</p>
+                                <ol class="list-decimal list-inside ml-4 mt-2">
+                                    <li><strong>Chiusura rispetto alla somma:</strong> Se $\vec{w}_1, \vec{w}_2 \in W$, allora $\vec{w}_1 + \vec{w}_2 \in W$.</li>
+                                    <li><strong>Chiusura rispetto al prodotto per scalare:</strong> Se $\vec{w} \in W$ e $k \in \mathbb{R}$, allora $k\vec{w} \in W$.</li>
+                                </ol>
+                            </div>
+                            <div id="pane-esempio-6-2" class="tab-pane hidden" data-tab-group="cap6-2" role="tabpanel">
+                                <p>Sono sottospazi vettoriali:</p>
+                                <ul class="list-disc list-inside ml-4 mt-2">
+                                    <li>In $\mathbb{R}^3$: L'origine $\vec{0}$, una retta passante per l'origine, un piano passante per l'origine.</li>
+                                    <li>L'insieme delle soluzioni di un sistema omogeneo $A\vec{x} = \vec{0}$ (è un sottospazio di $\mathbb{R}^n$).</li>
+                                    <li>L'insieme delle matrici simmetriche (è un sottospazio delle matrici quadrate).</li>
+                                    <li>L'insieme dei polinomi di grado $\le n$ (è un sottospazio di tutti i polinomi).</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 6.2 -->
+                                <p>Un sottospazio vettoriale W è un sottoinsieme di uno spazio vettoriale più grande V che è, a sua volta, uno spazio vettoriale rispetto alle stesse operazioni di V.</p>
+                                <h5 class="font-semibold mt-2">Il Test Semplificato</h5>
+                                <p>Per verificare se un sottoinsieme non vuoto $W \subseteq V$ è un sottospazio, non è necessario verificare tutti gli otto assiomi. È sufficiente controllare che W sia "chiuso" rispetto alle due operazioni di base: [Chiusura somma, Chiusura prodotto per scalare].</p>
+                                <p class="mt-2">Una conseguenza immediata [...] è che ogni sottospazio vettoriale deve contenere il vettore nullo $\vec{0}$.</p>
+                                <h5 class="font-semibold mt-2">Esempi Fondamentali di Sottospazi</h5>
+                                <p>[... Soluzioni di sistemi omogenei, matrici simmetriche, polinomi ...]</p>
+                            </div>
+                        </details>
+                    </div>
+                    
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 6.3 Combinazioni Lineari e Span === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">6.3 Combinazioni Lineari e Span</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap6-3" data-tab-target="pane-sintesi-6-3" role="tab" aria-selected="true">Sintesi e Formule</button>
+                                <button class="tab-button" data-tab-group="cap6-3" data-tab-target="pane-visualizza-6-3" role="tab" aria-selected="false">Generatore di Span 2D</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-6-3" class="tab-pane" data-tab-group="cap6-3" role="tabpanel">
+                                <p><strong>Combinazione Lineare:</strong> È una somma pesata di vettori. Dati i vettori $\{\vec{v}_1, ..., \vec{v}_k\}$ e gli scalari $\{c_1, ..., c_k\}$, una combinazione lineare è:
+                                $$ c_1\vec{v}_1 + c_2\vec{v}_2 + \dots + c_k\vec{v}_k $$
+                                </p>
+                                <p class="font-medium mt-4">Span (Sottospazio Generato):</p>
+                                <p>Lo <strong>span</strong> di un insieme di vettori, $span\{\vec{v}_1, ..., \vec{v}_k\}$, è l'insieme di <strong>tutte le possibili</strong> combinazioni lineari che si possono formare con essi. È "tutto ciò che si può raggiungere" usando quei vettori.</p>
+                                <p class="mt-2">Lo span di vettori è sempre un sottospazio vettoriale.</p>
+                                <p class="font-medium mt-4">Intuizione Geometrica (in $\mathbb{R}^3$):</p>
+                                <ul class="list-disc list-inside ml-4 mt-2">
+                                    <li>$span\{\vec{v}\}$ (un vettore $\neq \vec{0}$): Una retta passante per l'origine.</li>
+                                    <li>$span\{\vec{v}, \vec{w}\}$ (due vettori non paralleli): Un piano passante per l'origine.</li>
+                                </ul>
+                            </div>
+                            <div id="pane-visualizza-6-3" class="tab-pane hidden" data-tab-group="cap6-3" role="tabpanel">
+                                <p class="mb-4">Visualizza lo span di due vettori $\vec{v}$ e $\vec{w}$ in $\mathbb{R}^2$.</p>
+                                <div class="flex flex-wrap items-center gap-4 mb-4">
+                                    <label>$\vec{v}$: ( <input id="vec-v-x-6-3" type="number" value="2" class="w-16 p-2 border border-slate-300 rounded-md"> , <input id="vec-v-y-6-3" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md"> )</label>
+                                    <label>$\vec{w}$: ( <input id="vec-w-x-6-3" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md"> , <input id="vec-w-y-6-3" type="number" value="3" class="w-16 p-2 border border-slate-300 rounded-md"> )</label>
+                                    <button id="btn-draw-6-3" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700">Disegna Span</button>
+                                </div>
+                                <canvas id="canvas-6-3" width="400" height="300" class="bg-white border border-slate-400 rounded-md"></canvas>
+                                <div id="result-6-3" class="text-lg font-semibold h-8 mt-2"></div>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 6.3 -->
+                                <h5 class="font-semibold mt-2">Combinazione Lineare</h5>
+                                <p>Come già visto, una combinazione lineare di un insieme di vettori $\{\vec{v}_{1},...,\vec{v}_{k}\}$ è una qualsiasi espressione della forma $c_{1}\vec{v}_{1}+c_{2}\vec{v}_{2}+\cdot\cdot\cdot+c_{k}\vec{v}_{k}$, dove $c_{i}$ sono scalari.</p>
+                                <h5 class="font-semibold mt-2">Span (Sottospazio Generato)</h5>
+                                <p>Lo span di un insieme di vettori $\{\vec{v}_{1},...,\vec{v}_{k}\}$, indicato con $span\{\vec{v}_{1},...,\vec{v}_{k}\}$ o $\langle\vec{v}_{1},...,\vec{v}_{k}\rangle$, è l'insieme di tutte le possibili combinazioni lineari che si possono formare con questi vettori. Questo insieme è sempre un sottospazio vettoriale.</p>
+                                <h5 class="font-semibold mt-2">Intuizione Geometrica</h5>
+                                <p>Lo span rappresenta "tutto ciò che si può raggiungere" usando solo i vettori dati come direzioni di movimento. Lo span di un singolo vettore non nullo in $\mathbb{R}^3$ è la retta passante per l'origine con quella direzione. Lo span di due vettori non paralleli è il piano passante per l'origine che li contiene.</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 6.4 Indipendenza Lineare === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">6.4 Indipendenza Lineare</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap6-4" data-tab-target="pane-sintesi-6-4" role="tab" aria-selected="true">Sintesi e Definizione</button>
+                                <button class="tab-button" data-tab-group="cap6-4" data-tab-target="pane-esempio-6-4" role="tab" aria-selected="false">Test Indipendenza 2D</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-6-4" class="tab-pane" data-tab-group="cap6-4" role="tabpanel">
+                                <p>Un insieme di vettori è <strong>linearmente indipendente</strong> se nessun vettore è "ridondante", cioè nessuno può essere scritto come combinazione lineare degli altri.</p>
+                                <p class="mt-2">Se un insieme non è linearmente indipendente, si dice <strong>linearmente dipendente</strong> (es. due vettori paralleli, o tre vettori complanari).</p>
+                                <p class="font-medium mt-4">Definizione Formale:</p>
+                                <p>I vettori $\{\vec{v}_1, ..., \vec{v}_k\}$ sono linearmente indipendenti se l'unica combinazione lineare che dà il vettore nullo è quella con tutti i coefficienti nulli (la "combinazione banale"):</p>
+                                $$ c_1\vec{v}_1 + c_2\vec{v}_2 + \dots + c_k\vec{v}_k = \vec{0} \implies c_1 = c_2 = \dots = c_k = 0 $$
+                            </div>
+                            <div id="pane-esempio-6-4" class="tab-pane hidden" data-tab-group="cap6-4" role="tabpanel">
+                                <p class="mb-4">Testa se due vettori $\vec{v}$ e $\vec{w}$ in $\mathbb{R}^2$ sono linearmente indipendenti.
+                                <br><span class="text-sm text-slate-500">(Sono indipendenti se e solo se non sono paralleli, cioè se il determinante della matrice formata da essi è $\neq 0$).</span></p>
+                                <div class="flex flex-wrap items-center gap-4 mb-4">
+                                    <label>$\vec{v}$: ( <input id="vec-v-x-6-4" type="number" value="1" class="w-16 p-2 border border-slate-300 rounded-md"> , <input id="vec-v-y-6-4" type="number" value="2" class="w-16 p-2 border border-slate-300 rounded-md"> )</label>
+                                    <label>$\vec{w}$: ( <input id="vec-w-x-6-4" type="number" value="2" class="w-16 p-2 border border-slate-300 rounded-md"> , <input id="vec-w-y-6-4" type="number" value="4" class="w-16 p-2 border border-slate-300 rounded-md"> )</label>
+                                    <button id="btn-calc-6-4" class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700">Testa Indipendenza</button>
+                                </div>
+                                <div id="result-6-4" class="text-lg font-semibold h-8"></div>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 6.4 -->
+                                <p>Il concetto di indipendenza lineare cattura l'idea di avere un insieme di vettori "efficiente", senza elementi superflui.</p>
+                                <h5 class="font-semibold mt-2">Definizione Formale</h5>
+                                <p>Un insieme di vettori $\{\vec{v}_{1},...,\vec{v}_{k}\}$ è linearmente indipendente se l'unica combinazione lineare di questi vettori che produce il vettore nullo è quella in cui tutti i coefficienti sono zero (la combinazione "banale"):
+                                $$ c_{1}\vec{v}_{1}+c_{2}\vec{v}_{2}+\cdot\cdot\cdot+c_{k}\vec{v}_{k}=\vec{0} \implies c_{1}=c_{2}=\cdot\cdot\cdot=c_{k}=0 $$</p>
+                                <h5 class="font-semibold mt-2">Definizione Intuitiva</h5>
+                                <p>Se un insieme di vettori non è linearmente indipendente, si dice linearmente dipendente. Questo significa che esiste almeno un vettore nell'insieme che è "ridondante", ovvero può essere espresso come combinazione lineare degli altri. [...]</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 6.5 Base e Dimensione === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">6.5 La Base e la Dimensione</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap6-5" data-tab-target="pane-sintesi-6-5" role="tab" aria-selected="true">Definizioni</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-6-5" class="tab-pane" data-tab-group="cap6-5" role="tabpanel">
+                                <p class="font-medium">Definizione di Base:</p>
+                                <p>Una <strong>base</strong> di uno spazio vettoriale $V$ è un insieme di vettori che è "perfetto": non troppo piccolo, non troppo grande. Deve soddisfare due condizioni:</p>
+                                <ol class="list-decimal list-inside ml-4 mt-2">
+                                    <li>L'insieme è <strong>linearmente indipendente</strong> (non ci sono vettori ridondanti).</li>
+                                    <li>L'insieme <strong>genera</strong> lo spazio $V$ (il suo span è l'intero spazio).</li>
+                                </ol>
+                                <p class="mt-2">Proprietà: Ogni vettore dello spazio si scrive come combinazione lineare della base in <strong>un solo e unico modo</strong> (le coordinate).</p>
+                                <p class="font-medium mt-4">Definizione di Dimensione:</p>
+                                <p>Tutte le basi di uno stesso spazio vettoriale hanno lo <strong>stesso numero di elementi</strong>. Questo numero è chiamato la <strong>dimensione</strong> dello spazio, $dim(V)$.</p>
+                                <p class="mt-2">Esempio: $dim(\mathbb{R}^3) = 3$. La base canonica è $\{\vec{i}, \vec{j}, \vec{k}\} = \{(1,0,0), (0,1,0), (0,0,1)\}$.</p>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 6.5 -->
+                                <p>I concetti di base e dimensione sono tra i più importanti dell'intera algebra lineare. Ci permettono di caratterizzare la struttura intrinseca di qualsiasi spazio vettoriale.</p>
+                                <h5 class="font-semibold mt-2">Definizione di Base</h5>
+                                <p>Una base di uno spazio vettoriale V è un insieme di vettori che soddisfa due condizioni: [1. Linearmente Indipendente, 2. Genera lo spazio V].</p>
+                                <h5 class="font-semibold mt-2">Unicità della Rappresentazione</h5>
+                                <p>Una delle proprietà più potenti di una base $\{\vec{b}_{1},...,\vec{b}_{n}\}$ è che ogni vettore $\vec{v}$ dello spazio può essere scritto come combinazione lineare dei vettori della base in un solo e unico modo. I coefficienti di questa combinazione, $(c_{1},...,c_{n})$, sono chiamati le coordinate di $\vec{v}$ rispetto a quella base.</p>
+                                <h5 class="font-semibold mt-2">Definizione di Dimensione</h5>
+                                <p>Si può dimostrare che tutte le basi di un dato spazio vettoriale hanno lo stesso numero di elementi. Questo numero è una proprietà intrinseca dello spazio ed è chiamato la sua dimensione, denotata con $dim(V)$. [...]</p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-700">
+
+                    <!-- === 6.6 Rango Rivisitato === -->
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-800 dark:text-slate-200">6.6 Il Rango Rivisitato: La Dimensione in Pratica</h3>
+                        <!-- Tabs -->
+                        <div class="mb-4 border-b border-slate-300 dark:border-slate-700">
+                            <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                <button class="tab-button" data-tab-group="cap6-6" data-tab-target="pane-sintesi-6-6" role="tab" aria-selected="true">Sintesi</button>
+                                <button class="tab-button" data-tab-group="cap6-6" data-tab-target="pane-esempio-6-6" role="tab" aria-selected="false">Come Trovare le Basi</button>
+                            </nav>
+                        </div>
+                        <!-- Tab Panes -->
+                        <div>
+                            <div id="pane-sintesi-6-6" class="tab-pane" data-tab-group="cap6-6" role="tabpanel">
+                                <p>Il concetto di <strong>rango</strong> di una matrice $A$, $rg(A)$, introdotto con Gauss (numero di pivot), ha un significato profondo:</p>
+                                <p class="font-medium text-lg mt-2 text-center p-4 bg-sky-50 dark:bg-sky-900 rounded-md">
+                                    $rg(A) = dim(\text{Spazio Colonne di } A)$
+                                    <br>
+                                    $rg(A) = dim(\text{Spazio Righe di } A)$
+                                </p>
+                                <p class="mt-4">Il rango ci dice quanti "vettori indipendenti" costituiscono le colonne (e le righe) della matrice.</p>
+                            </div>
+                            <div id="pane-esempio-6-6" class="tab-pane hidden" data-tab-group="cap6-6" role="tabpanel">
+                                <p>Il metodo di riduzione a scalini (Gauss-Jordan) è l'algoritmo pratico per trovare le basi degli spazi associati ad $A$:</p>
+                                <ul class="list-disc list-inside ml-4 mt-2">
+                                    <li><strong>Base Spazio Colonne:</strong> Le colonne della matrice <strong>originale A</strong> che corrispondono alle colonne con i pivot nella forma RREF.</li>
+                                    <li><strong>Base Spazio Righe:</strong> Le righe <strong>non nulle</strong> della matrice RREF.</li>
+                                    <li><strong>Base Spazio Nullo ($N(A)$):</strong> Le soluzioni di base del sistema omogeneo $A\vec{x} = \vec{0}$ (ottenute dalle variabili libere).</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Approfondisci -->
+                        <details class="approfondisci mt-4">
+                            <summary class="cursor-pointer text-sm text-slate-500 dark:text-slate-400 hover:text-sky-600">Approfondisci (Testo Originale)</summary>
+                            <div class="mt-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
+                                <!-- Testo completo da PDF per 6.6 -->
+                                <h5 class="font-semibold mt-2">Il Teorema Fondamentale del Rango</h5>
+                                <p>Il rango di una matrice A è uguale alla dimensione dello spazio generato dalle sue colonne (spazio delle colonne) ed è anche uguale alla dimensione dello spazio generato dalle sue righe (spazio delle righe). Questo è un risultato notevole [...].</p>
+                                <p class="mt-2">Il metodo di riduzione a scalini ci fornisce un algoritmo pratico per trovare le basi di questi spazi fondamentali associati a una matrice A:</p>
+                                <ul class="list-disc list-inside ml-4">
+                                    <li><strong>Base dello Spazio delle Colonne:</strong> Le colonne della matrice originale A che corrispondono alle colonne contenenti i pivot nella forma a scalini ridotta $(rref(A))$ formano una base per lo spazio delle colonne di A.</li>
+                                    <li><strong>Base dello Spazio delle Righe:</strong> Le righe non nulle della matrice a scalini ridotta $(rref(A))$ formano una base per lo spazio delle righe di A.</li>
+                                    <li><strong>Base dello Spazio Nullo ($N(A)$):</strong> Le soluzioni di base del sistema omogeneo $A\vec{x}=\vec{0}$ [...] formano una base per lo spazio nullo di A. [...]</li>
+                                </ul>
+                                <!-- ... (testo "Osservazione: L'Architettura dell'Algebra Lineare") -->
+                            </div>
+                        </details>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ======================================= -->
+    <!--            SCRIPT PRINCIPALE            -->
+    <!-- ======================================= -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Inizializzazione Icone Lucide ---
+            lucide.createIcons();
+
+            // --- Inizializzazione KaTeX ---
+            // Funzione per eseguire il rendering di KaTeX
+            const renderKaTeX = () => {
+                if (window.renderMathInElement) {
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false},
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true}
+                        ],
+                        throwOnError : false
+                    });
+                } else {
+                    console.warn("KaTeX auto-render non ancora caricato.");
+                }
+            };
+            
+            // Esegui il rendering iniziale
+            renderKaTeX();
+
+            // --- Gestione Dark Mode ---
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+                // Salva preferenza (opzionale)
+                if (document.documentElement.classList.contains('dark')) {
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+            // Applica tema salvato al caricamento
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            // --- Gestione Sistema a Schede (Tabs) ---
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const group = button.dataset.tabGroup;
+                    const targetId = button.dataset.tabTarget;
+
+                    // Gestisci bottoni
+                    document.querySelectorAll(`.tab-button[data-tab-group="${group}"]`).forEach(btn => {
+                        btn.setAttribute('aria-selected', 'false');
+                        btn.classList.remove('border-sky-500', 'text-sky-600', 'dark:text-sky-400', 'dark:border-sky-400');
+                        btn.classList.add('border-transparent', 'hover:text-slate-700', 'hover:border-slate-300', 'dark:hover:text-slate-300');
+                    });
+                    button.setAttribute('aria-selected', 'true');
+                    button.classList.add('border-sky-500', 'text-sky-600', 'dark:text-sky-400', 'dark:border-sky-400');
+                    button.classList.remove('border-transparent', 'hover:text-slate-700', 'hover:border-slate-300', 'dark:hover:text-slate-300');
+
+                    // Gestisci pannelli
+                    document.querySelectorAll(`.tab-pane[data-tab-group="${group}"]`).forEach(pane => {
+                        pane.classList.add('hidden');
+                    });
+                    document.getElementById(targetId).classList.remove('hidden');
+                });
+            });
+            // Inizializza i primi tab come attivi (stile)
+             document.querySelectorAll('.tab-button[aria-selected="true"]').forEach(button => {
+                button.classList.add('border-sky-500', 'text-sky-600', 'dark:text-sky-400', 'dark:border-sky-400');
+                button.classList.remove('border-transparent', 'hover:text-slate-700', 'hover:border-slate-300', 'dark:hover:text-slate-300');
+             });
+
+
+            // --- Gestione Navigazione Sidebar (Smooth Scroll & Active Link) ---
+            const navLinks = document.querySelectorAll('.sidebar-link');
+            const sections = document.querySelectorAll('section[id]');
+            
+            // Smooth scroll
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    document.querySelector(targetId).scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                });
+            });
+
+            // Active link highlighting con Intersection Observer
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active', 'font-semibold', 'text-sky-600', 'dark:text-sky-400');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active', 'font-semibold', 'text-sky-600', 'dark:text-sky-400');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-20% 0px -75% 0px' }); // Attiva quando la sezione è nella parte alta dello schermo
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // --- Gestione Ricerca (Filtro Semplice) ---
+            const searchInput = document.getElementById('search-input');
+            const allContent = document.querySelector('.main-content');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                sections.forEach(section => {
+                    const text = section.textContent.toLowerCase();
+                    if (query === '') {
+                        section.style.display = 'block';
+                    } else if (text.includes(query)) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
+
+
+            // ===========================================
+            //       FUNZIONI DI PLOTTING E CALCOLO
+            // ===========================================
+
+            // --- Helper: Disegno Canvas 2D ---
+            const drawVector2D = (ctx, origin, vec, scale, color, label) => {
+                const [x, y] = [origin[0] + vec[0] * scale, origin[1] - vec[1] * scale];
+                ctx.beginPath();
+                ctx.moveTo(origin[0], origin[1]);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Arrowhead
+                const headlen = 10;
+                const angle = Math.atan2(y - origin[1], x - origin[0]);
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x - headlen * Math.cos(angle - Math.PI / 6), y - headlen * Math.sin(angle - Math.PI / 6));
+                ctx.lineTo(x - headlen * Math.cos(angle + Math.PI / 6), y - headlen * Math.sin(angle + Math.PI / 6));
+                ctx.lineTo(x, y);
+                ctx.lineTo(x - headlen * Math.cos(angle - Math.PI / 6), y - headlen * Math.sin(angle - Math.PI / 6));
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = color;
+                ctx.fill();
+                
+                // Label
+                ctx.fillStyle = color;
+                ctx.font = '14px Inter';
+                ctx.fillText(label, x + 5, y - 5);
+            };
+            
+            const drawGrid = (ctx, w, h, origin, scale) => {
+                ctx.beginPath();
+                ctx.strokeStyle = '#e2e8f0'; // slate-200
+                ctx.lineWidth = 0.5;
+                // Vertical lines
+                for (let x = origin[0] + scale; x < w; x += scale) { ctx.moveTo(x, 0); ctx.lineTo(x, h); }
+                for (let x = origin[0] - scale; x > 0; x -= scale) { ctx.moveTo(x, 0); ctx.lineTo(x, h); }
+                // Horizontal lines
+                for (let y = origin[1] + scale; y < h; y += scale) { ctx.moveTo(0, y); ctx.lineTo(w, y); }
+                for (let y = origin[1] - scale; y > 0; y -= scale) { ctx.moveTo(0, y); ctx.lineTo(w, y); }
+                ctx.stroke();
+                
+                // Axes
+                ctx.beginPath();
+                ctx.strokeStyle = '#475569'; // slate-600
+                ctx.lineWidth = 1;
+                ctx.moveTo(origin[0], 0); ctx.lineTo(origin[0], h); // Y-axis
+                ctx.moveTo(0, origin[1]); ctx.lineTo(w, origin[1]); // X-axis
+                ctx.stroke();
+            };
+            
+            const setupCanvas = (canvasId) => {
+                const canvas = document.getElementById(canvasId);
+                const ctx = canvas.getContext('2d');
+                const [w, h] = [canvas.width, canvas.height];
+                const origin = [w / 2, h / 2];
+                const scale = 25; // 25px per unità
+                ctx.clearRect(0, 0, w, h);
+                drawGrid(ctx, w, h, origin, scale);
+                return { ctx, origin, scale, w, h };
+            };
+
+            // --- Plotter 1.2: Vettore Geometrico ---
+            document.getElementById('btn-draw-1-2').addEventListener('click', () => {
+                const { ctx, origin, scale } = setupCanvas('canvas-1-2');
+                const x = parseFloat(document.getElementById('vec-x-1-2').value) || 0;
+                const y = parseFloat(document.getElementById('vec-y-1-2').value) || 0;
+                drawVector2D(ctx, origin, [x, y], scale, '#0284c7', `(${x}, ${y})`); // sky-600
+            });
+            document.getElementById('btn-draw-1-2').click(); // Disegna al caricamento
+
+            // --- Plotter 1.3: Somma Vettori ---
+            document.getElementById('btn-draw-1-3').addEventListener('click', () => {
+                const { ctx, origin, scale } = setupCanvas('canvas-1-3');
+                const vx = parseFloat(document.getElementById('vec-v-x-1-3').value) || 0;
+                const vy = parseFloat(document.getElementById('vec-v-y-1-3').value) || 0;
+                const wx = parseFloat(document.getElementById('vec-w-x-1-3').value) || 0;
+                const wy = parseFloat(document.getElementById('vec-w-y-1-3').value) || 0;
+                
+                const v = [vx, vy];
+                const w = [wx, wy];
+                const u = [vx + wx, vy + wy]; // Somma
+                
+                // v dall'origine
+                drawVector2D(ctx, origin, v, scale, '#dc2626', 'v'); // red-600
+                
+                // w (regola testa-coda)
+                const v_end = [origin[0] + v[0] * scale, origin[1] - v[1] * scale];
+                drawVector2D(ctx, v_end, w, scale, '#16a34a', 'w'); // green-600
+                
+                // u = v+w (risultante)
+                drawVector2D(ctx, origin, u, scale, '#0284c7', 'u = v+w'); // sky-600
+            });
+            document.getElementById('btn-draw-1-3').click();
+
+            // --- Plotter 1.4: Retta Parametrica ---
+            document.getElementById('btn-draw-1-4').addEventListener('click', () => {
+                const { ctx, origin, scale, w, h } = setupCanvas('canvas-1-4');
+                const p1x = parseFloat(document.getElementById('vec-p1-x-1-4').value) || 0;
+                const p1y = parseFloat(document.getElementById('vec-p1-y-1-4').value) || 0;
+                const vx = parseFloat(document.getElementById('vec-v-x-1-4').value) || 0;
+                const vy = parseFloat(document.getElementById('vec-v-y-1-4').value) || 0;
+                
+                const p1_canvas = [origin[0] + p1x * scale, origin[1] - p1y * scale];
+                
+                // Disegna punto P1
+                ctx.beginPath();
+                ctx.arc(p1_canvas[0], p1_canvas[1], 5, 0, 2 * Math.PI);
+                ctx.fillStyle = '#dc2626'; // red-600
+                ctx.fill();
+                ctx.font = '14px Inter';
+                ctx.fillText(`P1(${p1x}, ${p1y})`, p1_canvas[0] + 5, p1_canvas[1] - 5);
+                
+                // Disegna vettore direzione v da P1
+                drawVector2D(ctx, p1_canvas, [vx, vy], scale, '#16a34a', 'v');
+                
+                // Disegna retta (estesa)
+                const t_min = -100;
+                const t_max = 100;
+                const start = [p1_canvas[0] + vx * scale * t_min, p1_canvas[1] - vy * scale * t_min];
+                const end = [p1_canvas[0] + vx * scale * t_max, p1_canvas[1] - vy * scale * t_max];
+                
+                ctx.beginPath();
+                ctx.moveTo(start[0], start[1]);
+                ctx.lineTo(end[0], end[1]);
+                ctx.strokeStyle = '#0284c7'; // sky-600
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            });
+            document.getElementById('btn-draw-1-4').click();
+
+            // --- Calcolatore 2.1: Norma ---
+            document.getElementById('btn-calc-2-1').addEventListener('click', () => {
+                const x = parseFloat(document.getElementById('vec-x-2-1').value) || 0;
+                const y = parseFloat(document.getElementById('vec-y-2-1').value) || 0;
+                const z = parseFloat(document.getElementById('vec-z-2-1').value) || 0;
+                const norma = Math.sqrt(x*x + y*y + z*z);
+                const resultEl = document.getElementById('result-2-1');
+                resultEl.innerHTML = `Norma: $ ||\\vec{v}|| = \\sqrt{${x}^2 + ${y}^2 + ${z}^2} = ${norma.toFixed(3)} $`;
+                renderMathInElement(resultEl, { delimiters: [{left: '$', right: '$', display: false}] });
+            });
+            document.getElementById('btn-calc-2-1').click();
+            
+            // --- Calcolatore 2.2: Angolo ---
+            document.getElementById('btn-calc-2-2').addEventListener('click', () => {
+                const { ctx, origin, scale } = setupCanvas('canvas-2-2');
+                const vx = parseFloat(document.getElementById('vec-v-x-2-2').value) || 0;
+                const vy = parseFloat(document.getElementById('vec-v-y-2-2').value) || 0;
+                const wx = parseFloat(document.getElementById('vec-w-x-2-2').value) || 0;
+                const wy = parseFloat(document.getElementById('vec-w-y-2-2').value) || 0;
+                
+                const v = [vx, vy];
+                const w = [wx, wy];
+                
+                drawVector2D(ctx, origin, v, scale, '#dc2626', 'v'); // red-600
+                drawVector2D(ctx, origin, w, scale, '#16a34a', 'w'); // green-600
+                
+                const dotProduct = vx * wx + vy * wy;
+                const normaV = Math.sqrt(vx*vx + vy*vy);
+                const normaW = Math.sqrt(wx*wx + wy*wy);
+                const cosTheta = (normaV * normaW === 0) ? 0 : dotProduct / (normaV * normaW);
+                const thetaRad = Math.acos(Math.max(-1, Math.min(1, cosTheta))); // Clamp per precisione
+                const thetaDeg = thetaRad * (180 / Math.PI);
+                
+                // Disegna arco angolo
+                const angleV = Math.atan2(-vy, vx);
+                const angleW = Math.atan2(-wy, wx);
+                ctx.beginPath();
+                ctx.arc(origin[0], origin[1], 30, Math.min(angleV, angleW), Math.max(angleV, angleW));
+                ctx.strokeStyle = '#0284c7';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                const resultEl = document.getElementById('result-2-2');
+                resultEl.innerHTML = `Prodotto Scalare: ${dotProduct.toFixed(2)} | $\\cos(\\theta) = ${cosTheta.toFixed(3)}$ | $\\theta = ${thetaDeg.toFixed(2)}^\\circ$`;
+                renderMathInElement(resultEl, { delimiters: [{left: '$', right: '$', display: false}] });
+            });
+            document.getElementById('btn-calc-2-2').click();
+
+            // --- Plotter 3.1: Prodotto Vettoriale 3D ---
+            let scene3_1, camera3_1, renderer3_1, controls3_1;
+            let arrows3_1 = [];
+
+            const init3DPlotter = (containerId, resultId) => {
+                const container = document.getElementById(containerId);
+                // Pulisci container se esiste già un renderer
+                while (container.firstChild) {
+                    container.removeChild(container.firstChild);
+                }
+                
+                const w = container.clientWidth || 400;
+                const h = container.clientHeight || 384;
+
+                // Scena
+                const scene = new THREE.Scene();
+                scene.background = new THREE.Color(document.documentElement.classList.contains('dark') ? 0x000000 : 0xffffff);
+                
+                // Camera
+                const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
+                camera.position.set(5, 5, 5);
+                camera.lookAt(0, 0, 0);
+
+                // Renderer
+                const renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(w, h);
+                container.appendChild(renderer.domElement);
+
+                // Controlli
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.1;
+                
+                // Luci
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+                scene.add(ambientLight);
+                const pointLight = new THREE.PointLight(0xffffff, 0.5);
+                pointLight.position.set(10, 10, 10);
+                scene.add(pointLight);
+
+                // Assi e Griglia
+                const axesHelper = new THREE.AxesHelper(5);
+                scene.add(axesHelper);
+                const gridHelper = new THREE.GridHelper(10, 10);
+                scene.add(gridHelper);
+
+                // Loop di animazione
+                function animate() {
+                    requestAnimationFrame(animate);
+                    controls.update();
+                    renderer.render(scene, camera);
+                }
+                animate();
+                
+                // Gestione resize
+                const resizeObserver = new ResizeObserver(() => {
+                    const w = container.clientWidth;
+                    const h = container.clientHeight;
+                    renderer.setSize(w, h);
+                    camera.aspect = w / h;
+                    camera.updateProjectionMatrix();
+                });
+                resizeObserver.observe(container);
+
+                return { scene, camera, renderer, controls, resultContainer: document.getElementById(resultId) };
+            };
+            
+            const drawVector3D = (scene, vec, origin, color) => {
+                const dir = vec.clone().normalize();
+                const length = vec.length();
+                if (length < 0.001) return null; // Non disegnare vettori nulli
+                const arrow = new THREE.ArrowHelper(dir, origin, length, color, 0.5, 0.3);
+                scene.add(arrow);
+                return arrow;
+            };
+
+            document.getElementById('btn-draw-3-1').addEventListener('click', () => {
+                // Inizializza o ottieni la scena
+                if (!scene3_1) {
+                    const plot = init3DPlotter('canvas-container-3-1', 'result-3-1');
+                    scene3_1 = plot.scene;
+                    camera3_1 = plot.camera;
+                    renderer3_1 = plot.renderer;
+                    controls3_1 = plot.controls;
+                }
+                
+                // Pulisci vettori precedenti
+                arrows3_1.forEach(arrow => { if (arrow) scene3_1.remove(arrow); });
+                arrows3_1 = [];
+
+                // Leggi input
+                const vx = parseFloat(document.getElementById('vec-v-x-3-1').value) || 0;
+                const vy = parseFloat(document.getElementById('vec-v-y-3-1').value) || 0;
+                const vz = parseFloat(document.getElementById('vec-v-z-3-1').value) || 0;
+                const wx = parseFloat(document.getElementById('vec-w-x-3-1').value) || 0;
+                const wy = parseFloat(document.getElementById('vec-w-y-3-1').value) || 0;
+                const wz = parseFloat(document.getElementById('vec-w-z-3-1').value) || 0;
+
+                const v = new THREE.Vector3(vx, vy, vz);
+                const w = new THREE.Vector3(wx, wy, wz);
+                const u = new THREE.Vector3().crossVectors(v, w);
+                const origin = new THREE.Vector3(0, 0, 0);
+
+                // Disegna vettori
+                arrows3_1.push(drawVector3D(scene3_1, v, origin, 0xdc2626)); // red
+                arrows3_1.push(drawVector3D(scene3_1, w, origin, 0x16a34a)); // green
+                arrows3_1.push(drawVector3D(scene3_1, u, origin, 0x0284c7)); // blue
+                
+                // Mostra risultato
+                const resultEl = document.getElementById('result-3-1');
+                resultEl.innerHTML = `
+                    <span style="color: #dc2626;">$\vec{v} = (${vx}, ${vy}, ${vz})$</span><br>
+                    <span style="color: #16a34a;">$\vec{w} = (${wx}, ${wy}, ${wz})$</span><br>
+                    <span style="color: #0284c7;">$\vec{u} = \vec{v} \\times \vec{w} = (${u.x.toFixed(2)}, ${u.y.toFixed(2)}, ${u.z.toFixed(2)})$</span>
+                `;
+                renderMathInElement(resultEl, { delimiters: [{left: '$', right: '$', display: false}] });
+            });
+            document.getElementById('btn-draw-3-1').click();
+
+            // --- Calcolatore 3.2: Prodotto Misto (Volume) ---
+            document.getElementById('btn-calc-3-2').addEventListener('click', () => {
+                const ux = parseFloat(document.getElementById('vec-u-x-3-2').value) || 0;
+                const uy = parseFloat(document.getElementById('vec-u-y-3-2').value) || 0;
+                const uz = parseFloat(document.getElementById('vec-u-z-3-2').value) || 0;
+                const vx = parseFloat(document.getElementById('vec-v-x-3-2').value) || 0;
+                const vy = parseFloat(document.getElementById('vec-v-y-3-2').value) || 0;
+                const vz = parseFloat(document.getElementById('vec-v-z-3-2').value) || 0;
+                const wx = parseFloat(document.getElementById('vec-w-x-3-2').value) || 0;
+                const wy = parseFloat(document.getElementById('vec-w-y-3-2').value) || 0;
+                const wz = parseFloat(document.getElementById('vec-w-z-3-2').value) || 0;
+
+                const u = new THREE.Vector3(ux, uy, uz);
+                const v = new THREE.Vector3(vx, vy, vz);
+                const w = new THREE.Vector3(wx, wy, wz);
+                
+                // Calcola v x w
+                const crossProduct = new THREE.Vector3().crossVectors(v, w);
+                
+                // Calcola u . (v x w)
+                const mixedProduct = u.dot(crossProduct);
+                const volume = Math.abs(mixedProduct);
+
+                const resultEl = document.getElementById('result-3-2');
+                resultEl.innerHTML = `Prodotto Misto: ${mixedProduct.toFixed(3)} | Volume: ${volume.toFixed(3)}`;
+                
+                if (volume < 0.001) {
+                    resultEl.innerHTML += " (Vettori complanari!)";
+                }
+            });
+            document.getElementById('btn-calc-3-2').click();
+
+            // ===========================================
+            //       NUOVE FUNZIONI (CAP 4, 5, 6)
+            // ===========================================
+
+            // --- Calcolatore 4.1: Prodotto Scalare Rⁿ ---
+            document.getElementById('btn-calc-4-1').addEventListener('click', () => {
+                const vecAStr = document.getElementById('vec-a-4-1').value.split(',');
+                const vecBStr = document.getElementById('vec-b-4-1').value.split(',');
+                const resultEl = document.getElementById('result-4-1');
+
+                if (vecAStr.length !== vecBStr.length) {
+                    resultEl.textContent = "Errore: I vettori devono avere la stessa dimensione.";
+                    return;
+                }
+
+                const vecA = vecAStr.map(Number);
+                const vecB = vecBStr.map(Number);
+                
+                let dotProduct = 0;
+                let calcString = [];
+                for (let i = 0; i < vecA.length; i++) {
+                    const a = vecA[i] || 0;
+                    const b = vecB[i] || 0;
+                    dotProduct += a * b;
+                    calcString.push(`(${a})(${b})`);
+                }
+
+                resultEl.innerHTML = `$\vec{a} \cdot \vec{b} = ${calcString.join(' + ')} = ${dotProduct}$`;
+                renderKaTeX();
+            });
+            document.getElementById('btn-calc-4-1').click();
+
+            // --- Calcolatore 4.3: Somma Matrici 2x2 ---
+            document.getElementById('btn-calc-4-3').addEventListener('click', () => {
+                const a11 = parseFloat(document.getElementById('a11-4-3').value) || 0;
+                const a12 = parseFloat(document.getElementById('a12-4-3').value) || 0;
+                const a21 = parseFloat(document.getElementById('a21-4-3').value) || 0;
+                const a22 = parseFloat(document.getElementById('a22-4-3').value) || 0;
+                const b11 = parseFloat(document.getElementById('b11-4-3').value) || 0;
+                const b12 = parseFloat(document.getElementById('b12-4-3').value) || 0;
+                const b21 = parseFloat(document.getElementById('b21-4-3').value) || 0;
+                const b22 = parseFloat(document.getElementById('b22-4-3').value) || 0;
+
+                const c11 = a11 + b11;
+                const c12 = a12 + b12;
+                const c21 = a21 + b21;
+                const c22 = a22 + b22;
+
+                const resultEl = document.getElementById('result-4-3');
+                resultEl.innerHTML = `Risultato: $
+                \\begin{pmatrix} 
+                    ${c11} & ${c12} \\\\ 
+                    ${c21} & ${c22} 
+                \\end{pmatrix}
+                $`;
+                renderKaTeX();
+            });
+            document.getElementById('btn-calc-4-3').click();
+            
+            // --- Calcolatore 4.4: Prodotto Matrici 2x2 ---
+            document.getElementById('btn-calc-4-4').addEventListener('click', () => {
+                const a11 = parseFloat(document.getElementById('a11-4-4').value) || 0;
+                const a12 = parseFloat(document.getElementById('a12-4-4').value) || 0;
+                const a21 = parseFloat(document.getElementById('a21-4-4').value) || 0;
+                const a22 = parseFloat(document.getElementById('a22-4-4').value) || 0;
+                const b11 = parseFloat(document.getElementById('b11-4-4').value) || 0;
+                const b12 = parseFloat(document.getElementById('b12-4-4').value) || 0;
+                const b21 = parseFloat(document.getElementById('b21-4-4').value) || 0;
+                const b22 = parseFloat(document.getElementById('b22-4-4').value) || 0;
+
+                const c11 = a11*b11 + a12*b21;
+                const c12 = a11*b12 + a12*b22;
+                const c21 = a21*b11 + a22*b21;
+                const c22 = a21*b12 + a22*b22;
+
+                const resultEl = document.getElementById('result-4-4');
+                resultEl.innerHTML = `
+                $c_{11} = (${a11})(${b11}) + (${a12})(${b21}) = ${c11}$ <br>
+                $c_{12} = (${a11})(${b12}) + (${a12})(${b22}) = ${c12}$ <br>
+                $c_{21} = (${a21})(${b11}) + (${a22})(${b21}) = ${c21}$ <br>
+                $c_{22} = (${a21})(${b12}) + (${a22})(${b22}) = ${c22}$
+                `;
+                renderKaTeX();
+            });
+            document.getElementById('btn-calc-4-4').click();
+            
+            // --- Calcolatore 5.3: Rouché-Capelli ---
+            document.getElementById('btn-calc-5-3').addEventListener('click', () => {
+                const rA = parseInt(document.getElementById('rank-a-5-3').value);
+                const rAb = parseInt(document.getElementById('rank-ab-5-3').value);
+                const n = parseInt(document.getElementById('num-n-5-3').value);
+                const resultEl = document.getElementById('result-5-3');
+
+                if (rA < rAb) {
+                    resultEl.textContent = "INCOMPATIBILE (0 Soluzioni)";
+                    resultEl.className = "text-lg font-semibold h-8 text-red-600";
+                } else {
+                    // rA == rAb
+                    if (rA === n) {
+                        resultEl.textContent = "COMPATIBILE (1 Soluzione Unica)";
+                        resultEl.className = "text-lg font-semibold h-8 text-green-600";
+                    } else if (rA < n) {
+                        const freeVars = n - rA;
+                        resultEl.textContent = `COMPATIBILE (∞ Soluzioni, ${freeVars} var. libere)`;
+                        resultEl.className = "text-lg font-semibold h-8 text-yellow-500";
+                    } else {
+                        // rA > n non è possibile
+                        resultEl.textContent = "Errore: rg(A) non può essere > n";
+                        resultEl.className = "text-lg font-semibold h-8 text-red-600";
+                    }
+                }
+            });
+            document.getElementById('btn-calc-5-3').click();
+            
+            // --- Calcolatore 6.4: Indipendenza Lineare 2D ---
+            document.getElementById('btn-calc-6-4').addEventListener('click', () => {
+                const vx = parseFloat(document.getElementById('vec-v-x-6-4').value) || 0;
+                const vy = parseFloat(document.getElementById('vec-v-y-6-4').value) || 0;
+                const wx = parseFloat(document.getElementById('vec-w-x-6-4').value) || 0;
+                const wy = parseFloat(document.getElementById('vec-w-y-6-4').value) || 0;
+                const resultEl = document.getElementById('result-6-4');
+
+                // Test del determinante
+                const det = vx * wy - vy * wx;
+                
+                resultEl.innerHTML = `det([v, w]) = $${det.toFixed(2)}$`;
+
+                if (Math.abs(det) < 0.001) {
+                    resultEl.innerHTML += " $\\to$ Linearmente DIPENDENTI";
+                    resultEl.className = "text-lg font-semibold h-8 text-red-600";
+                } else {
+                    resultEl.innerHTML += " $\\neq 0 \\to$ Linearmente INDIPENDENTI";
+                    resultEl.className = "text-lg font-semibold h-8 text-green-600";
+                }
+                renderKaTeX();
+            });
+            document.getElementById('btn-calc-6-4').click();
+
+            // --- Plotter 6.3: Span 2D ---
+            const drawSpan = (ctx, origin, scale, v, w, canvasW, canvasH) => {
+                const det = v[0] * w[1] - v[1] * w[0];
+                const resultEl = document.getElementById('result-6-3');
+                
+                if (Math.abs(det) < 0.001) {
+                    // Collineari: disegna una linea
+                    resultEl.textContent = "Span: Una retta (vettori dipendenti)";
+                    
+                    const [nonZeroVec, t_min, t_max] = [v[0] !== 0 || v[1] !== 0 ? v : w, -100, 100];
+                    if (nonZeroVec[0] === 0 && nonZeroVec[1] === 0) {
+                         resultEl.textContent = "Span: L'origine (vettori nulli)";
+                         ctx.beginPath();
+                         ctx.arc(origin[0], origin[1], 5, 0, 2*Math.PI);
+                         ctx.fillStyle = '#0284c7';
+                         ctx.fill();
+                         return; // Vettori nulli
+                    }
+                    
+                    const start = [origin[0] + nonZeroVec[0] * scale * t_min, origin[1] - nonZeroVec[1] * scale * t_min];
+                    const end = [origin[0] + nonZeroVec[0] * scale * t_max, origin[1] - nonZeroVec[1] * scale * t_max];
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(start[0], start[1]);
+                    ctx.lineTo(end[0], end[1]);
+                    ctx.strokeStyle = 'rgba(2, 132, 199, 0.5)'; // sky-600 50%
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                } else {
+                    // Non collineari: disegna il piano
+                    resultEl.textContent = "Span: L'intero piano R² (vettori indipendenti)";
+                    ctx.fillStyle = 'rgba(2, 132, 199, 0.1)'; // sky-600 10%
+                    ctx.fillRect(0, 0, canvasW, canvasH);
+                }
+            };
+            
+            document.getElementById('btn-draw-6-3').addEventListener('click', () => {
+                const { ctx, origin, scale, w: canvasWidth, h } = setupCanvas('canvas-6-3');
+                const vx = parseFloat(document.getElementById('vec-v-x-6-3').value) || 0;
+                const vy = parseFloat(document.getElementById('vec-v-y-6-3').value) || 0;
+                const wx = parseFloat(document.getElementById('vec-w-x-6-3').value) || 0;
+                const wy = parseFloat(document.getElementById('vec-w-y-6-3').value) || 0;
+                
+                const v = [vx, vy];
+                const w = [wx, wy];
+                
+                // Disegna lo span (sfondo)
+                drawSpan(ctx, origin, scale, v, w, canvasWidth, h);
+                
+                // Disegna i vettori (in primo piano)
+                drawVector2D(ctx, origin, v, scale, '#dc2626', 'v'); // red-600
+                drawVector2D(ctx, origin, w, scale, '#16a34a', 'w'); // green-600
+            });
+            document.getElementById('btn-draw-6-3').click();
+
+        });
+    </script>
+
+</body>
+</html>
+

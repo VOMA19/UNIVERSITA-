@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guida Interattiva ai Vettori</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e293b; /* slate-800 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .nav-link {
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: #0ea5e9; /* sky-500 */
+        }
+        .active-link {
+             color: #0ea5e9; /* sky-500 */
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <h1 class="text-xl font-bold text-slate-900">Algebra Lineare: Vettori</h1>
+                <div class="hidden sm:flex sm:space-x-8">
+                    <a href="#intro" class="nav-link text-slate-600">Introduzione</a>
+                    <a href="#operations" class="nav-link text-slate-600">Operazioni</a>
+                    <a href="#products" class="nav-link text-slate-600">Prodotti</a>
+                    <a href="#lab" class="nav-link text-slate-600">Laboratorio</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <section id="intro" class="mb-20 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-900 mb-4">Cos'è un Vettore?</h2>
+            <p class="text-lg text-slate-600 mb-8 max-w-3xl">In algebra lineare, un vettore è un oggetto matematico che possiede due proprietà fondamentali: <strong>modulo</strong> (o magnitudine, cioè la sua lunghezza) e <strong>direzione</strong>. A differenza di uno scalare (un semplice numero come 7 o -12), un vettore ci dice "quanto" e "verso dove". Possiamo immaginarlo come una freccia che parte da un punto di origine e arriva a un punto di destinazione. Questa sezione ti permette di esplorare visivamente un vettore in uno spazio a 2 dimensioni.</p>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4">Vettore Interattivo</h3>
+                    <p class="text-slate-600 mb-4">Trascina il punto blu sul grafico per modificare il vettore. Osserva come cambiano le sue componenti (coordinate x e y), il suo modulo e il suo angolo rispetto all'asse x.</p>
+                    <div class="space-y-3 text-sm font-mono p-4 bg-slate-100 rounded-lg">
+                        <p>Componenti: <strong id="intro-vector-coords" class="text-sky-600">[2, 3]</strong></p>
+                        <p>Modulo: <strong id="intro-vector-magnitude" class="text-sky-600">3.61</strong></p>
+                        <p>Angolo: <strong id="intro-vector-angle" class="text-sky-600">56.3°</strong></p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-lg">
+                    <div class="chart-container">
+                        <canvas id="intro-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="operations" class="mb-20 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-900 mb-4">Operazioni di Base sui Vettori</h2>
+            <p class="text-lg text-slate-600 mb-8 max-w-3xl">I vettori possono essere manipolati attraverso operazioni algebriche che hanno un'interpretazione geometrica molto intuitiva. Le operazioni fondamentali sono la somma, la sottrazione e la moltiplicazione per uno scalare. Esplora queste operazioni per capire come combinare e trasformare i vettori.</p>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4">Somma e Sottrazione</h3>
+                     <p class="text-slate-600 mb-4">Trascina i vettori <span class="font-bold text-blue-600">u</span> (blu) e <span class="font-bold text-green-600">v</span> (verde). Il vettore risultante <span class="font-bold text-red-600">u + v</span> (rosso) viene calcolato e visualizzato. La somma segue la "regola del parallelogramma": il vettore somma è la diagonale del parallelogramma formato da u e v. La sottrazione <span class="font-bold text-orange-500">u - v</span> è come sommare il vettore opposto: u + (-v).</p>
+                    <div class="space-y-3 text-sm font-mono p-4 bg-slate-100 rounded-lg">
+                        <p>u = <strong id="add-u-coords" class="text-blue-600">[2, 3]</strong></p>
+                        <p>v = <strong id="add-v-coords" class="text-green-600">[-3, 1]</strong></p>
+                        <hr class="my-2 border-slate-300">
+                        <p>u + v = <strong id="add-sum-coords" class="text-red-600">[-1, 4]</strong></p>
+                        <p>u - v = <strong id="add-sub-coords" class="text-orange-500">[5, 2]</strong></p>
+                    </div>
+                </div>
+
+                 <div class="bg-white p-4 rounded-xl shadow-lg">
+                    <div class="chart-container">
+                        <canvas id="add-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4">Moltiplicazione per uno Scalare</h3>
+                    <p class="text-slate-600 mb-4">Moltiplicare un vettore per uno scalare (un numero) ne cambia il modulo. Se lo scalare è positivo, la direzione non cambia. Se è negativo, la direzione si inverte. Usa lo slider per cambiare il valore dello scalare `c` e osserva come il vettore <span class="font-bold text-purple-600">c * v</span> si trasforma.</p>
+                     <div class="space-y-4">
+                        <div class="flex items-center space-x-4">
+                             <label for="scalar" class="font-medium text-slate-700">Scalare c:</label>
+                             <input type="range" id="scalar" min="-2" max="2" step="0.1" value="1.5" class="w-full">
+                             <span id="scalar-value" class="font-mono text-purple-600 font-bold w-12 text-center">1.5</span>
+                        </div>
+                        <div class="text-sm font-mono p-4 bg-slate-100 rounded-lg">
+                            <p>v = <strong id="scalar-v-coords" class="text-green-600">[2, 2]</strong></p>
+                            <hr class="my-2 border-slate-300">
+                            <p>c * v = <strong id="scalar-result-coords" class="text-purple-600">[3.0, 3.0]</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="bg-white p-4 rounded-xl shadow-lg">
+                    <div class="chart-container">
+                        <canvas id="scalar-chart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="products" class="mb-20 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-slate-900 mb-4">Prodotti tra Vettori</h2>
+            <p class="text-lg text-slate-600 mb-8 max-w-3xl">Oltre alle operazioni di base, esistono due tipi di "prodotto" tra vettori con significati e risultati molto diversi. Il prodotto scalare restituisce un numero (uno scalare), mentre il prodotto vettoriale (o prodotto esterno) restituisce un nuovo vettore.</p>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-semibold mb-4">Prodotto Scalare (Dot Product)</h3>
+                    <p class="text-slate-600 mb-4">Il prodotto scalare tra due vettori <span class="font-bold text-blue-600">u</span> e <span class="font-bold text-green-600">v</span> è uno scalare che misura quanto i due vettori "puntano nella stessa direzione". È massimo quando sono paralleli, zero quando sono perpendicolari (ortogonali), e negativo quando puntano in direzioni opposte. Algebricamente, `u · v = ux*vx + uy*vy`.</p>
+                    <div class="text-sm font-mono p-4 bg-slate-100 rounded-lg">
+                        <p>u = <strong id="dot-u-coords" class="text-blue-600">[2, 3]</strong></p>
+                        <p>v = <strong id="dot-v-coords" class="text-green-600">[-3, 1]</strong></p>
+                        <hr class="my-2 border-slate-300">
+                        <p>Prodotto Scalare (u · v) = <strong id="dot-product-value" class="text-teal-600">-3.00</strong></p>
+                        <p>Angolo tra u e v = <strong id="dot-angle-value" class="text-teal-600">109.7°</strong></p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-lg">
+                    <div class="chart-container">
+                        <canvas id="dot-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg col-span-full">
+                    <h3 class="text-xl font-semibold mb-4">Prodotto Vettoriale (Cross Product)</h3>
+                    <p class="text-slate-600 mb-4">Il prodotto vettoriale, definito solo nello spazio 3D, prende due vettori `u` e `v` e produce un nuovo vettore `w` che è <strong>perpendicolare</strong> al piano formato da `u` e `v`. La sua direzione è data dalla "regola della mano destra": se le dita si chiudono da `u` a `v`, il pollice indica la direzione di `w`. Il modulo di `w` è uguale all'area del parallelogramma formato da `u` e `v`.</p>
+                    <div class="flex flex-col md:flex-row gap-8 items-center bg-slate-50 p-6 rounded-lg">
+                        <div class="text-center">
+                            <div class="font-mono text-lg text-slate-700 relative inline-block">
+                                <span class="text-blue-600">w</span> = <span class="text-green-600">u</span> × <span class="text-red-600">v</span> = 
+                                <div class="inline-block align-middle text-2xl px-1">|</div>
+                                <div class="inline-block text-center align-middle">
+                                    <div class="flex justify-around"><span>i</span><span>j</span><span>k</span></div>
+                                    <div class="flex justify-around text-green-600"><span>uₓ</span><span>uᵧ</span><span>u₂</span></div>
+                                    <div class="flex justify-around text-red-600"><span>vₓ</span><span>vᵧ</span><span>v₂</span></div>
+                                </div>
+                                <div class="inline-block align-middle text-2xl px-1">|</div>
+                            </div>
+                             <p class="text-sm text-slate-500 mt-2">Formula del determinante per il calcolo.</p>
+                        </div>
+                        <div class="text-center flex-shrink-0">
+                            <div class="text-6xl">✋</div>
+                            <p class="font-semibold mt-2">Regola della Mano Destra</p>
+                            <p class="text-sm text-slate-500 max-w-xs">Indice su <strong>u</strong>, medio su <strong>v</strong>, il pollice indica <strong>u × v</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="lab" class="scroll-mt-20">
+             <h2 class="text-3xl font-bold text-slate-900 mb-4">Laboratorio Interattivo</h2>
+            <p class="text-lg text-slate-600 mb-8 max-w-3xl">Ora metti tutto insieme! In questo laboratorio puoi manipolare liberamente i vettori <span class="font-bold text-blue-600">u</span> e <span class="font-bold text-green-600">v</span>. Tutti i calcoli che abbiamo visto finora (modulo, somma, differenza, prodotto scalare e angolo) verranno aggiornati in tempo reale. Sperimenta e osserva le relazioni tra la geometria e l'algebra.</p>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-6 rounded-xl shadow-lg order-2 md:order-1">
+                    <h3 class="text-xl font-semibold mb-4">Dashboard dei Calcoli</h3>
+                    <div class="grid sm:grid-cols-2 gap-x-6 gap-y-4 text-sm font-mono p-4 bg-slate-100 rounded-lg">
+                        <div>
+                            <p>u = <strong id="lab-u-coords" class="text-blue-600">[2, 3]</strong></p>
+                            <p>|u| = <strong id="lab-u-mag" class="text-blue-600">3.61</strong></p>
+                        </div>
+                        <div>
+                            <p>v = <strong id="lab-v-coords" class="text-green-600">[-3, 1]</strong></p>
+                            <p>|v| = <strong id="lab-v-mag" class="text-green-600">3.16</strong></p>
+                        </div>
+                        <div class="col-span-full border-t border-slate-300 my-1"></div>
+                        <p>u + v = <strong id="lab-sum-coords" class="text-red-600">[-1, 4]</strong></p>
+                        <p>u - v = <strong id="lab-sub-coords" class="text-orange-500">[5, 2]</strong></p>
+                        <div class="col-span-full border-t border-slate-300 my-1"></div>
+                        <p>u · v = <strong id="lab-dot-val" class="text-teal-600">-3.00</strong></p>
+                        <p>Angolo = <strong id="lab-angle-val" class="text-teal-600">109.7°</strong></p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-lg order-1 md:order-2">
+                    <div class="chart-container">
+                        <canvas id="lab-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm">
+            <p>&copy; 2025 Guida Interattiva ai Vettori. Un esperimento di visualizzazione didattica.</p>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const calculateMagnitude = (x, y) => Math.sqrt(x * x + y * y);
+        const calculateAngle = (x, y) => (Math.atan2(y, x) * 180) / Math.PI;
+
+        const createVectorChart = (canvasId, initialVectors, options = {}) => {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const data = { datasets: [] };
+            const config = {
+                type: 'scatter',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            min: -5,
+                            max: 5,
+                            grid: { color: '#e2e8f0' },
+                            ticks: { color: '#64748b' }
+                        },
+                        y: {
+                            min: -5,
+                            max: 5,
+                            grid: { color: '#e2e8f0' },
+                            ticks: { color: '#64748b' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false },
+                        annotation: {
+                            annotations: {}
+                        }
+                    },
+                    ...options
+                }
+            };
+            const chart = new Chart(ctx, config);
+
+            let vectors = initialVectors.map(v => ({ ...v }));
+            let draggedVector = null;
+            let draggedPoint = null;
+
+            const drawVectors = () => {
+                const annotations = {};
+                vectors.forEach((vector, i) => {
+                    if (!vector.visible) return;
+                    
+                    const head = { x: vector.x, y: vector.y };
+                    const angle = Math.atan2(head.y, 0);
+
+                    annotations[`arrow${i}`] = {
+                        type: 'arrow',
+                        xMin: 0,
+                        yMin: 0,
+                        xMax: head.x,
+                        yMax: head.y,
+                        borderColor: vector.color,
+                        borderWidth: 3,
+                        headLength: 12,
+                        headWidth: 8
+                    };
+                    if(vector.dashed) {
+                        annotations[`arrow${i}`].borderDash = [6, 6];
+                    }
+                });
+                chart.options.plugins.annotation.annotations = annotations;
+                
+                chart.data.datasets = vectors.map((vector, i) => ({
+                    data: (vector.draggable) ? [{ x: vector.x, y: vector.y }] : [],
+                    pointBackgroundColor: vector.color,
+                    pointRadius: 8,
+                    pointHoverRadius: 10,
+                    label: vector.id
+                }));
+                chart.update('none');
+            };
+
+            const getMousePos = (e) => {
+                const rect = chart.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                return {
+                    x: chart.scales.x.getValueForPixel(x),
+                    y: chart.scales.y.getValueForPixel(y)
+                };
+            };
+
+            chart.canvas.addEventListener('mousedown', (e) => {
+                const pos = getMousePos(e);
+                for (let i = 0; i < vectors.length; i++) {
+                    const v = vectors[i];
+                    if (!v.draggable) continue;
+                    const dist = Math.sqrt(Math.pow(pos.x - v.x, 2) + Math.pow(pos.y - v.y, 2));
+                    if (dist < 0.5) { 
+                        draggedVector = v;
+                        chart.canvas.style.cursor = 'grabbing';
+                        return;
+                    }
+                }
+            });
+
+            chart.canvas.addEventListener('mousemove', (e) => {
+                const pos = getMousePos(e);
+                if (draggedVector) {
+                    draggedVector.x = pos.x;
+                    draggedVector.y = pos.y;
+                    drawVectors();
+                    if (typeof window[chart.canvas.id.replace(/-/g, '_') + '_onUpdate'] === 'function') {
+                        window[chart.canvas.id.replace(/-/g, '_') + '_onUpdate'](vectors);
+                    }
+                } else {
+                    let onPoint = false;
+                    for (let i = 0; i < vectors.length; i++) {
+                        const v = vectors[i];
+                        if (!v.draggable) continue;
+                        const dist = Math.sqrt(Math.pow(pos.x - v.x, 2) + Math.pow(pos.y - v.y, 2));
+                        if (dist < 0.5) {
+                            onPoint = true;
+                            break;
+                        }
+                    }
+                    chart.canvas.style.cursor = onPoint ? 'grab' : 'default';
+                }
+            });
+            
+            chart.canvas.addEventListener('mouseup', () => {
+                draggedVector = null;
+                chart.canvas.style.cursor = 'default';
+            });
+            chart.canvas.addEventListener('mouseleave', () => {
+                draggedVector = null;
+                chart.canvas.style.cursor = 'default';
+            });
+
+            drawVectors();
+            return { chart, vectors, update: drawVectors };
+        };
+
+        // Intro Chart
+        const introChart = createVectorChart('intro-chart', [
+            { id: 'v', x: 2, y: 3, color: '#0ea5e9', draggable: true, visible: true }
+        ]);
+        window.intro_chart_onUpdate = (vectors) => {
+            const v = vectors[0];
+            document.getElementById('intro-vector-coords').textContent = `[${v.x.toFixed(2)}, ${v.y.toFixed(2)}]`;
+            document.getElementById('intro-vector-magnitude').textContent = calculateMagnitude(v.x, v.y).toFixed(2);
+            document.getElementById('intro-vector-angle').textContent = `${calculateAngle(v.x, v.y).toFixed(1)}°`;
+        };
+        window.intro_chart_onUpdate(introChart.vectors);
+
+
+        // Add/Subtract Chart
+        const addChart = createVectorChart('add-chart', [
+            { id: 'u', x: 2, y: 3, color: '#2563eb', draggable: true, visible: true },
+            { id: 'v', x: -3, y: 1, color: '#16a34a', draggable: true, visible: true },
+            { id: 'sum', x: -1, y: 4, color: '#dc2626', draggable: false, visible: true },
+            { id: 'sub', x: 5, y: 2, color: '#f97316', draggable: false, visible: true, dashed: true }
+        ]);
+        window.add_chart_onUpdate = (vectors) => {
+            const u = vectors[0];
+            const v = vectors[1];
+            const sum = vectors[2];
+            const sub = vectors[3];
+            sum.x = u.x + v.x;
+            sum.y = u.y + v.y;
+            sub.x = u.x - v.x;
+            sub.y = u.y - v.y;
+            
+            document.getElementById('add-u-coords').textContent = `[${u.x.toFixed(2)}, ${u.y.toFixed(2)}]`;
+            document.getElementById('add-v-coords').textContent = `[${v.x.toFixed(2)}, ${v.y.toFixed(2)}]`;
+            document.getElementById('add-sum-coords').textContent = `[${sum.x.toFixed(2)}, ${sum.y.toFixed(2)}]`;
+            document.getElementById('add-sub-coords').textContent = `[${sub.x.toFixed(2)}, ${sub.y.toFixed(2)}]`;
+        };
+        window.add_chart_onUpdate(addChart.vectors);
+
+        // Scalar Chart
+        const scalarChart = createVectorChart('scalar-chart', [
+            { id: 'v', x: 2, y: 2, color: '#16a34a', draggable: true, visible: true },
+            { id: 'result', x: 3, y: 3, color: '#9333ea', draggable: false, visible: true },
+        ]);
+        const scalarInput = document.getElementById('scalar');
+        window.scalar_chart_onUpdate = () => {
+            const v = scalarChart.vectors[0];
+            const result = scalarChart.vectors[1];
+            const c = parseFloat(scalarInput.value);
+
+            result.x = v.x * c;
+            result.y = v.y * c;
+
+            document.getElementById('scalar-v-coords').textContent = `[${v.x.toFixed(2)}, ${v.y.toFixed(2)}]`;
+            document.getElementById('scalar-result-coords').textContent = `[${result.x.toFixed(2)}, ${result.y.toFixed(2)}]`;
+            document.getElementById('scalar-value').textContent = c.toFixed(1);
+            scalarChart.update();
+        };
+        scalarInput.addEventListener('input', window.scalar_chart_onUpdate);
+        window.scalar_chart_onUpdate(scalarChart.vectors);
+        
+        // Dot Product Chart
+        const dotChart = createVectorChart('dot-chart', [
+            { id: 'u', x: 2, y: 3, color: '#2563eb', draggable: true, visible: true },
+            { id: 'v', x: -3, y: 1, color: '#16a34a', draggable: true, visible: true },
+        ]);
+        window.dot_chart_onUpdate = (vectors) => {
+            const u = vectors[0];
+            const v = vectors[1];
+            const dotProduct = u.x * v.x + u.y * v.y;
+            const magU = calculateMagnitude(u.x, u.y);
+            const magV = calculateMagnitude(v.x, v.y);
+            const cosAngle = dotProduct / (magU * magV);
+            const angle = Math.acos(Math.min(Math.max(cosAngle, -1), 1)) * 180 / Math.PI;
+
+            document.getElementById('dot-u-coords').textContent = `[${u.x.toFixed(2)}, ${u.y.toFixed(2)}]`;
+            document.getElementById('dot-v-coords').textContent = `[${v.x.toFixed(2)}, ${v.y.toFixed(2)}]`;
+            document.getElementById('dot-product-value').textContent = dotProduct.toFixed(2);
+            document.getElementById('dot-angle-value').textContent = `${angle.toFixed(1)}°`;
+        };
+        window.dot_chart_onUpdate(dotChart.vectors);
+        
+        // Lab Chart
+        const labChart = createVectorChart('lab-chart', [
+            { id: 'u', x: 2, y: 3, color: '#2563eb', draggable: true, visible: true },
+            { id: 'v', x: -3, y: 1, color: '#16a34a', draggable: true, visible: true },
+            { id: 'sum', x: -1, y: 4, color: '#dc2626', draggable: false, visible: true, dashed: true },
+        ]);
+        window.lab_chart_onUpdate = (vectors) => {
+            const u = vectors[0];
+            const v = vectors[1];
+            const sum = vectors[2];
+
+            sum.x = u.x + v.x;
+            sum.y = u.y + v.y;
+            
+            const magU = calculateMagnitude(u.x, u.y);
+            const magV = calculateMagnitude(v.x, v.y);
+            const subX = u.x - v.x;
+            const subY = u.y - v.y;
+            const dotProduct = u.x * v.x + u.y * v.y;
+            const cosAngle = dotProduct / (magU * magV);
+            const angle = Math.acos(Math.min(Math.max(cosAngle, -1), 1)) * 180 / Math.PI;
+
+            document.getElementById('lab-u-coords').textContent = `[${u.x.toFixed(2)}, ${u.y.toFixed(2)}]`;
+            document.getElementById('lab-u-mag').textContent = magU.toFixed(2);
+            document.getElementById('lab-v-coords').textContent = `[${v.x.toFixed(2)}, ${v.y.toFixed(2)}]`;
+            document.getElementById('lab-v-mag').textContent = magV.toFixed(2);
+            document.getElementById('lab-sum-coords').textContent = `[${sum.x.toFixed(2)}, ${sum.y.toFixed(2)}]`;
+            document.getElementById('lab-sub-coords').textContent = `[${subX.toFixed(2)}, ${subY.toFixed(2)}]`;
+            document.getElementById('lab-dot-val').textContent = dotProduct.toFixed(2);
+            document.getElementById('lab-angle-val').textContent = `${angle.toFixed(1)}°`;
+        };
+        window.lab_chart_onUpdate(labChart.vectors);
+
+
+        // Nav intersection observer
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active-link');
+                        if (link.getAttribute('href').substring(1) === entry.target.id) {
+                            link.classList.add('active-link');
+                        }
+                    });
+                }
+            });
+        }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
+
+        sections.forEach(section => observer.observe(section));
+
+    });
+    </script>
+</body>
+</html>

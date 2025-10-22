@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mappa Concettuale - Algebra Lineare</title>
+    <!-- Caricamento Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Caricamento Font Inter -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+    
+    <!-- Configurazione e caricamento di MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* Stile per un blocco concettuale */
+        .concept-box {
+            background-color: white;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+        /* Titolo di una sezione (Capitolo) */
+        .section-title {
+            font-size: 1.875rem;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+        }
+        /* Sottotitolo del concetto */
+        .concept-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+        /* Icona per i titoli */
+        .icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+        /* Freccia di connessione (per desktop) */
+        .flow-arrow {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0;
+        }
+        @media (min-width: 768px) {
+            .flow-arrow {
+                display: flex;
+            }
+        }
+        .flow-arrow svg {
+            width: 3rem;
+            height: 3rem;
+            color: #9ca3af;
+        }
+        /* Freccia di connessione (per mobile) */
+        .flow-arrow-mobile {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0;
+        }
+        @media (min-width: 768px) {
+            .flow-arrow-mobile {
+                display: none;
+            }
+        }
+        .flow-arrow-mobile svg {
+            width: 2.5rem;
+            height: 2.5rem;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-5xl mx-auto">
+        
+        <h1 class="text-4xl md:text-5xl font-extrabold text-center text-gray-800 mb-4">Mappa Concettuale dell'Algebra Lineare</h1>
+        <p class="text-center text-xl text-gray-600 mb-10">Un percorso guidato basato sul tuo PDF, dai vettori agli spazi astratti.</p>
+
+        <!-- Icone SVG per i titoli -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="hidden">
+            <symbol id="icon-vector" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" />
+            </symbol>
+            <symbol id="icon-ruler" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3.09m-10.5 3.09v6.182m0-6.182L3 15M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </symbol>
+            <symbol id="icon-cube" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+            </symbol>
+            <symbol id="icon-matrix" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.5-9h15M4.5 9h15m-15 6h15M4.5 6h15m-15 6h15" />
+            </symbol>
+            <symbol id="icon-flow" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h12v-1.5M3.75 3H13.5v11.25M3.75 3L7.5 7.5M3.75 3L.75 7.5M13.5 14.25v-11.25" />
+            </symbol>
+            <symbol id="icon-atom" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.06 8.527c.414-.233.85-.41 1.306-.532a.74.74 0 01.834.127 6.75 6.75 0 010 9.756.74.74 0 01-.834.127 8.27 8.27 0 01-1.306-.532m0-8.666a.74.74 0 01.127-.834 6.75 6.75 0 019.756 0 .74.74 0 01.127.834m-9.9-7.332a.74.74 0 01-.834-.127 6.75 6.75 0 010-9.756.74.74 0 01.834-.127m0 9.9a.74.74 0 01.127-.834 6.75 6.75 0 019.756 0 .74.74 0 01.127.834m0-9.9a.74.74 0 01-.834-.127 6.75 6.75 0 010-9.756.74.74 0 01.834-.127" />
+            </symbol>
+            <symbol id="icon-arrow-down" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+            </symbol>
+            <symbol id="icon-arrow-right" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </symbol>
+        </svg>
+
+        <!-- SEZIONE 1: Vettori (Cap. 1) -->
+        <section class="mb-6">
+            <h2 class="section-title bg-blue-600">
+                Cap. 1: Dai Punti ai Vettori - Le Fondamenta
+            </h2>
+            <div class="concept-box grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Concetto 1.1 -->
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h3 class="concept-title text-blue-800">
+                        <svg class="icon"><use href="#icon-vector"></use></svg>
+                        Vettore Geometrico
+                    </h3>
+                    <p>Una freccia $\vec{AB}$ con direzione, verso e modulo (lunghezza). Rappresenta uno spostamento.</p>
+                </div>
+                <!-- Concetto 1.2 -->
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h3 class="concept-title text-blue-800">
+                        <svg class="icon"><use href="#icon-vector"></use></svg>
+                        Componenti
+                    </h3>
+                    <p>Traducono la geometria in algebra. Se $A(x_A, y_A)$ e $B(x_B, y_B)$, allora:</p>
+                    <p class="font-mono text-center mt-2">$\vec{AB} = (x_B - x_A, y_B - y_A)$</p>
+                </div>
+                <!-- Concetto 1.3 -->
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h3 class="concept-title text-blue-800">
+                        <svg class="icon"><use href="#icon-vector"></use></svg>
+                        Operazioni Base
+                    </h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><b>Somma:</b> $\vec{v} + \vec{w} = (v_1+w_1, v_2+w_2)$</li>
+                        <li><b>Scalare:</b> $k\vec{v} = (kv_1, kv_2)$</li>
+                    </ul>
+                </div>
+                <!-- Concetto 1.4 -->
+                <div class="md:col-span-3 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="concept-title text-blue-800">
+                        <svg class="icon"><use href="#icon-vector"></use></svg>
+                        Equazioni Parametriche
+                    </h3>
+                    <p>Usano i vettori per "costruire" oggetti geometrici. $P$ è un punto sull'oggetto, $P_1$ un punto noto, $t, s$ sono parametri.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                        <div><b>Retta (1 direzione $\vec{v}$):</b><br> $\vec{OP} = \vec{OP_1} + t\vec{v}$</div>
+                        <div><b>Piano (2 direzioni $\vec{v}, \vec{w}$):</b><br> $\vec{OP} = \vec{OP_1} + s\vec{v} + t\vec{w}$</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="flow-arrow-mobile"><svg><use href="#icon-arrow-down"></use></svg></div>
+
+        <!-- SEZIONE 2 & 3: Misurare i Vettori (Cap. 2-3) -->
+        <section class="mb-6">
+            <h2 class="section-title bg-green-600">
+                Cap. 2 & 3: Misurare i Vettori (Prodotti)
+            </h2>
+            <div class="concept-box grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Prodotto Scalare -->
+                <div class="p-4 bg-green-50 rounded-lg space-y-3">
+                    <h3 class="concept-title text-green-800">
+                        <svg class="icon"><use href="#icon-ruler"></use></svg>
+                        Prodotto Scalare (Dot Product)
+                    </h3>
+                    <p>Prende 2 vettori, restituisce 1 <b>scalare</b>. Misura l'allineamento.</p>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><b>Algebrica:</b> $\vec{v} \cdot \vec{w} = v_1w_1 + v_2w_2 + v_3w_3$</li>
+                        <li><b>Geometrica:</b> $\vec{v} \cdot \vec{w} = |\vec{v}||\vec{w}|\cos(\theta)$</li>
+                    </ul>
+                    <div class="p-3 bg-white rounded-md shadow-inner">
+                        <b class="text-red-600">Applicazione Chiave: Ortogonalità</b><br>
+                        Due vettori sono perpendicolari se e solo se:<br>
+                        <span class="font-mono text-lg text-center block">$\vec{v} \cdot \vec{w} = 0$</span>
+                    </div>
+                </div>
+                
+                <!-- Prodotti in R3 -->
+                <div class="space-y-6">
+                    <!-- Prodotto Vettoriale -->
+                    <div class="p-4 bg-green-50 rounded-lg space-y-3">
+                        <h3 class="concept-title text-green-800">
+                            <svg class="icon"><use href="#icon-ruler"></use></svg>
+                            Prodotto Vettoriale (Cross Product)
+                        </h3>
+                        <p>Solo in $\mathbb{R}^3$. Prende 2 vettori, restituisce 1 <b>vettore</b>.</p>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li><b>Direzione:</b> Perpendicolare a $\vec{v}$ e $\vec{w}$.</li>
+                            <li><b>Verso:</b> Regola della mano destra.</li>
+                            <li><b>Modulo:</b> $|\vec{v} \times \vec{w}| = |\vec{v}||\vec{w}|\sin(\theta)$</li>
+                        </ul>
+                        <div class="p-3 bg-white rounded-md shadow-inner">
+                            <b class="text-red-600">Applicazione Chiave: Area</b><br>
+                            Il modulo $|\vec{v} \times \vec{w}|$ è l'<b>area</b> del parallelogramma formato da $\vec{v}$ e $\vec{w}$.
+                        </div>
+                    </div>
+                    <!-- Prodotto Misto -->
+                    <div class="p-4 bg-green-50 rounded-lg space-y-3">
+                        <h3 class="concept-title text-green-800">
+                            <svg class="icon"><use href="#icon-cube"></use></svg>
+                            Prodotto Misto
+                        </h3>
+                        <p>Solo in $\mathbb{R}^3$. Prende 3 vettori, restituisce 1 <b>scalare</b>.</p>
+                        <p class="font-mono text-lg text-center">$\vec{u} \cdot (\vec{v} \times \vec{w})$</p>
+                        <div class="p-3 bg-white rounded-md shadow-inner">
+                            <b class="text-red-600">Applicazione Chiave: Volume</b><br>
+                            Il suo valore assoluto è il <b>volume</b> del parallelepipedo. Se è 0, i vettori sono complanari.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="flow-arrow-mobile"><svg><use href="#icon-arrow-down"></use></svg></div>
+
+        <!-- SEZIONE 4: Matrici (Cap. 4) -->
+        <section class="mb-6">
+            <h2 class="section-title bg-purple-600">
+                Cap. 4: Le Matrici - Organizzare i Dati
+            </h2>
+            <div class="concept-box">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Definizione -->
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <h3 class="concept-title text-purple-800">
+                            <svg class="icon"><use href="#icon-matrix"></use></svg>
+                            Definizione e Operazioni
+                        </h3>
+                        <p>Una tabella $m \times n$ (m righe, n colonne) di numeri. <br><b>Somma</b> e <b>Prodotto per Scalare</b> si fanno componente per componente.</p>
+                    </div>
+                    <!-- Prodotto Matrici -->
+                    <div class="p-4 bg-purple-50 rounded-lg md:col-span-2">
+                        <h3 class="concept-title text-purple-800">
+                            <svg class="icon"><use href="#icon-matrix"></use></svg>
+                            Prodotto Matrici (Righe x Colonne)
+                        </h3>
+                        <p>Operazione fondamentale. L'elemento $c_{ik}$ della matrice prodotto $C=AB$ è il <b>prodotto scalare</b> della riga $i$ di $A$ e della colonna $k$ di $B$.</p>
+                        <div class="mt-2 p-3 bg-white rounded-md shadow-inner text-center font-mono text-lg">
+                            $A_{(m \times n)} \times B_{(n \times p)} \longrightarrow C_{(m \times p)}$
+                        </div>
+                        <p class="text-red-600 text-center font-semibold mt-2">ATTENZIONE: $AB \neq BA$ (Non è commutativo!)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="flow-arrow-mobile"><svg><use href="#icon-arrow-down"></use></svg></div>
+
+        <!-- SEZIONE 5: Sistemi Lineari (Cap. 5) -->
+        <section class="mb-6">
+            <h2 class="section-title bg-red-600">
+                Cap. 5: Sistemi Lineari $A\vec{x}=\vec{b}$ - Il Cuore dell'Algebra
+            </h2>
+            <div class="concept-box p-6 md:p-8">
+                <h3 class="concept-title text-red-800 text-2xl justify-center">
+                    <svg class="icon w-8 h-8"><use href="#icon-flow"></use></svg>
+                    Diagramma di Flusso (Teorema di Rouché-Capelli)
+                </h3>
+                
+                <!-- Inizio -->
+                <div class="text-center p-4 bg-gray-100 rounded-lg shadow-inner">
+                    <p class="font-medium">START: Sistema $A\vec{x}=\vec{b}$</p>
+                    <p>Si scrive la matrice aumentata $[A|b]$</p>
+                </div>
+                
+                <div class="flow-arrow-mobile"><svg><use href="#icon-arrow-down"></use></svg></div>
+                
+                <!-- Step -->
+                <div class="text-center p-4 bg-gray-100 rounded-lg shadow-inner mt-4">
+                    <p class="font-medium">Applico l'Eliminazione di Gauss-Jordan</p>
+                    <p>Ottengo la matrice a scalini (RREF)</p>
+                </div>
+                
+                <div class="flow-arrow-mobile"><svg><use href="#icon-arrow-down"></use></svg></div>
+
+                <!-- Step -->
+                <div class="text-center p-4 bg-gray-100 rounded-lg shadow-inner mt-4">
+                    <p class="font-medium">Calcolo i Ranghi</p>
+                    <p>$r = rg(A)$ (n. pivot in A) e $rg([A|b])$ (n. pivot totali)</p>
+                </div>
+
+                <div class="flow-arrow-mobile"><svg><use href="#icon-arrow-down"></use></svg></div>
+                
+                <!-- Decisione -->
+                <div class="mt-6 p-4 border-4 border-dashed border-red-400 rounded-xl">
+                    <h4 class="text-center font-bold text-xl text-red-700">DECISIONE: $r = rg(A|b)$?</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        
+                        <!-- CASO NO -->
+                        <div class="p-4 bg-red-100 rounded-lg border border-red-300">
+                            <h5 class="font-bold text-2xl text-red-700 text-center">NO</h5>
+                            <p class="text-center text-lg font-semibold">$r < rg([A|b])$</p>
+                            <hr class="my-2 border-red-300">
+                            <p>Si è creata una riga del tipo $[0 \ 0 \ ... \ | \ k]$ con $k \ne 0$.</p>
+                            <p class="mt-3 text-center p-2 bg-red-200 rounded-md font-bold text-xl text-red-800">NESSUNA SOLUZIONE<br>(Incompatibile)</p>
+                        </div>
+                        
+                        <!-- CASO SI -->
+                        <div class="p-4 bg-green-100 rounded-lg border border-green-300">
+                            <h5 class="font-bold text-2xl text-green-700 text-center">SÌ</h5>
+                            <p class="text-center text-lg font-semibold">$r = rg([A|b])$</p>
+                            <hr class="my-2 border-green-300">
+                            <p>Il sistema è <b>Compatibile</b>. Ora confronta $r$ con $n$ (n. incognite).</p>
+                            
+                            <!-- Sotto-decisione -->
+                            <div class="mt-4 p-4 border-2 border-dashed border-green-400 rounded-xl">
+                                <h4 class="text-center font-bold text-lg text-green-700">$r = n$?</h4>
+                                <div class="grid grid-cols-1 xl:grid-cols-2 gap-2 mt-2">
+                                    <div class="p-2 bg-green-200 rounded-md font-bold text-center text-green-800">SÌ ($r=n$)<br>SOLUZIONE UNICA</div>
+                                    <div class="p-2 bg-yellow-100 rounded-md font-bold text-center text-yellow-800">NO ($r<n$)<br>INFINITE SOLUZIONI<br>($\infty^{n-r}$)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="flow-arrow-mobile"><svg><use href="#icon-arrow-down"></use></svg></div>
+
+        <!-- SEZIONE 6: Spazi Vettoriali (Cap. 6) -->
+        <section class="mb-6">
+            <h2 class="section-title bg-gray-700">
+                Cap. 6: Spazi Vettoriali - La Struttura Astratta
+            </h2>
+            <div class="concept-box relative p-6 md:p-8">
+                <p class="text-center text-lg mb-6">Come si "costruisce" uno Spazio Vettoriale?</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Blocco Sinistro -->
+                    <div class="space-y-6">
+                        <div class="p-4 bg-gray-100 rounded-lg">
+                            <h3 class="concept-title text-gray-800">
+                                <svg class="icon"><use href="#icon-atom"></use></svg>
+                                1. Combinazione Lineare
+                            </h3>
+                            <p>L'operazione fondamentale: "sommare vettori scalati".</p>
+                            <p class="font-mono text-center mt-2">$c_1\vec{v}_1 + c_2\vec{v}_2 + ... + c_k\vec{v}_k$</p>
+                        </div>
+
+                        <div class="flow-arrow-mobile"><svg><use href="#icon-arrow-down"></use></svg></div>
+                        <div class="flow-arrow" style="margin-top: -1rem; margin-bottom: -1rem;"><svg class="transform -rotate-90"><use href="#icon-arrow-right"></use></svg></div>
+                        
+                        <div class="p-4 bg-gray-100 rounded-lg">
+                            <h3 class="concept-title text-gray-800">
+                                <svg class="icon"><use href="#icon-atom"></use></svg>
+                                2. Span (Sottospazio Generato)
+                            </h3>
+                            <p>L'insieme di <b>tutte</b> le combinazioni lineari possibili di un set di vettori $\{\vec{v}_1, ..., \vec{v}_k\}$. È "tutto ciò che puoi raggiungere".</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Blocco Destro -->
+                    <div class="p-4 bg-gray-100 rounded-lg">
+                        <h3 class="concept-title text-gray-800">
+                            <svg class="icon"><use href="#icon-atom"></use></svg>
+                            3. Indipendenza Lineare
+                        </h3>
+                        <p>Un set di vettori è L.I. se nessuno di loro è "ridondante" (cioè, nessuno può essere scritto come combinazione lineare degli altri).</p>
+                        <p class="mt-2">Formalmente, l'unica soluzione a $c_1\vec{v}_1 + ... + c_k\vec{v}_k = \vec{0}$ è $c_1=...=c_k=0$.</p>
+                    </div>
+                </div>
+
+                <!-- Conclusione -->
+                <div class="flow-arrow-mobile"><svg><use href="#icon-arrow-down"></use></svg></div>
+                <div class="hidden md:block absolute left-1/4 -bottom-6"><svg class="w-12 h-12 text-gray-400 transform rotate-45"><use href="#icon-arrow-down"></use></svg></div>
+                <div class="hidden md:block absolute right-1/4 -bottom-6"><svg class="w-12 h-12 text-gray-400 transform -rotate-45"><use href="#icon-arrow-down"></use></svg></div>
+
+                <div class="mt-12 p-6 bg-yellow-100 rounded-xl shadow-xl border-2 border-yellow-300">
+                    <h3 class="concept-title text-3xl font-bold justify-center text-yellow-800">
+                        BASE
+                    </h3>
+                    <p class="text-center text-xl text-yellow-900">Un set di vettori che è <b>sia (2) Generatore che (3) Linearmente Indipendente</b>.</p>
+                    <p class="text-center text-xl mt-2">È l'insieme "perfetto": i mattoni fondamentali e non ridondanti dello spazio.</p>
+                    <hr class="my-3 border-yellow-300">
+                    <h4 class="text-center font-bold text-2xl text-yellow-800">DIMENSIONE</h4>
+                    <p class="text-center text-xl text-yellow-900">Il numero di vettori in una base.</p>
+                </div>
+                
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // Assicura che MathJax ridisegni le formule dopo che la pagina è stata caricata
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.MathJax && window.MathJax.typeset) {
+                window.MathJax.typeset();
+            }
+        });
+    </script>
+</body>
+</html>

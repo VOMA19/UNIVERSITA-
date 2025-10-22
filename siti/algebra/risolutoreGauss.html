@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risolutore Sistemi Lineari (Gauss-Jordan)</title>
+    <!-- Caricamento Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Caricamento Font Inter -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+    
+    <!-- Configurazione e caricamento di MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* bg-gray-50 */
+        }
+        .matrix-input {
+            width: 80px;
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .matrix-input:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        .control-button {
+            background-color: #2563eb;
+            color: white;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 200ms ease-in-out;
+            border: none;
+            cursor: pointer;
+        }
+        .control-button:hover {
+            background-color: #1d4ed8;
+        }
+        .control-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        .control-button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        /* Stile per i log dei passaggi */
+        .step-log {
+            background-color: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 16px;
+        }
+        .step-op {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #2563eb;
+            margin-bottom: 8px;
+        }
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .matrix-table td {
+            padding: 8px 12px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        /* Colora la colonna dei termini noti */
+        .matrix-table td:last-child {
+            background-color: #f9fafb;
+            border-left: 1px solid #d1d5db;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-2xl shadow-xl border border-gray-200">
+        
+        <h1 class="text-3xl font-bold text-center text-blue-700 mb-4">
+            Risolutore Passo-Passo $A\vec{x}=\vec{b}$
+        </h1>
+        <p class="text-center text-gray-600 mb-8">
+            Basato sul Capitolo 5: inserisci la matrice aumentata $[A|b]$ e osserva l'eliminazione di Gauss-Jordan.
+        </p>
+
+        <!-- Sezione Controlli Matrice -->
+        <div class="flex flex-wrap items-center justify-center gap-4 mb-6 p-4 bg-gray-50 rounded-lg shadow-inner">
+            <div>
+                <label for="rows" class="font-medium text-gray-700">Equazioni (righe):</label>
+                <input type="number" id="rows" value="3" min="1" max="8" class="w-16 p-2 border border-gray-300 rounded-md shadow-sm">
+            </div>
+            <div>
+                <label for="cols" class="font-medium text-gray-700">Incognite (colonne A):</label>
+                <input type="number" id="cols" value="3" min="1" max="8" class="w-16 p-2 border border-gray-300 rounded-md shadow-sm">
+            </div>
+            <button id="createMatrixBtn" class="control-button bg-green-600 hover:bg-green-700">Crea/Resetta Matrice</button>
+        </div>
+
+        <!-- Sezione Input Matrice -->
+        <div id="matrix-container" class="mb-6 overflow-x-auto">
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Matrice Aumentata $[A|b]$</h3>
+            <div id="matrix-input-grid" class="grid gap-2" style="grid-template-columns: repeat(4, auto);">
+                <!-- Gli input verranno generati da JS -->
+            </div>
+        </div>
+        
+        <div class="text-center mb-8">
+            <button id="solveBtn" class="control-button text-lg px-8 py-3">Risolvi Passo-Passo</button>
+        </div>
+
+        <!-- Sezione Risultati -->
+        <div class="space-y-6">
+            <!-- Risultato Finale -->
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-3">Analisi Finale (Rouché-Capelli)</h2>
+                <div id="final-solution" class="bg-blue-50 text-blue-800 p-6 rounded-lg shadow-inner text-lg font-medium">
+                    <span class="text-blue-600">Inserisci una matrice e premi "Risolvi".</span>
+                </div>
+            </div>
+            
+            <!-- Log dei Passaggi -->
+            <div>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-3">Passaggi dell'Algoritmo di Gauss-Jordan</h2>
+                <div id="steps-log" class="bg-gray-100 p-4 rounded-lg shadow-inner min-h-[100px]">
+                    <span class="text-gray-500">I passaggi della riduzione appariranno qui...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const rowsInput = document.getElementById('rows');
+            const colsInput = document.getElementById('cols');
+            const createMatrixBtn = document.getElementById('createMatrixBtn');
+            const matrixGrid = document.getElementById('matrix-input-grid');
+            const solveBtn = document.getElementById('solveBtn');
+            const stepsLog = document.getElementById('steps-log');
+            const finalSolution = document.getElementById('final-solution');
+
+            let numRows = 3;
+            let numCols = 3; // Solo incognite (A)
+
+            // Funzione per creare la griglia di input
+            function createMatrixGrid() {
+                numRows = parseInt(rowsInput.value);
+                numCols = parseInt(colsInput.value); // n
+                const totalCols = numCols + 1; // n + 1 (per termini noti b)
+                
+                matrixGrid.innerHTML = '';
+                matrixGrid.style.gridTemplateColumns = `repeat(${totalCols}, auto)`;
+
+                for (let i = 0; i < numRows; i++) {
+                    for (let j = 0; j < totalCols; j++) {
+                        const input = document.createElement('input');
+                        input.type = 'text'; // Usiamo text per permettere frazioni (es. 1/3)
+                        input.className = 'matrix-input';
+                        input.id = `cell-${i}-${j}`;
+                        
+                        // Esempio per test
+                        if (i === 0) input.value = [1, 1, 2, 9][j];
+                        if (i === 1) input.value = [2, 4, -3, 1][j];
+                        if (i === 2) input.value = [3, 6, -5, 0][j];
+                        
+                        // Stile per colonna termini noti
+                        if (j === numCols) {
+                            input.style.borderLeft = '2px solid #4b5563'; // gray-700
+                        }
+                        
+                        matrixGrid.appendChild(input);
+                    }
+                }
+            }
+            
+            // Funzione per leggere la matrice e convertire in numeri
+            function getMatrix() {
+                const matrix = [];
+                let hasError = false;
+                for (let i = 0; i < numRows; i++) {
+                    const row = [];
+                    for (let j = 0; j < numCols + 1; j++) {
+                        const valStr = document.getElementById(`cell-${i}-${j}`).value;
+                        let valNum;
+                        if (valStr.includes('/')) {
+                            const parts = valStr.split('/');
+                            valNum = (parseFloat(parts[0]) || 0) / (parseFloat(parts[1]) || 1);
+                        } else {
+                            valNum = parseFloat(valStr) || 0;
+                        }
+                        if (isNaN(valNum)) hasError = true;
+                        row.push(valNum);
+                    }
+                    matrix.push(row);
+                }
+                if (hasError) {
+                    logMessage("Errore: controlla gli input. Inserisci solo numeri o frazioni (es. 2/3).", "error");
+                    return null;
+                }
+                return matrix;
+            }
+
+            // Funzione per formattare un numero
+            function formatNum(num) {
+                if (Math.abs(num) < 1e-9) return 0; // Gestisce lo zero
+                // Prova a convertire in frazione (semplificato)
+                if (Math.abs(num - Math.round(num)) < 1e-9) return num.toString();
+                
+                // Non una libreria di frazioni completa, solo per decimali comuni
+                const tolerance = 1.0E-6;
+                for(let d=2; d<=10; d++) {
+                    if (Math.abs(num*d - Math.round(num*d)) < tolerance) {
+                        return `${Math.round(num*d)}/${d}`;
+                    }
+                }
+                return num.toFixed(2); // Arrotonda se non è una frazione semplice
+            }
+            
+            // Funzione per mostrare un messaggio
+            function logMessage(message, type = 'info') {
+                const p = document.createElement('p');
+                if (type === 'error') p.className = 'text-red-600 font-bold';
+                if (type === 'info') p.className = 'text-gray-500';
+                p.textContent = message;
+                stepsLog.appendChild(p);
+            }
+
+            // Funzione per loggare un passaggio
+            function logStep(operation, matrix) {
+                const stepDiv = document.createElement('div');
+                stepDiv.className = 'step-log';
+                
+                const opP = document.createElement('p');
+                opP.className = 'step-op';
+                opP.textContent = operation;
+                stepDiv.appendChild(opP);
+                
+                const table = document.createElement('table');
+                table.className = 'matrix-table';
+                const tbody = document.createElement('tbody');
+                tbody.className = 'divide-y divide-gray-200';
+                
+                matrix.forEach(row => {
+                    const tr = document.createElement('tr');
+                    row.forEach(cell => {
+                        const td = document.createElement('td');
+                        td.textContent = formatNum(cell);
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+                
+                table.appendChild(tbody);
+                stepDiv.appendChild(table);
+                stepsLog.appendChild(stepDiv);
+            }
+            
+            // --- Algoritmo di Gauss-Jordan ---
+            function solveMatrix() {
+                let matrix = getMatrix();
+                if (!matrix) return;
+                
+                stepsLog.innerHTML = ''; // Pulisce log
+                finalSolution.innerHTML = '<span class="text-blue-600">Calcolo in corso...</span>';
+                
+                logStep("Matrice Iniziale:", matrix);
+                
+                const m = numRows;
+                const n = numCols; // n = incognite
+                const totalCols = n + 1;
+                let pivotRow = 0;
+                
+                // Copia profonda per non mutare l'originale
+                let mat = matrix.map(row => [...row]);
+
+                // --- FASE 1: Eliminazione in Avanti (Forma a Scalini) ---
+                for (let j = 0; j < n && pivotRow < m; j++) {
+                    // Trova pivot in colonna j (da pivotRow in giù)
+                    let i_max = pivotRow;
+                    for (let i = pivotRow + 1; i < m; i++) {
+                        if (Math.abs(mat[i][j]) > Math.abs(mat[i_max][j])) {
+                            i_max = i;
+                        }
+                    }
+                    
+                    if (Math.abs(mat[i_max][j]) < 1e-9) {
+                        // Nessun pivot in questa colonna, passa alla prossima
+                        logMessage(`Colonna ${j+1}: nessun pivot. Passo oltre.`);
+                        continue;
+                    }
+
+                    // Scambia pivotRow con i_max (se necessario)
+                    if (i_max !== pivotRow) {
+                        [mat[pivotRow], mat[i_max]] = [mat[i_max], mat[pivotRow]];
+                        logStep(`Scambio R${pivotRow + 1} <-> R${i_max + 1}`, mat);
+                    }
+
+                    // Rendi 1 il pivot (per Gauss-Jordan completo)
+                    // Lo facciamo dopo per semplicità numerica
+                    
+                    // Azzera le righe sotto il pivot
+                    for (let i = pivotRow + 1; i < m; i++) {
+                        if (Math.abs(mat[i][j]) > 1e-9) {
+                            const factor = mat[i][j] / mat[pivotRow][j];
+                            for (let k = j; k < totalCols; k++) {
+                                mat[i][k] = mat[i][k] - factor * mat[pivotRow][k];
+                            }
+                            logStep(`R${i + 1} = R${i + 1} - ${formatNum(factor)} * R${pivotRow + 1}`, mat);
+                        }
+                    }
+                    
+                    pivotRow++;
+                }
+                
+                logMessage("--- Fine Eliminazione in Avanti (Gauss) ---");
+                
+                // --- FASE 2: Sostituzione all'Indietro (Forma Ridotta) ---
+                for (let i = pivotRow - 1; i >= 0; i--) {
+                    // Trova il pivot (primo non-zero da sx)
+                    let pivotCol = -1;
+                    for(let j=0; j<n; j++) {
+                        if(Math.abs(mat[i][j]) > 1e-9) {
+                            pivotCol = j;
+                            break;
+                        }
+                    }
+                    
+                    if (pivotCol === -1) continue; // Riga di zeri
+
+                    // Rendi il pivot 1
+                    const pivotVal = mat[i][pivotCol];
+                    if (Math.abs(pivotVal - 1) > 1e-9) {
+                         for (let k = pivotCol; k < totalCols; k++) {
+                            mat[i][k] = mat[i][k] / pivotVal;
+                        }
+                        logStep(`R${i + 1} = R${i + 1} / ${formatNum(pivotVal)}`, mat);
+                    }
+
+                    // Azzera le righe sopra il pivot
+                    for (let r = i - 1; r >= 0; r--) {
+                        const factor = mat[r][pivotCol];
+                        if (Math.abs(factor) > 1e-9) {
+                            for (let k = pivotCol; k < totalCols; k++) {
+                                mat[r][k] = mat[r][k] - factor * mat[i][k];
+                            }
+                            logStep(`R${r + 1} = R${r + 1} - ${formatNum(factor)} * R${i + 1}`, mat);
+                        }
+                    }
+                }
+                
+                logMessage("--- Fine Riduzione (Gauss-Jordan) ---");
+                logStep("Matrice Finale (RREF):", mat);
+                
+                // --- FASE 3: Analisi Soluzione (Rouché-Capelli) ---
+                analyzeSolution(mat);
+            }
+            
+            function analyzeSolution(rrefMatrix) {
+                let rgA = 0;
+                let rgAb = 0;
+                let isIncompatible = false;
+                
+                for(let i=0; i < rrefMatrix.length; i++) {
+                    const row = rrefMatrix[i];
+                    let rowIsZero = true;
+                    
+                    // Controlla rg(A)
+                    for(let j=0; j<numCols; j++) {
+                        if(Math.abs(row[j]) > 1e-9) {
+                            rowIsZero = false;
+                            break;
+                        }
+                    }
+                    
+                    if (!rowIsZero) {
+                        rgA++;
+                    }
+                    
+                    // Controlla Incompatibilità e rg(A|b)
+                    if (rowIsZero && Math.abs(row[numCols]) > 1e-9) {
+                        // Riga tipo [0 0 ... | k] con k != 0
+                        isIncompatible = true;
+                        rgAb = rgA + 1; // rg(A|b) è più grande
+                        break;
+                    }
+                    
+                    // Se la riga non è [0 ... | k], allora contribuisce a rg(A|b)
+                    if (!rowIsZero || Math.abs(row[numCols]) > 1e-9) {
+                        rgAb++;
+                    }
+                }
+                
+                // Correggi rgAb se non è stato trovato un caso incompatibile
+                if (!isIncompatible) {
+                    rgAb = rgA;
+                }
+
+                let analysisHTML = `<p><strong>Teorema di Rouché-Capelli:</strong></p>`;
+                analysisHTML += `<ul class="list-disc pl-6 space-y-2 mt-2">`;
+                analysisHTML += `<li>Numero Incognite ($n$): <strong>${numCols}</strong></li>`;
+                analysisHTML += `<li>Rango di A ($rg(A)$): <strong>${rgA}</strong></li>`;
+                analysisHTML += `<li>Rango di $[A|b]$ ($rg(A|b)$): <strong>${rgAb}</strong></li>`;
+                analysisHTML += `</ul>`;
+                
+                if (isIncompatible || rgA < rgAb) {
+                    analysisHTML += `<p class="mt-4 text-xl font-bold text-red-600">SISTEMA INCOMPATIBILE</p>`;
+                    analysisHTML += `<p>Poiché $rg(A) \ne rg(A|b)$, il sistema non ammette soluzioni.</p>`;
+                    finalSolution.className = 'bg-red-50 text-red-800 p-6 rounded-lg shadow-inner text-lg';
+                } else {
+                    // Compatibile
+                    if (rgA === numCols) {
+                        analysisHTML += `<p class="mt-4 text-xl font-bold text-green-600">SOLUZIONE UNICA</p>`;
+                        analysisHTML += `<p>Poiché $rg(A) = rg(A|b) = n$, il sistema ammette una sola soluzione.</p>`;
+                        finalSolution.className = 'bg-green-50 text-green-800 p-6 rounded-lg shadow-inner text-lg';
+                        
+                        // Mostra soluzione
+                        analysisHTML += `<p class="mt-2 font-mono">`;
+                        for(let i=0; i<rgA; i++) {
+                            analysisHTML += `x_${i+1} = ${formatNum(rrefMatrix[i][numCols])}<br>`;
+                        }
+                        analysisHTML += `</p>`;
+
+                    } else { // rgA < numCols
+                        const freeVars = numCols - rgA;
+                        analysisHTML += `<p class="mt-4 text-xl font-bold text-yellow-600">INFINITE SOLUZIONI</p>`;
+                        analysisHTML += `<p>Poiché $rg(A) = rg(A|b) = ${rgA} < n$, il sistema ammette $\infty^{${freeVars}}$ soluzioni. (Dipende da ${freeVars} variabili libere).</p>`;
+                        finalSolution.className = 'bg-yellow-50 text-yellow-800 p-6 rounded-lg shadow-inner text-lg';
+                    }
+                }
+                
+                finalSolution.innerHTML = analysisHTML;
+            }
+
+            // Event Listeners
+            createMatrixBtn.addEventListener('click', createMatrixGrid);
+            solveBtn.addEventListener('click', solveMatrix);
+
+            // Crea griglia iniziale
+            createMatrixGrid();
+        });
+    </script>
+</body>
+</html>
