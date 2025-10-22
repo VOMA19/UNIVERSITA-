@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guida Interattiva ai Limiti per Analisi 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Academic Calm -->
+    <!-- Application Structure Plan: A responsive single-page application with a fixed sidebar for navigation and a main content area. This structure allows users to freely navigate between different theoretical concepts, interactive visualizations, and practical exercises without losing context. It's designed to be a non-linear learning tool, which is more effective for exam preparation than a static document, as it allows students to focus on their specific areas of weakness. Key interactions include dynamic charts to build intuition for the ε-δ definition and accordion-style exercises to promote active recall. -->
+    <!-- Visualization & Content Choices: 1. Intuitive Definition -> Interactive Chart.js with a slider to demonstrate how f(x) approaches L as x approaches c. Goal: Build visual intuition. 2. Formal ε-δ Definition -> Interactive Chart.js where changing ε visually updates the required δ. Goal: Demystify the abstract formal definition. 3. Asymptotes -> Static Chart.js graphs plotting functions and their asymptotes. Goal: Connect the algebraic concept of limits at infinity to its geometric meaning. 4. Exercises -> Accordion-style HTML/JS elements that hide/show solutions. Goal: Encourage active problem-solving before revealing the answer. All content is structured in distinct, navigable sections. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://rsms.me/inter/inter.css');
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link.active {
+            background-color: #D1D5DB;
+            color: #111827;
+            border-left: 3px solid #3B82F6;
+        }
+        .katex-display { display: block; text-align: center; }
+        .solution {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .solution.show {
+            max-height: 1000px;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="flex h-screen">
+        <aside class="w-64 bg-white text-gray-700 shadow-lg flex-shrink-0">
+            <div class="p-4 border-b">
+                <h1 class="text-xl font-bold text-gray-900">Guida ai Limiti</h1>
+                <p class="text-sm text-gray-500">Analisi 1</p>
+            </div>
+            <nav id="navigation" class="p-2 space-y-1">
+                <a href="#intro" class="nav-link block p-3 rounded-lg font-medium text-gray-600 hover:bg-gray-200">Introduzione</a>
+                <a href="#definizione-intuitiva" class="nav-link block p-3 rounded-lg font-medium text-gray-600 hover:bg-gray-200">Definizione Intuitiva</a>
+                <a href="#definizione-formale" class="nav-link block p-3 rounded-lg font-medium text-gray-600 hover:bg-gray-200">Definizione Formale ε–δ</a>
+                <a href="#teoremi-e-operazioni" class="nav-link block p-3 rounded-lg font-medium text-gray-600 hover:bg-gray-200">Teoremi e Operazioni</a>
+                <a href="#limiti-notevoli" class="nav-link block p-3 rounded-lg font-medium text-gray-600 hover:bg-gray-200">Limiti Notevoli</a>
+                <a href="#successioni-vs-funzioni" class="nav-link block p-3 rounded-lg font-medium text-gray-600 hover:bg-gray-200">Successioni vs Funzioni</a>
+                <a href="#asintoti" class="nav-link block p-3 rounded-lg font-medium text-gray-600 hover:bg-gray-200">Limiti Infiniti e Asintoti</a>
+                <a href="#esercizi" class="nav-link block p-3 rounded-lg font-medium text-gray-600 hover:bg-gray-200">Esercizi Guidati</a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto p-6 md:p-10 bg-gray-100">
+
+            <section id="intro" class="content-section">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900">Benvenuto nella Guida Interattiva ai Limiti</h2>
+                <p class="text-lg mb-6">Questa guida è pensata per aiutarti a comprendere uno dei concetti più fondamentali dell'Analisi Matematica: il limite. Attraverso definizioni, visualizzazioni interattive ed esercizi, potrai costruire una solida base per il tuo esame.</p>
+                <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-md" role="alert">
+                    <p class="font-bold">Come usare questa guida</p>
+                    <p>Usa il menu a sinistra per navigare tra le sezioni. Ti consigliamo di seguire l'ordine proposto, ma sentiti libero di saltare agli argomenti che ti interessano di più. Le sezioni con grafici interattivi sono pensate per darti un'intuizione visiva dei concetti più astratti.</p>
+                </div>
+            </section>
+
+            <section id="definizione-intuitiva" class="content-section">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900">Definizione Intuitiva e Significato Geometrico</h2>
+                <p class="text-lg mb-4">Il concetto di limite serve a descrivere il comportamento di una funzione "vicino" a un punto, senza necessariamente interessarci del valore della funzione *nel* punto stesso.</p>
+                <p class="mb-6">Intuitivamente, dire che "il limite di f(x) per x che tende a c è L" significa che possiamo rendere il valore di f(x) arbitrariamente vicino a L, a patto di scegliere un valore di x sufficientemente vicino a c (ma diverso da c).</p>
+                <p class="font-bold text-center text-xl mb-4"> lim f(x) = L</p>
+                <p class="text-center mb-6"> x → c</p>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">Visualizzazione Interattiva</h3>
+                    <p class="mb-4">Consideriamo la funzione f(x) = (x² - 1) / (x - 1). Questa funzione non è definita in x=1, perché annullerebbe il denominatore. Ma cosa succede *vicino* a x=1? Muovi lo slider per esplorare.</p>
+                    <div class="chart-container mb-4">
+                        <canvas id="intuitiveChart"></canvas>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <input id="xSlider" type="range" min="0" max="2" value="0.5" step="0.01" class="w-full">
+                        <span id="xValue" class="font-mono text-lg p-2 bg-gray-200 rounded-md">x = 0.50</span>
+                    </div>
+                     <div id="fxValue" class="mt-4 text-center font-semibold text-lg bg-blue-100 p-3 rounded-lg">f(x) ≈ 1.500</div>
+                </div>
+                
+                 <div class="mt-6 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-md">
+                    <p><span class="font-bold">Punto chiave:</span> Geometricamente, il limite L è l'altezza (ordinata) a cui il grafico della funzione "si sta avvicinando" quando l'ascissa si avvicina a c. Nel grafico sopra, anche se c'è un "buco" in x=1, il grafico si avvicina all'altezza y=2.</p>
+                </div>
+            </section>
+            
+            <section id="definizione-formale" class="content-section">
+                 <h2 class="text-3xl font-bold mb-4 text-gray-900">Definizione Formale ε–δ</h2>
+                 <p class="text-lg mb-4">L'intuizione è un ottimo punto di partenza, ma la matematica richiede precisione. La definizione formale, detta "epsilon-delta", cattura l'idea di "vicinanza" in modo rigoroso.</p>
+                
+                 <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <h3 class="font-semibold text-xl mb-2">Enunciato Preciso</h3>
+                    <p>Si dice che <code class="bg-gray-200 p-1 rounded">lim f(x) = L</code> per <code class="bg-gray-200 p-1 rounded">x → c</code> se:</p>
+                    <p class="my-4 text-center font-mono bg-gray-100 p-4 rounded-md text-lg">
+                        ∀ε > 0, ∃δ > 0 tale che se 0 < |x - c| < δ, allora |f(x) - L| < ε
+                    </p>
+                     <p>In parole povere: "Per ogni piccola tolleranza verticale <span class="font-bold">ε</span> (epsilon) che fissiamo attorno a L, riusciamo a trovare una tolleranza orizzontale <span class="font-bold">δ</span> (delta) attorno a c, tale che se prendiamo una x qualsiasi nell'intorno di c (escluso c), la sua immagine f(x) cadrà nell'intorno di L."</p>
+                 </div>
+                 
+                 <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                     <h3 class="text-xl font-semibold mb-4">Visualizzazione ε–δ Interattiva</h3>
+                     <p class="mb-4">Verifichiamo che <code class="bg-gray-200 p-1 rounded">lim (2x - 1) = 3</code> per <code class="bg-gray-200 p-1 rounded">x → 2</code>. Fissa una tolleranza ε (la fascia blu) e osserva come viene determinato un δ valido (la fascia verde) per soddisfare la definizione.</p>
+                     <div class="chart-container mb-4">
+                        <canvas id="epsilonDeltaChart"></canvas>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <label for="epsilonSlider" class="font-medium">ε =</label>
+                        <input id="epsilonSlider" type="range" min="0.1" max="1.5" value="1" step="0.05" class="w-full">
+                        <span id="epsilonValue" class="font-mono text-lg p-2 bg-gray-200 rounded-md">1.00</span>
+                    </div>
+                    <div id="deltaValue" class="mt-4 text-center font-semibold text-lg bg-green-100 p-3 rounded-lg">Per questo ε, un δ valido è δ ≤ 0.50</div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="font-semibold text-xl mb-4">Costruzione della Dimostrazione (Esempi)</h3>
+                    <div class="space-y-6">
+                        <article class="border border-gray-200 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg">Esempio 1: Funzione Lineare</h4>
+                            <p class="mb-2">Dimostrare usando la definizione che <code class="bg-gray-200 p-1 rounded">lim (3x + 1) = 7</code> per <code class="bg-gray-200 p-1 rounded">x → 2</code>.</p>
+                            <ol class="list-decimal list-inside space-y-2">
+                                <li><strong>Fissare ε > 0.</strong> Il nostro obiettivo è trovare un δ > 0.</li>
+                                <li><strong>Impostare la disuguaglianza finale.</strong> Vogliamo che <code class="bg-gray-200 p-1 rounded">|f(x) - L| < ε</code>.
+                                <br>Nel nostro caso: <code class="bg-gray-200 p-1 rounded">|(3x + 1) - 7| < ε</code>.</li>
+                                <li><strong>Manipolare l'espressione per far comparire |x - c|.</strong>
+                                <br><code class="bg-gray-200 p-1 rounded">|3x - 6| < ε</code>
+                                <br><code class="bg-gray-200 p-1 rounded">|3(x - 2)| < ε</code>
+                                <br><code class="bg-gray-200 p-1 rounded">3|x - 2| < ε</code>
+                                <br><code class="bg-gray-200 p-1 rounded">|x - 2| < ε / 3</code></li>
+                                <li><strong>Scegliere δ.</strong> Abbiamo trovato la relazione! Se poniamo <code class="bg-gray-200 p-1 rounded">δ = ε / 3</code>, la condizione è soddisfatta. Poiché ε > 0, anche δ > 0. Abbiamo trovato un δ per ogni ε. La dimostrazione è conclusa.</li>
+                            </ol>
+                        </article>
+                        
+                        <article class="border border-gray-200 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg">Esempio 2: Funzione Razionale</h4>
+                            <p class="mb-2">Dimostrare che <code class="bg-gray-200 p-1 rounded">lim (x² - 9)/(x - 3) = 6</code> per <code class="bg-gray-200 p-1 rounded">x → 3</code>.</p>
+                             <ol class="list-decimal list-inside space-y-2">
+                                <li><strong>Fissare ε > 0.</strong></li>
+                                <li><strong>Impostare la disuguaglianza.</strong> Vogliamo <code class="bg-gray-200 p-1 rounded">|(x² - 9)/(x - 3) - 6| < ε</code>.</li>
+                                <li><strong>Semplificare e manipolare.</strong> Per x ≠ 3, possiamo semplificare la frazione.
+                                <br><code class="bg-gray-200 p-1 rounded">|((x - 3)(x + 3))/(x - 3) - 6| < ε</code>
+                                <br><code class="bg-gray-200 p-1 rounded">|(x + 3) - 6| < ε</code>
+                                <br><code class="bg-gray-200 p-1 rounded">|x - 3| < ε</code></li>
+                                <li><strong>Scegliere δ.</strong> La relazione è diretta. Possiamo scegliere <code class="bg-gray-200 p-1 rounded">δ = ε</code>. Per ogni ε > 0, abbiamo trovato un δ > 0 corrispondente.</li>
+                            </ol>
+                        </article>
+                    </div>
+                     <div class="mt-6 bg-red-100 border-l-4 border-red-500 text-red-800 p-4 rounded-md">
+                        <p><span class="font-bold">Errore Comune:</span> Lo scopo non è "risolvere per δ", ma "dimostrare che un δ esiste". La scelta di δ dipende sempre da ε. Per funzioni non lineari, a volte δ dipenderà anche dal punto c, richiedendo di limitare δ a un valore massimo (es. δ ≤ 1) per controllare altri termini. </p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="teoremi-e-operazioni" class="content-section">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900">Teoremi e Operazioni sui Limiti</h2>
+                <p class="text-lg mb-6">Fortunatamente, non dobbiamo usare la definizione ε–δ ogni volta. Esistono potenti teoremi che semplificano il calcolo dei limiti.</p>
+
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <h3 class="font-semibold text-xl mb-4">Algebra dei Limiti</h3>
+                    <p>Siano <code class="bg-gray-200 p-1 rounded">lim f(x) = L</code> e <code class="bg-gray-200 p-1 rounded">lim g(x) = M</code> per <code class="bg-gray-200 p-1 rounded">x → c</code>. Allora:</p>
+                    <ul class="list-disc list-inside space-y-2 mt-4">
+                        <li><strong>Somma/Differenza:</strong> <code class="bg-gray-200 p-1 rounded">lim [f(x) ± g(x)] = L ± M</code></li>
+                        <li><strong>Prodotto:</strong> <code class="bg-gray-200 p-1 rounded">lim [f(x) * g(x)] = L * M</code></li>
+                        <li><strong>Quoziente:</strong> <code class="bg-gray-200 p-1 rounded">lim [f(x) / g(x)] = L / M</code> (se <code class="bg-gray-200 p-1 rounded">M ≠ 0</code>)</li>
+                        <li><strong>Potenza:</strong> <code class="bg-gray-200 p-1 rounded">lim [f(x)]ⁿ = Lⁿ</code></li>
+                    </ul>
+                    <p class="mt-4 text-sm text-gray-600">Queste regole sono valide anche per limiti <code class="bg-gray-200 p-1 rounded">x → ±∞</code> e per limiti infiniti (L, M = ±∞), prestando attenzione alle forme indeterminate.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <h3 class="font-semibold text-xl mb-4">Forme Indeterminate</h3>
+                    <p>Le regole precedenti falliscono quando portano a espressioni ambigue. Le principali forme indeterminate sono:</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mt-4">
+                        <div class="bg-red-100 p-3 rounded-lg font-mono">0 / 0</div>
+                        <div class="bg-red-100 p-3 rounded-lg font-mono">∞ / ∞</div>
+                        <div class="bg-red-100 p-3 rounded-lg font-mono">0 * ∞</div>
+                        <div class="bg-red-100 p-3 rounded-lg font-mono">∞ - ∞</div>
+                        <div class="bg-red-100 p-3 rounded-lg font-mono">1 ^ ∞</div>
+                        <div class="bg-red-100 p-3 rounded-lg font-mono">0 ^ 0</div>
+                        <div class="bg-red-100 p-3 rounded-lg font-mono">∞ ^ 0</div>
+                    </div>
+                    <p class="mt-4">Queste forme richiedono tecniche di risoluzione specifiche, come la scomposizione, la razionalizzazione o l'uso dei limiti notevoli.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="font-semibold text-xl mb-4">Teoremi Fondamentali</h3>
+                    <div class="space-y-4">
+                        <article>
+                            <h4 class="font-bold">Teorema di Unicità del Limite</h4>
+                            <p>Se un limite esiste, è unico.</p>
+                        </article>
+                        <article>
+                            <h4 class="font-bold">Teorema della Permanenza del Segno</h4>
+                            <p>Se <code class="bg-gray-200 p-1 rounded">lim f(x) = L > 0</code>, allora esiste un intorno di c in cui f(x) > 0. (Analogo per L < 0).</p>
+                        </article>
+                        <article>
+                            <h4 class="font-bold">Teorema del Confronto (o dei due Carabinieri)</h4>
+                            <p>Se <code class="bg-gray-200 p-1 rounded">h(x) ≤ f(x) ≤ g(x)</code> in un intorno di c, e <code class="bg-gray-200 p-1 rounded">lim h(x) = lim g(x) = L</code>, allora anche <code class="bg-gray-200 p-1 rounded">lim f(x) = L</code>.</p>
+                            <p class="mt-2 text-sm text-gray-600">Questo teorema è potentissimo per dimostrare limiti complessi, come il limite notevole del seno.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="limiti-notevoli" class="content-section">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900">Limiti Notevoli</h2>
+                <p class="text-lg mb-6">I limiti notevoli sono limiti fondamentali che servono come "mattoni" per risolvere forme indeterminate più complesse. È cruciale memorizzarli e capire come applicarli.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="font-semibold text-center text-lg mb-2">Limite Neperiano</h3>
+                        <p class="text-center font-mono text-lg bg-gray-100 p-3 rounded">lim (1 + 1/x) ^ x = e</p>
+                        <p class="text-center text-sm text-gray-500">x → ±∞</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="font-semibold text-center text-lg mb-2">Limite del Seno</h3>
+                        <p class="text-center font-mono text-lg bg-gray-100 p-3 rounded">lim sin(x) / x = 1</p>
+                        <p class="text-center text-sm text-gray-500">x → 0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="font-semibold text-center text-lg mb-2">Limite del Coseno</h3>
+                        <p class="text-center font-mono text-lg bg-gray-100 p-3 rounded">lim (1 - cos(x)) / x² = 1/2</p>
+                        <p class="text-center text-sm text-gray-500">x → 0</p>
+                    </div>
+                     <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="font-semibold text-center text-lg mb-2">Logaritmo Naturale</h3>
+                        <p class="text-center font-mono text-lg bg-gray-100 p-3 rounded">lim ln(1 + x) / x = 1</p>
+                        <p class="text-center text-sm text-gray-500">x → 0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="font-semibold text-center text-lg mb-2">Esponenziale</h3>
+                        <p class="text-center font-mono text-lg bg-gray-100 p-3 rounded">lim (e^x - 1) / x = 1</p>
+                        <p class="text-center text-sm text-gray-500">x → 0</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        <h3 class="font-semibold text-center text-lg mb-2">Potenza</h3>
+                        <p class="text-center font-mono text-lg bg-gray-100 p-3 rounded">lim ((1+x)ᵃ - 1) / x = a</p>
+                        <p class="text-center text-sm text-gray-500">x → 0</p>
+                    </div>
+                </div>
+                <div class="mt-6 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-md">
+                    <p><span class="font-bold">Come usarli:</span> La chiave è ricondurre una forma indeterminata a uno di questi limiti notevoli tramite sostituzioni o manipolazioni algebriche. Ad esempio, per calcolare il limite di `sin(3x)/x` per `x → 0`, moltiplichi e dividi per 3 per ottenere `3 * [sin(3x)/(3x)]`, che tende a `3 * 1 = 3`.</p>
+                </div>
+            </section>
+            
+            <section id="successioni-vs-funzioni" class="content-section">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900">Limite di Successione vs Limite di Funzione</h2>
+                <p class="text-lg mb-6">Il concetto di limite si applica sia alle funzioni (con dominio continuo) sia alle successioni (con dominio discreto, i numeri naturali ℕ).</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="font-semibold text-xl mb-4 text-center">Limite di Successione</h3>
+                        <p class="font-bold text-center text-xl mb-4"> lim aₙ = L</p>
+                        <p class="text-center mb-6"> n → ∞</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>Il dominio è ℕ (numeri naturali).</li>
+                            <li>L'unico limite che ha senso studiare è per n → ∞.</li>
+                            <li><strong>Definizione formale:</strong> ∀ε > 0, ∃N ∈ ℕ tale che se n > N, allora |aₙ - L| < ε.</li>
+                            <li><span class="font-semibold">Intuizione:</span> I termini della successione si "accumulano" definitivamente intorno al valore L man mano che n diventa grande.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                         <h3 class="font-semibold text-xl mb-4 text-center">Limite di Funzione</h3>
+                         <p class="font-bold text-center text-xl mb-4"> lim f(x) = L</p>
+                         <p class="text-center mb-6"> x → c</p>
+                         <ul class="list-disc list-inside space-y-2">
+                             <li>Il dominio è un sottoinsieme di ℝ (numeri reali).</li>
+                             <li>Il limite può essere studiato per x che tende a un valore finito c, a ±∞.</li>
+                             <li><strong>Definizione formale:</strong> ∀ε > 0, ∃δ > 0 tale che se 0 < |x - c| < δ, allora |f(x) - L| < ε.</li>
+                            <li><span class="font-semibold">Intuizione:</span> I valori della funzione si avvicinano a L quando la variabile x si avvicina a c.</li>
+                         </ul>
+                    </div>
+                </div>
+                 <div class="mt-6 bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-md">
+                    <p><span class="font-bold">Teorema Ponte:</span> Esiste una forte connessione. Se <code class="bg-gray-200 p-1 rounded">lim f(x) = L</code> per <code class="bg-gray-200 p-1 rounded">x → ∞</code>, allora per ogni successione aₙ tale che aₙ → ∞, si ha che <code class="bg-gray-200 p-1 rounded">lim f(aₙ) = L</code>. Questo permette di usare i limiti di funzione per calcolare limiti di successioni.</p>
+                </div>
+            </section>
+            
+            <section id="asintoti" class="content-section">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900">Limiti Infiniti e Asintoti</h2>
+                <p class="text-lg mb-6">Gli asintoti sono rette a cui il grafico di una funzione si avvicina indefinitamente. Il loro studio è un'applicazione diretta del calcolo dei limiti.</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <article class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="font-semibold text-xl mb-2">Asintoto Verticale</h3>
+                        <p class="mb-4">La retta <code class="bg-gray-200 p-1 rounded">x = c</code> è un asintoto verticale se almeno uno di questi limiti è vero:</p>
+                        <p class="text-center font-mono text-lg bg-gray-100 p-3 rounded">lim f(x) = ±∞</p>
+                        <p class="text-center text-sm text-gray-500 mb-4">x → c⁺ / c⁻</p>
+                        <div class="chart-container">
+                             <canvas id="verticalAsymptoteChart"></canvas>
+                        </div>
+                    </article>
+
+                    <article class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="font-semibold text-xl mb-2">Asintoto Orizzontale</h3>
+                        <p class="mb-4">La retta <code class="bg-gray-200 p-1 rounded">y = L</code> è un asintoto orizzontale se:</p>
+                        <p class="text-center font-mono text-lg bg-gray-100 p-3 rounded">lim f(x) = L</p>
+                        <p class="text-center text-sm text-gray-500 mb-4">x → ±∞</p>
+                         <div class="chart-container">
+                             <canvas id="horizontalAsymptoteChart"></canvas>
+                        </div>
+                    </article>
+
+                    <article class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="font-semibold text-xl mb-2">Asintoto Obliquo</h3>
+                        <p class="mb-4">La retta <code class="bg-gray-200 p-1 rounded">y = mx + q</code> è un asintoto obliquo se:</p>
+                        <ul class="list-disc list-inside space-y-1 text-sm bg-gray-100 p-2 rounded">
+                            <li>m = lim f(x)/x (con m finito e ≠ 0)</li>
+                            <li>q = lim [f(x) - mx] (con q finito)</li>
+                        </ul>
+                        <p class="text-center text-sm text-gray-500 mb-4">per x → ±∞</p>
+                        <div class="chart-container">
+                             <canvas id="obliqueAsymptoteChart"></canvas>
+                        </div>
+                    </article>
+                </div>
+                 <div class="mt-6 bg-red-100 border-l-4 border-red-500 text-red-800 p-4 rounded-md">
+                    <p><span class="font-bold">Attenzione:</span> Un asintoto orizzontale e uno obliquo sono mutuamente esclusivi nella stessa direzione (x → +∞ o x → -∞). Se esiste l'orizzontale, non si cerca l'obliquo.</p>
+                </div>
+            </section>
+            
+            <section id="esercizi" class="content-section">
+                <h2 class="text-3xl font-bold mb-4 text-gray-900">Esercizi Guidati</h2>
+                <p class="text-lg mb-6">Metti alla prova le tue conoscenze. Prova a risolvere ogni esercizio prima di guardare la soluzione.</p>
+                <div id="exercises-container" class="space-y-4">
+                </div>
+            </section>
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const navigationLinks = document.querySelectorAll('#navigation a');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    function updateContent(hash) {
+        hash = hash || window.location.hash || '#intro';
+        
+        contentSections.forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        let activeSection = document.querySelector(hash);
+        if (activeSection) {
+            activeSection.classList.add('active');
+        } else {
+            document.querySelector('#intro').classList.add('active');
+        }
+
+        navigationLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === hash) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    navigationLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            history.pushState(null, null, targetId);
+            updateContent(targetId);
+        });
+    });
+
+    window.addEventListener('popstate', () => updateContent(window.location.hash));
+    updateContent(); 
+
+    function createIntuitiveChart() {
+        const ctx = document.getElementById('intuitiveChart')?.getContext('2d');
+        if (!ctx) return;
+        
+        const f = x => (x === 1) ? undefined : (x * x - 1) / (x - 1);
+
+        const data = {
+            datasets: [{
+                label: 'f(x) = (x²-1)/(x-1)',
+                data: Array.from({ length: 201 }, (_, i) => {
+                    const x = i * 0.01;
+                    return { x: x, y: f(x) };
+                }),
+                borderColor: '#3B82F6',
+                borderWidth: 2,
+                tension: 0.1,
+                pointRadius: 0,
+                fill: false
+            }, {
+                label: 'Punto di interesse',
+                data: [{x: 1, y: 2}],
+                backgroundColor: 'white',
+                borderColor: '#EF4444',
+                borderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                type: 'scatter'
+            }, {
+                label: 'Punto mobile',
+                data: [],
+                backgroundColor: '#10B981',
+                pointRadius: 6,
+                type: 'scatter'
+            }]
+        };
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { type: 'linear', position: 'bottom', min: 0, max: 2, title: { display: true, text: 'x' } },
+                    y: { min: 0, max: 3, title: { display: true, text: 'f(x)' } }
+                },
+                plugins: {
+                    tooltip: { enabled: false }
+                }
+            }
+        });
+
+        const xSlider = document.getElementById('xSlider');
+        const xValueSpan = document.getElementById('xValue');
+        const fxValueDiv = document.getElementById('fxValue');
+        
+        function updateChart(x) {
+            const y = f(x);
+            chart.data.datasets[2].data = [{x: x, y: y}];
+            chart.update('none');
+            xValueSpan.textContent = `x = ${x.toFixed(2)}`;
+            if (y !== undefined) {
+               fxValueDiv.textContent = `f(x) ≈ ${y.toFixed(3)}`;
+            } else {
+               fxValueDiv.textContent = `f(x) non è definita`;
+            }
+        }
+        
+        xSlider.addEventListener('input', (e) => updateChart(parseFloat(e.target.value)));
+        updateChart(parseFloat(xSlider.value));
+    }
+
+    function createEpsilonDeltaChart() {
+        const ctx = document.getElementById('epsilonDeltaChart')?.getContext('2d');
+        if (!ctx) return;
+        
+        const c = 2, L = 3;
+        const f = x => 2 * x - 1;
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'f(x) = 2x - 1',
+                    data: Array.from({length: 41}, (_, i) => ({x: i * 0.1, y: f(i * 0.1)})),
+                    borderColor: '#3B82F6',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { min: 0, max: 4 },
+                    y: { min: -1, max: 7 }
+                },
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            epsilon_top: { type: 'line', yMin: L + 1, yMax: L + 1, borderColor: 'rgba(239, 68, 68, 0.5)', borderWidth: 2, borderDash: [6, 6] },
+                            epsilon_bottom: { type: 'line', yMin: L - 1, yMax: L - 1, borderColor: 'rgba(239, 68, 68, 0.5)', borderWidth: 2, borderDash: [6, 6] },
+                            epsilon_box: { type: 'box', yMin: L - 1, yMax: L + 1, backgroundColor: 'rgba(59, 130, 246, 0.1)' },
+                            delta_left: { type: 'line', xMin: c - 0.5, xMax: c - 0.5, borderColor: 'rgba(239, 68, 68, 0.5)', borderWidth: 2, borderDash: [6, 6] },
+                            delta_right: { type: 'line', xMin: c + 0.5, xMax: c + 0.5, borderColor: 'rgba(239, 68, 68, 0.5)', borderWidth: 2, borderDash: [6, 6] },
+                            delta_box: { type: 'box', xMin: c - 0.5, xMax: c + 0.5, backgroundColor: 'rgba(16, 185, 129, 0.1)' },
+                            pointL: { type: 'point', xValue: c, yValue: L, backgroundColor: '#EF4444', radius: 5 }
+                        }
+                    }
+                }
+            }
+        });
+
+        const epsilonSlider = document.getElementById('epsilonSlider');
+        const epsilonValueSpan = document.getElementById('epsilonValue');
+        const deltaValueDiv = document.getElementById('deltaValue');
+        
+        function updateAnnotations(epsilon) {
+            const delta = epsilon / 2;
+            const annotations = chart.options.plugins.annotation.annotations;
+            annotations.epsilon_top.yMin = L + epsilon;
+            annotations.epsilon_top.yMax = L + epsilon;
+            annotations.epsilon_bottom.yMin = L - epsilon;
+            annotations.epsilon_bottom.yMax = L - epsilon;
+            annotations.epsilon_box.yMin = L - epsilon;
+            annotations.epsilon_box.yMax = L + epsilon;
+            
+            annotations.delta_left.xMin = c - delta;
+            annotations.delta_left.xMax = c - delta;
+            annotations.delta_right.xMin = c + delta;
+            annotations.delta_right.xMax = c + delta;
+            annotations.delta_box.xMin = c - delta;
+            annotations.delta_box.xMax = c + delta;
+
+            chart.update();
+            epsilonValueSpan.textContent = epsilon.toFixed(2);
+            deltaValueDiv.textContent = `Per questo ε, un δ valido è δ ≤ ${delta.toFixed(2)}`;
+        }
+        epsilonSlider.addEventListener('input', e => updateAnnotations(parseFloat(e.target.value)));
+        updateAnnotations(parseFloat(epsilonSlider.value));
+    }
+
+    function createAsymptoteCharts() {
+        const createChart = (id, data, annotations) => {
+            const ctx = document.getElementById(id)?.getContext('2d');
+            if(!ctx) return;
+            new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { type: 'linear', position: 'bottom' },
+                        y: { position: 'left' }
+                    },
+                    elements: { point: { radius: 0 } },
+                    plugins: { annotation: { annotations: annotations } }
+                }
+            });
+        };
+
+        createChart('verticalAsymptoteChart', {
+            datasets: [{
+                label: 'f(x) = 1/(x-2)',
+                data: Array.from({length: 401}, (_,i) => {
+                    const x = (i*0.01);
+                    return {x: x, y: (x === 2) ? null : 1 / (x - 2)}
+                }),
+                borderColor: '#3B82F6',
+            }]
+        }, {
+            asymptote: { type: 'line', xMin: 2, xMax: 2, borderColor: 'rgba(239, 68, 68, 0.7)', borderWidth: 2, borderDash: [6,6], label: { content: 'x=2', enabled: true } }
+        });
+
+        createChart('horizontalAsymptoteChart', {
+            datasets: [{
+                label: 'f(x) = 2x/(x+1)',
+                data: Array.from({length: 201}, (_,i) => {
+                    const x = -10 + i*0.1;
+                    return {x: x, y: (x === -1) ? null : (2*x)/(x+1) }
+                }),
+                borderColor: '#3B82F6',
+            }]
+        }, {
+            asymptote: { type: 'line', yMin: 2, yMax: 2, borderColor: 'rgba(239, 68, 68, 0.7)', borderWidth: 2, borderDash: [6,6], label: { content: 'y=2', enabled: true, position: 'start' } }
+        });
+
+        createChart('obliqueAsymptoteChart', {
+            datasets: [{
+                label: 'f(x) = (x²+1)/x',
+                data: Array.from({length: 201}, (_,i) => {
+                    const x = -10 + i*0.1;
+                    return {x: x, y: (x === 0) ? null : (x*x + 1)/x }
+                }),
+                borderColor: '#3B82F6',
+            }, {
+                label: 'Asintoto y = x',
+                data: [{x: -10, y: -10}, {x: 10, y: 10}],
+                borderColor: 'rgba(239, 68, 68, 0.7)',
+                borderWidth: 2,
+                borderDash: [6,6],
+            }]
+        }, {});
+    }
+
+    const exercises = [
+        { 
+            q: "1. Calcolare lim (x² - 4x + 3) / (x - 1) per x → 1",
+            s: "È una forma indeterminata 0/0. Scomponiamo il numeratore: x² - 4x + 3 = (x - 1)(x - 3). Semplificando (x-1), otteniamo lim (x - 3) per x → 1. Sostituendo x=1, il risultato è 1 - 3 = -2."
+        },
+        { 
+            q: "2. Calcolare lim (√(x+4) - 2) / x per x → 0",
+            s: "È una forma indeterminata 0/0. Razionalizziamo moltiplicando e dividendo per (√(x+4) + 2). Al numeratore otteniamo (x+4) - 4 = x. L'espressione diventa lim x / [x * (√(x+4) + 2)]. Semplificando x, rimane lim 1 / (√(x+4) + 2). Sostituendo x=0, il risultato è 1 / (√4 + 2) = 1/4."
+        },
+        { 
+            q: "3. Calcolare lim (sin(5x)) / (3x) per x → 0",
+            s: "Forma 0/0. Usiamo il limite notevole sin(t)/t → 1. Riscriviamo l'espressione come (5/3) * (sin(5x))/(5x). Ponendo t=5x, per x→0 anche t→0. Il limite diventa (5/3) * lim (sin(t)/t) = (5/3) * 1 = 5/3."
+        },
+        { 
+            q: "4. Calcolare lim (2x³ - x) / (x³ + 3x² + 1) per x → +∞",
+            s: "Forma ∞/∞. Raccogliamo il termine di grado massimo sia al numeratore che al denominatore: lim [x³(2 - 1/x²)] / [x³(1 + 3/x + 1/x³)]. Semplifichiamo x³. Per x→+∞, i termini 1/x², 3/x, 1/x³ tendono a 0. Il limite è 2/1 = 2."
+        },
+        { 
+            q: "5. Calcolare lim (e⁻ˣ * (x+1)) per x → +∞",
+            s: "Forma 0 * ∞. Riscriviamo come lim (x+1)/eˣ. Questa è una forma ∞/∞. Poiché l'esponenziale eˣ cresce più velocemente di qualsiasi polinomio (gerarchia degli infiniti), il denominatore domina. Il limite è 0."
+        },
+        { 
+            q: "6. Calcolare lim (1 + 2/x) ^ (3x) per x → +∞",
+            s: "Forma 1^∞, riconducibile al limite di Nepero. Poniamo t = x/2, quindi x = 2t. Se x→∞, anche t→∞. Sostituendo: lim (1 + 1/t) ^ (3*2t) = lim [(1 + 1/t) ^ t] ^ 6. L'espressione nella parentesi quadra tende a 'e'. Il risultato è e⁶."
+        },
+        { 
+            q: "7. Trovare gli asintoti di f(x) = (3x² + 1) / (x - 1)",
+            s: "Asintoto Verticale: il denominatore si annulla in x=1. lim per x→1⁺ di f(x) = +∞. Quindi x=1 è asintoto verticale. Asintoto Orizzontale: lim per x→±∞ di f(x) = ±∞. Non ci sono asintoti orizzontali. Asintoto Obliquo (y=mx+q): m = lim f(x)/x = lim (3x²+1)/(x²-x) = 3. q = lim [f(x)-3x] = lim [(3x²+1 - 3x(x-1))/(x-1)] = lim (3x+1)/(x-1) = 3. L'asintoto obliquo è y = 3x + 3."
+        },
+        { 
+            q: "8. Calcolare lim (1 - cos(x)) / sin(x) per x → 0",
+            s: "Forma 0/0. Usiamo i limiti notevoli. Dividiamo numeratore e denominatore per x²: lim [(1-cos(x))/x²] / [sin(x)/x²]. Riscriviamo il denominatore: [sin(x)/x * 1/x]. Il numeratore tende a 1/2. Il denominatore tende a 1 * (1/0), quindi a ∞. Il limite è (1/2)/∞ che fa 0. Metodo alternativo più semplice: Moltiplichiamo e dividiamo per x: lim [(1 - cos(x))/x] * [x/sin(x)]. Il primo termine tende a 0, il secondo a 1. Risultato 0 * 1 = 0."
+        },
+        { 
+            q: "9. Calcolare lim (ln(x) - x) per x → +∞",
+            s: "Forma ∞ - ∞. Raccogliamo il termine dominante, x: lim x * (ln(x)/x - 1). Per la gerarchia degli infiniti, lim ln(x)/x per x→+∞ è 0. Quindi il limite diventa lim x * (0 - 1) = -∞."
+        },
+        { 
+            q: "10. Dimostrare con il Teorema del Confronto che lim (sin(x) / x) = 1 per x → 0",
+            s: "Per x in (0, π/2), si può dimostrare geometricamente che sin(x) < x < tan(x). Dividendo per sin(x) (che è > 0), otteniamo 1 < x/sin(x) < 1/cos(x). Invertendo le frazioni (e il verso delle disuguaglianze): cos(x) < sin(x)/x < 1. Poiché lim cos(x) per x→0 è 1, e lim 1 è 1, per il Teorema del Confronto anche lim (sin(x)/x) deve essere 1."
+        }
+    ];
+
+    const exercisesContainer = document.getElementById('exercises-container');
+    if (exercisesContainer) {
+        exercises.forEach((ex, index) => {
+            const exerciseEl = document.createElement('div');
+            exerciseEl.className = 'bg-white p-4 rounded-lg shadow-md';
+            exerciseEl.innerHTML = `
+                <div class="flex justify-between items-center cursor-pointer" data-ex-id="${index}">
+                    <h3 class="font-semibold text-lg">${ex.q}</h3>
+                    <span class="text-blue-500 transform transition-transform duration-300">&#9662;</span>
+                </div>
+                <div id="sol-${index}" class="solution mt-4 pt-4 border-t border-gray-200">
+                    <p class="text-gray-700">${ex.s}</p>
+                </div>
+            `;
+            exercisesContainer.appendChild(exerciseEl);
+        });
+
+        exercisesContainer.addEventListener('click', (e) => {
+            const header = e.target.closest('[data-ex-id]');
+            if (header) {
+                const id = header.dataset.exId;
+                const solution = document.getElementById(`sol-${id}`);
+                const arrow = header.querySelector('span');
+                solution.classList.toggle('show');
+                arrow.classList.toggle('rotate-180');
+            }
+        });
+    }
+
+    createIntuitiveChart();
+    createEpsilonDeltaChart();
+    createAsymptoteCharts();
+});
+</script>
+
+</body>
+</html>

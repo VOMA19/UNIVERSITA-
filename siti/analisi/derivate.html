@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Derivate - Un'Esplorazione Interattiva</title>
+    <!-- Chosen Palette: Warm Neutrals & Muted Blue -->
+    <!-- Application Structure Plan: Single-page application with sticky sidebar navigation for clear topic segmentation. Interactive sections focus on visualizing core concepts: the secant-to-tangent limit, continuity vs. differentiability, and the relationship between a function and its derivatives. This structure is chosen to transform a linear textbook chapter into an explorable, hands-on learning tool, prioritizing conceptual understanding through interaction over passive reading. -->
+    <!-- Visualization & Content Choices: 1. Geometric Intro: Goal=Explore, Viz=Interactive Chart.js line chart, Interaction=Slider to change point distance. Justification=Directly visualizes the limit definition. 2. Function Study: Goal=Analyze, Viz=Multi-layer Chart.js chart, Interaction=Buttons to toggle derivative plots and highlight points. Justification=Connects abstract derivative properties (sign) to concrete function behavior (monotonicity/concavity). 3. Theorems: Goal=Inform, Viz=Static illustrative charts (Chart.js), Interaction=None. Justification=Provides quick visual context without distraction. 4. Formulary: Goal=Reference, Viz=HTML tables. Justification=Clarity and ease of access. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .math {
+            font-size: 1.1em;
+        }
+        .prose {
+            max-width: 80ch;
+        }
+        .prose h2 {
+            margin-top: 2em;
+            margin-bottom: 1em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .prose h3 {
+             margin-top: 1.5em;
+             margin-bottom: 0.8em;
+        }
+        .sidebar-link {
+            transition: all 0.2s ease-in-out;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-link.active {
+            border-left-color: #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
+            background-color: #eff6ff;
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            max-height: 50vh;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <div class="flex">
+        <aside class="sticky top-0 h-screen w-64 bg-stone-100 p-4 hidden lg:block overflow-y-auto">
+            <h1 class="text-xl font-bold text-blue-600 mb-6">Analisi I: Derivate</h1>
+            <nav id="sidebar-nav" class="flex flex-col space-y-2">
+                <a href="#introduzione" class="sidebar-link p-2 rounded-md hover:bg-stone-200">Introduzione Intuitiva</a>
+                <a href="#definizione" class="sidebar-link p-2 rounded-md hover:bg-stone-200">Definizione e Proprietà</a>
+                <a href="#teoremi" class="sidebar-link p-2 rounded-md hover:bg-stone-200">Teoremi Fondamentali</a>
+                <a href="#studio-funzione" class="sidebar-link p-2 rounded-md hover:bg-stone-200">Studio di Funzione</a>
+                <a href="#formulario" class="sidebar-link p-2 rounded-md hover:bg-stone-200">Formulario e Regole</a>
+                <a href="#conclusione" class="sidebar-link p-2 rounded-md hover:bg-stone-200">Conclusione</a>
+            </nav>
+        </aside>
+
+        <main class="w-full lg:w-[calc(100%-16rem)] p-6 md:p-10">
+            <div class="prose mx-auto">
+                <section id="introduzione">
+                    <h2 class="text-3xl font-bold text-stone-900">1. Introduzione Intuitiva al Concetto di Derivata</h2>
+                    <p>La derivata è uno dei concetti più potenti e fondamentali del calcolo infinitesimale. Essa cattura l'idea di "tasso di variazione istantaneo" di una funzione. Sebbene la sua definizione formale sia basata sul concetto di limite, possiamo comprenderla intuitivamente attraverso tre prospettive complementari: geometrica, fisica e analitica.</p>
+
+                    <div id="tabs-container" class="mt-6">
+                        <div class="border-b border-stone-200">
+                            <nav class="flex space-x-4" aria-label="Tabs">
+                                <button data-tab="geometrico" class="tab-btn active text-blue-600 border-b-2 border-blue-600 px-3 py-2 font-medium">Significato Geometrico</button>
+                                <button data-tab="fisico" class="tab-btn text-stone-500 hover:text-stone-700 px-3 py-2 font-medium">Significato Fisico</button>
+                                <button data-tab="analitico" class="tab-btn text-stone-500 hover:text-stone-700 px-3 py-2 font-medium">Significato Analitico</button>
+                            </nav>
+                        </div>
+
+                        <div id="tab-content" class="mt-4">
+                            <div id="content-geometrico" class="tab-pane">
+                                <h3>1.1 Pendenza della Retta Tangente</h3>
+                                <p>Geometricamente, la derivata di una funzione \(f(x)\) in un punto \(x_0\) rappresenta il <strong>coefficiente angolare (la pendenza) della retta tangente</strong> al grafico della funzione in quel punto. Questa retta è il limite a cui tende la retta secante che passa per i punti \((x_0, f(x_0))\) e \((x_0+h, f(x_0+h))\) quando \(h\) si avvicina a zero.</p>
+                                <div class="bg-white p-4 rounded-lg shadow-md my-6 not-prose">
+                                    <div class="chart-container">
+                                        <canvas id="tangentChart"></canvas>
+                                    </div>
+                                    <div class="mt-4 text-center">
+                                        <label for="hSlider" class="block text-sm font-medium text-stone-700">Trascina per variare \(h\):</label>
+                                        <input id="hSlider" type="range" min="0.05" max="2" step="0.01" value="2" class="w-full max-w-sm mt-2">
+                                        <p class="mt-2">Pendenza secante: <span id="slopeValue" class="font-mono font-bold">...</span></p>
+                                        <p>Pendenza tangente (derivata in x=1): <span class="font-mono font-bold text-blue-600">2.00</span></p>
+                                    </div>
+                                </div>
+                                <p>Nell'esempio interattivo, osserva come la linea secante (in rosso) si avvicina sempre di più alla linea tangente (in blu) man mano che riduci il valore di \(h\). La sua pendenza converge al valore della derivata nel punto.</p>
+                            </div>
+                            <div id="content-fisico" class="tab-pane hidden">
+                                <h3>1.2 Velocità Istantanea</h3>
+                                <p>In fisica, se una funzione \(s(t)\) descrive la posizione di un oggetto in movimento al tempo \(t\), la sua derivata \(s'(t)\) rappresenta la <strong>velocità istantanea</strong> dell'oggetto a quell'istante. Mentre la velocità media si calcola su un intervallo di tempo \(\Delta t\), la velocità istantanea è il limite a cui tende la velocità media quando l'intervallo \(\Delta t\) diventa infinitesimale.</p>
+                                <p class="math">Velocità media: \(v_m = \frac{\Delta s}{\Delta t} = \frac{s(t_0 + \Delta t) - s(t_0)}{\Delta t}\)</p>
+                                <p class="math">Velocità istantanea: \(v(t_0) = s'(t_0) = \lim_{\Delta t \to 0} \frac{s(t_0 + \Delta t) - s(t_0)}{\Delta t}\)</p>
+                                <div class="bg-white p-4 rounded-lg shadow-md my-6 text-center not-prose">
+                                    <p class="text-lg">Immagina un'auto che percorre una distanza. La sua velocità media su un viaggio di un'ora è facile da calcolare. Ma cosa segna il tachimetro in un preciso istante? Quella è la velocità istantanea, la derivata della posizione rispetto al tempo.</p>
+                                    <div class="text-4xl my-4">🚗</div>
+                                    <p>Se la posizione è \(s(t) = 4.9t^2\) (caduta libera), la velocità istantanea al tempo \(t=2s\) è \(s'(2) = 9.8 \cdot 2 = 19.6 \, m/s\).</p>
+                                </div>
+                            </div>
+                            <div id="content-analitico" class="tab-pane hidden">
+                                <h3>1.3 Limite del Rapporto Incrementale</h3>
+                                <p>Dal punto di vista analitico, la derivata è definita formalmente come il <strong>limite del rapporto incrementale</strong>. Questo rapporto misura la variazione media della funzione \(f\) rispetto a una variazione della variabile indipendente \(x\). Facendo tendere a zero l'incremento della variabile indipendente, si ottiene il tasso di variazione istantaneo.</p>
+                                <p>Dato un punto \(x_0\) e un piccolo incremento \(h\), il rapporto incrementale è:</p>
+                                <p class="math">$$ R(h) = \frac{\Delta y}{\Delta x} = \frac{f(x_0 + h) - f(x_0)}{h} $$</p>
+                                <p>La derivata prima di \(f\) in \(x_0\), indicata con \(f'(x_0)\), è il valore (se esiste ed è finito) del limite di questo rapporto per \(h\) che tende a zero:</p>
+                                <p class="math">$$ f'(x_0) = \lim_{h \to 0} \frac{f(x_0 + h) - f(x_0)}{h} $$</p>
+                                <p>Questo limite è il cuore della definizione di derivata e unifica le interpretazioni geometrica e fisica.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="definizione">
+                    <h2 class="text-3xl font-bold text-stone-900">2. Definizione Formale e Proprietà</h2>
+                    <h3>2.1 Funzione Derivabile e Continuità</h3>
+                    <p>Una funzione \(f\) si dice <strong>derivabile</strong> in un punto \(x_0\) del suo dominio se il limite del rapporto incrementale esiste ed è finito. Se una funzione è derivabile in ogni punto di un intervallo, si dice derivabile in quell'intervallo.</p>
+                    <p>Un teorema fondamentale lega la derivabilità alla continuità:</p>
+                    <blockquote><strong>Teorema:</strong> Se una funzione \(f\) è derivabile in un punto \(x_0\), allora è anche continua in \(x_0\).</blockquote>
+                    <p><strong>Attenzione:</strong> il viceversa non è vero. Una funzione può essere continua ma non derivabile. Un classico esempio è la funzione \(f(x) = |x|\) nel punto \(x_0 = 0\). La funzione è continua, ma il suo grafico ha un "punto angoloso" dove non è possibile definire una singola retta tangente.</p>
+                    <div class="bg-white p-4 rounded-lg shadow-md my-6 not-prose">
+                         <div class="chart-container">
+                            <canvas id="continuityChart"></canvas>
+                        </div>
+                        <p class="text-center mt-2">Il grafico di \(f(x)=|x|\) è continuo in \(x=0\) ma non derivabile a causa del punto angoloso.</p>
+                    </div>
+
+                    <h3>2.2 Derivate Laterali (Destra e Sinistra)</h3>
+                    <p>Per analizzare i punti di non derivabilità, si introducono le derivate destra e sinistra, che sono i limiti del rapporto incrementale per \(h \to 0^+\) (da destra) e \(h \to 0^-\) (da sinistra).</p>
+                    <p class="math">Derivata destra: \( f'_+(x_0) = \lim_{h \to 0^+} \frac{f(x_0 + h) - f(x_0)}{h} \)</p>
+                    <p class="math">Derivata sinistra: \( f'_-(x_0) = \lim_{h \to 0^-} \frac{f(x_0 + h) - f(x_0)}{h} \)</p>
+                    <p>Una funzione è derivabile in \(x_0\) se e solo se le derivate destra e sinistra esistono, sono finite e coincidono: \(f'_+(x_0) = f'_- (x_0)\). Per \(f(x)=|x|\) in \(x=0\), si ha \(f'_+(0)=1\) e \(f'_- (0)=-1\), quindi non è derivabile.</p>
+
+                    <h3>2.3 Il Differenziale</h3>
+                    <p>Il differenziale, \(dy\), è strettamente legato alla derivata. Se \(y=f(x)\), il differenziale è definito come \(dy = f'(x)dx\). Esso rappresenta l'incremento della funzione lungo la retta tangente. Per piccoli incrementi \(\Delta x\), il differenziale \(dy\) fornisce una buona approssimazione dell'incremento reale della funzione \(\Delta y = f(x+\Delta x) - f(x)\).</p>
+                    <p class="math">\(\Delta y \approx dy = f'(x)\Delta x\). Questa approssimazione è alla base di molti metodi numerici.</p>
+                </section>
+
+                <section id="teoremi">
+                    <h2 class="text-3xl font-bold text-stone-900">3. Teoremi Fondamentali del Calcolo Differenziale</h2>
+                    <p>I seguenti teoremi sono pilastri del calcolo differenziale e legano le proprietà di una funzione alla sua derivata, con importanti conseguenze geometriche e analitiche.</p>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-stone-200">
+                            <h3>Teorema di Fermat</h3>
+                            <p><strong>Enunciato:</strong> Sia \(f\) una funzione definita in un intervallo \([a, b]\) e sia \(x_0\) un punto interno a \((a, b)\) in cui \(f\) ha un massimo o un minimo locale. Se \(f\) è derivabile in \(x_0\), allora \(f'(x_0) = 0\).</p>
+                            <p><strong>Interpretazione:</strong> Nei punti di massimo o minimo interni, la retta tangente al grafico (se esiste) è orizzontale. Questo teorema fornisce un metodo per trovare i "candidati" a essere punti di estremo: i cosiddetti <strong>punti critici o stazionari</strong>.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-stone-200">
+                            <h3>Teorema di Rolle</h3>
+                            <p><strong>Enunciato:</strong> Sia \(f\) una funzione continua nell'intervallo chiuso \([a, b]\), derivabile nell'intervallo aperto \((a, b)\), e tale che \(f(a) = f(b)\).</p>
+                            <p>Allora esiste almeno un punto \(c \in (a, b)\) tale che \(f'(c) = 0\).</p>
+                            <p><strong>Interpretazione:</strong> Se una funzione "liscia" parte da un'altezza e ritorna alla stessa altezza, deve esserci almeno un punto intermedio in cui la sua velocità di crescita è nulla, ovvero la sua tangente è orizzontale.</p>
+                        </div>
+                         <div class="bg-white p-4 rounded-lg shadow-sm border border-stone-200">
+                            <h3>Teorema di Lagrange (o del Valor Medio)</h3>
+                            <p><strong>Enunciato:</strong> Sia \(f\) una funzione continua nell'intervallo chiuso \([a, b]\) e derivabile nell'intervallo aperto \((a, b)\).</p>
+                            <p>Allora esiste almeno un punto \(c \in (a, b)\) tale che:</p>
+                            <p class="math">$$ f'(c) = \frac{f(b) - f(a)}{b - a} $$</p>
+                            <p><strong>Interpretazione:</strong> Esiste almeno un punto \(c\) in cui la pendenza della retta tangente è uguale alla pendenza della retta secante che congiunge gli estremi del grafico. In termini fisici, la velocità istantanea in un certo momento \(c\) è uguale alla velocità media tenuta durante l'intero intervallo.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-stone-200">
+                            <h3>Teorema di Cauchy</h3>
+                            <p><strong>Enunciato:</strong> Siano \(f\) e \(g\) due funzioni continue in \([a, b]\) e derivabili in \((a, b)\), con \(g'(x) \neq 0\) per ogni \(x \in (a, b)\).</p>
+                            <p>Allora esiste almeno un punto \(c \in (a, b)\) tale che:</p>
+                            <p class="math">$$ \frac{f'(c)}{g'(c)} = \frac{f(b) - f(a)}{g(b) - g(a)} $$</p>
+                            <p><strong>Interpretazione:</strong> È una generalizzazione del teorema di Lagrange ed è fondamentale per dimostrare il Teorema di De L'Hôpital.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-stone-200">
+                            <h3>Teorema di De L'Hôpital</h3>
+                            <p><strong>Enunciato:</strong> Siano \(f\) e \(g\) due funzioni derivabili in un intorno di \(x_0\) (escluso al più \(x_0\)) con \(g'(x) \neq 0\). Se \(\lim_{x \to x_0} f(x) = \lim_{x \to x_0} g(x) = 0\) (o \(\pm \infty\)), e se esiste il limite \(\lim_{x \to x_0} \frac{f'(x)}{g'(x)}\), allora:</p>
+                            <p class="math">$$ \lim_{x \to x_0} \frac{f(x)}{g(x)} = \lim_{x \to x_0} \frac{f'(x)}{g'(x)} $$</p>
+                            <p><strong>Interpretazione:</strong> Fornisce un metodo potentissimo per risolvere i limiti che si presentano nelle forme indeterminate \(\frac{0}{0}\) o \(\frac{\infty}{\infty}\) derivando numeratore e denominatore.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="studio-funzione">
+                    <h2 class="text-3xl font-bold text-stone-900">4. Lo Studio di Funzione tramite le Derivate</h2>
+                    <p>La derivata prima e la derivata seconda sono strumenti essenziali per analizzare l'andamento del grafico di una funzione. Ci permettono di determinare crescenza, decrescenza, massimi, minimi, concavità e punti di flesso.</p>
+                    <div class="bg-white p-4 rounded-lg shadow-md my-6 not-prose">
+                        <div class="chart-container">
+                            <canvas id="functionStudyChart"></canvas>
+                        </div>
+                        <div class="mt-4 flex flex-wrap justify-center gap-2">
+                            <button id="toggleFPrime" class="px-3 py-1 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600">Mostra/Nascondi f'(x)</button>
+                            <button id="toggleFSecond" class="px-3 py-1 bg-green-500 text-white rounded-md shadow-sm hover:bg-green-600">Mostra/Nascondi f''(x)</button>
+                            <button id="toggleCritical" class="px-3 py-1 bg-red-500 text-white rounded-md shadow-sm hover:bg-red-600">Evidenzia Punti Critici</button>
+                            <button id="toggleInflection" class="px-3 py-1 bg-purple-500 text-white rounded-md shadow-sm hover:bg-purple-600">Evidenzia Flessi</button>
+                        </div>
+                        <div id="functionStudyInfo" class="mt-4 p-3 bg-stone-50 rounded-md text-sm">
+                            <p>Interagisci con i pulsanti per analizzare la funzione \(f(x) = x^3 - 3x^2 + 1\). Osserva come il comportamento di \(f(x)\) è legato al segno delle sue derivate.</p>
+                        </div>
+                    </div>
+
+                    <h3>4.1 Derivata Prima: Monotonia e Punti Critici</h3>
+                    <ul>
+                        <li>Se \(f'(x) > 0\) in un intervallo, allora \(f(x)\) è <strong>strettamente crescente</strong> in quell'intervallo.</li>
+                        <li>Se \(f'(x) < 0\) in un intervallo, allora \(f(x)\) è <strong>strettamente decrescente</strong> in quell'intervallo.</li>
+                        <li>I punti in cui \(f'(x) = 0\) sono chiamati <strong>punti critici o stazionari</strong>. Questi sono i candidati per essere punti di <strong>massimo o minimo locale</strong>.</li>
+                    </ul>
+                    
+                    <h3>4.2 Derivata Seconda: Concavità e Punti di Flesso</h3>
+                    <ul>
+                        <li>Se \(f''(x) > 0\) in un intervallo, allora \(f(x)\) ha la <strong>concavità rivolta verso l'alto</strong> (è convessa) in quell'intervallo. Il grafico "sta sopra" la retta tangente.</li>
+                        <li>Se \(f''(x) < 0\) in un intervallo, allora \(f(x)\) ha la <strong>concavità rivolta verso il basso</strong> (è concava) in quell'intervallo. Il grafico "sta sotto" la retta tangente.</li>
+                        <li>I punti in cui \(f''(x) = 0\) e la concavità cambia sono chiamati <strong>punti di flesso</strong>.</li>
+                    </ul>
+                </section>
+
+                <section id="formulario">
+                    <h2 class="text-3xl font-bold text-stone-900">5. Formulario e Regole di Derivazione</h2>
+                    <p>Padroneggiare le regole di derivazione è essenziale per calcolare le derivate di funzioni complesse.</p>
+                    
+                    <h3>5.1 Regole Fondamentali</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-stone-100">
+                                <tr>
+                                    <th class="p-2 border">Operazione</th>
+                                    <th class="p-2 border">Regola</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t">
+                                    <td class="p-2 border">Somma</td>
+                                    <td class="p-2 border math">\( D[f(x) + g(x)] = f'(x) + g'(x) \)</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 border">Prodotto</td>
+                                    <td class="p-2 border math">\( D[f(x)g(x)] = f'(x)g(x) + f(x)g'(x) \)</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 border">Quoziente</td>
+                                    <td class="p-2 border math">\( D\left[\frac{f(x)}{g(x)}\right] = \frac{f'(x)g(x) - f(x)g'(x)}{[g(x)]^2} \)</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 border">Funzione Composta (Regola della Catena)</td>
+                                    <td class="p-2 border math">\( D[f(g(x))] = f'(g(x)) \cdot g'(x) \)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>5.2 Derivate di Funzioni Elementari</h3>
+                     <div class="overflow-x-auto mt-4">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-stone-100">
+                                <tr>
+                                    <th class="p-2 border">Funzione \(f(x)\)</th>
+                                    <th class="p-2 border">Derivata \(f'(x)\)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t"><td class="p-2 border math">\(c\) (costante)</td><td class="p-2 border math">\(0\)</td></tr>
+                                <tr><td class="p-2 border math">\(x^\alpha\)</td><td class="p-2 border math">\(\alpha x^{\alpha-1}\)</td></tr>
+                                <tr><td class="p-2 border math">\(\sqrt{x}\)</td><td class="p-2 border math">\(\frac{1}{2\sqrt{x}}\)</td></tr>
+                                <tr><td class="p-2 border math">\(e^x\)</td><td class="p-2 border math">\(e^x\)</td></tr>
+                                <tr><td class="p-2 border math">\(a^x\)</td><td class="p-2 border math">\(a^x \ln(a)\)</td></tr>
+                                <tr><td class="p-2 border math">\(\ln(x)\)</td><td class="p-2 border math">\(\frac{1}{x}\)</td></tr>
+                                <tr><td class="p-2 border math">\(\log_a(x)\)</td><td class="p-2 border math">\(\frac{1}{x \ln(a)}\)</td></tr>
+                                <tr><td class="p-2 border math">\(\sin(x)\)</td><td class="p-2 border math">\(\cos(x)\)</td></tr>
+                                <tr><td class="p-2 border math">\(\cos(x)\)</td><td class="p-2 border math">\(-\sin(x)\)</td></tr>
+                                <tr><td class="p-2 border math">\(\tan(x)\)</td><td class="p-2 border math">\(\frac{1}{\cos^2(x)} = 1 + \tan^2(x)\)</td></tr>
+                                <tr><td class="p-2 border math">\(\arcsin(x)\)</td><td class="p-2 border math">\(\frac{1}{\sqrt{1-x^2}}\)</td></tr>
+                                <tr><td class="p-2 border math">\(\arccos(x)\)</td><td class="p-2 border math">\(-\frac{1}{\sqrt{1-x^2}}\)</td></tr>
+                                <tr><td class="p-2 border math">\(\arctan(x)\)</td><td class="p-2 border math">\(\frac{1}{1+x^2}\)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>5.3 Derivate Successive</h3>
+                    <p>La derivata di una funzione è essa stessa una funzione, che può essere a sua volta derivata. Si parla così di derivate successive:</p>
+                    <ul>
+                        <li><strong>Derivata prima:</strong> \(f'(x)\)</li>
+                        <li><strong>Derivata seconda:</strong> \(f''(x) = D[f'(x)]\)</li>
+                        <li><strong>Derivata n-esima:</strong> \(f^{(n)}(x) = D[f^{(n-1)}(x)]\)</li>
+                    </ul>
+                    <p>Ad esempio, se \(f(x) = x^4\), allora \(f'(x) = 4x^3\), \(f''(x) = 12x^2\), \(f'''(x) = 24x\), \(f^{(4)}(x) = 24\), \(f^{(5)}(x) = 0\).</p>
+                </section>
+
+                <section id="conclusione">
+                    <h2 class="text-3xl font-bold text-stone-900">6. Conclusione: Perché la Derivata è Fondamentale</h2>
+                    <p>La derivata è molto più di un semplice calcolo algebrico. È un concetto unificante che descrive come cambiano le cose. La sua capacità di misurare i tassi di variazione istantanei la rende uno strumento indispensabile in innumerevoli campi:</p>
+                    <ul>
+                        <li>In <strong>matematica</strong>, è la base per l'analisi locale delle funzioni, l'ottimizzazione (trovare massimi e minimi) e lo sviluppo di serie di Taylor.</li>
+                        <li>In <strong>fisica</strong>, definisce concetti come velocità e accelerazione, descrive il decadimento radioattivo, le leggi dell'elettromagnetismo e quasi ogni campo che coinvolge cambiamenti nel tempo o nello spazio.</li>
+                        <li>In <strong>economia</strong>, viene utilizzata per calcolare il costo marginale e il ricavo marginale, aiutando le aziende a prendere decisioni sulla produzione per massimizzare i profitti.</li>
+                        <li>In <strong>informatica</strong>, è al centro degli algoritmi di ottimizzazione usati nell'apprendimento automatico (machine learning), come la discesa del gradiente, per addestrare i modelli.</li>
+                    </ul>
+                    <p>In sintesi, comprendere la derivata significa acquisire un linguaggio potente per descrivere, analizzare e ottimizzare i sistemi dinamici del mondo che ci circonda.</p>
+                </section>
+            </div>
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tangentChartCtx = document.getElementById('tangentChart').getContext('2d');
+    const hSlider = document.getElementById('hSlider');
+    const slopeValue = document.getElementById('slopeValue');
+    
+    const func = x => x * x;
+    const func_prime = x => 2 * x;
+    const x0 = 1;
+    const y0 = func(x0);
+    
+    let chartData = {
+        datasets: [{
+            label: 'f(x) = x^2',
+            data: Array.from({length: 41}, (_, i) => ({x: i * 0.1, y: func(i * 0.1)})),
+            borderColor: '#60a5fa',
+            backgroundColor: 'transparent',
+            tension: 0.1,
+            type: 'line',
+            pointRadius: 0
+        }, {
+            label: 'Retta Tangente',
+            data: [],
+            borderColor: '#3b82f6',
+            backgroundColor: 'transparent',
+            type: 'line',
+            borderDash: [5, 5],
+            pointRadius: 0
+        }, {
+            label: 'Retta Secante',
+            data: [],
+            borderColor: '#ef4444',
+            backgroundColor: 'transparent',
+            type: 'line',
+            pointRadius: 0
+        }, {
+            label: 'Punti',
+            data: [],
+            backgroundColor: ['#ef4444', '#ef4444'],
+            type: 'bubble',
+            radius: 5
+        }]
+    };
+    
+    const tangentChart = new Chart(tangentChartCtx, {
+        type: 'scatter',
+        data: chartData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    min: 0,
+                    max: 4
+                },
+                y: {
+                    min: 0
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: false }
+            }
+        }
+    });
+
+    function updateTangentChart() {
+        const h = parseFloat(hSlider.value);
+        const x1 = x0 + h;
+        const y1 = func(x1);
+
+        const secantSlope = (y1 - y0) / (x1 - x0);
+        slopeValue.textContent = secantSlope.toFixed(2);
+        
+        const tangentSlope = func_prime(x0);
+
+        chartData.datasets[1].data = [
+            {x: x0 - 2, y: y0 + tangentSlope * (-2)},
+            {x: x0 + 2, y: y0 + tangentSlope * (2)}
+        ];
+        
+        chartData.datasets[2].data = [
+            {x: x0 - 2, y: y0 + secantSlope * (-2)},
+            {x: x0 + 2, y: y0 + secantSlope * (2)}
+        ];
+        
+        chartData.datasets[3].data = [
+            {x: x0, y: y0},
+            {x: x1, y: y1}
+        ];
+        
+        tangentChart.update();
+    }
+
+    hSlider.addEventListener('input', updateTangentChart);
+    updateTangentChart();
+
+
+    const continuityChartCtx = document.getElementById('continuityChart').getContext('2d');
+    new Chart(continuityChartCtx, {
+        type: 'line',
+        data: {
+            labels: [-3, -2, -1, 0, 1, 2, 3],
+            datasets: [{
+                label: 'f(x) = |x|',
+                data: [3, 2, 1, 0, 1, 2, 3],
+                borderColor: '#3b82f6',
+                tension: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { x: { grid: { display: false } }, y: { grid: { display: false }, min: 0 } },
+            plugins: { legend: { display: true } }
+        }
+    });
+
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panes = document.querySelectorAll('.tab-pane');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => {
+                t.classList.remove('active', 'text-blue-600', 'border-b-2', 'border-blue-600');
+                t.classList.add('text-stone-500', 'hover:text-stone-700');
+            });
+            tab.classList.add('active', 'text-blue-600', 'border-b-2', 'border-blue-600');
+            tab.classList.remove('text-stone-500', 'hover:text-stone-700');
+            
+            panes.forEach(pane => pane.classList.add('hidden'));
+            document.getElementById('content-' + tab.dataset.tab).classList.remove('hidden');
+        });
+    });
+
+    const studyFunc = x => x*x*x - 3*x*x + 1;
+    const studyFPrime = x => 3*x*x - 6*x;
+    const studyFSecond = x => 6*x - 6;
+
+    const studyLabels = Array.from({length: 41}, (_, i) => (i*0.1 - 1).toFixed(1));
+    const studyDataF = studyLabels.map(x => studyFunc(parseFloat(x)));
+    const studyDataFPrime = studyLabels.map(x => studyFPrime(parseFloat(x)));
+    const studyDataFSecond = studyLabels.map(x => studyFSecond(parseFloat(x)));
+
+    const functionStudyChartCtx = document.getElementById('functionStudyChart').getContext('2d');
+    const functionStudyChart = new Chart(functionStudyChartCtx, {
+        type: 'line',
+        data: {
+            labels: studyLabels,
+            datasets: [{
+                label: "f(x)",
+                data: studyDataF,
+                borderColor: '#3b82f6',
+                borderWidth: 2,
+                pointRadius: 0,
+                tension: 0.1
+            }, {
+                label: "f'(x)",
+                data: studyDataFPrime,
+                borderColor: '#22c55e',
+                borderDash: [5,5],
+                pointRadius: 0,
+                hidden: true,
+            }, {
+                label: "f''(x)",
+                data: studyDataFSecond,
+                borderColor: '#a855f7',
+                borderDash: [2,2],
+                pointRadius: 0,
+                hidden: true,
+            }, {
+                label: 'Punti Critici',
+                data: [{x: '0.0', y: studyFunc(0)}, {x: '2.0', y: studyFunc(2)}],
+                pointBackgroundColor: '#ef4444',
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                type: 'scatter',
+                hidden: true
+            }, {
+                label: 'Punto di Flesso',
+                data: [{x: '1.0', y: studyFunc(1)}],
+                pointBackgroundColor: '#8b5cf6',
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                type: 'scatter',
+                hidden: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {x: {grid: {display:false}}, y: {grid:{display:false}}},
+            plugins: {
+                legend: { position: 'top' },
+            }
+        }
+    });
+
+    document.getElementById('toggleFPrime').addEventListener('click', () => {
+        functionStudyChart.data.datasets[1].hidden = !functionStudyChart.data.datasets[1].hidden;
+        functionStudyChart.update();
+    });
+    document.getElementById('toggleFSecond').addEventListener('click', () => {
+        functionStudyChart.data.datasets[2].hidden = !functionStudyChart.data.datasets[2].hidden;
+        functionStudyChart.update();
+    });
+    document.getElementById('toggleCritical').addEventListener('click', () => {
+        functionStudyChart.data.datasets[3].hidden = !functionStudyChart.data.datasets[3].hidden;
+        functionStudyChart.update();
+    });
+    document.getElementById('toggleInflection').addEventListener('click', () => {
+        functionStudyChart.data.datasets[4].hidden = !functionStudyChart.data.datasets[4].hidden;
+        functionStudyChart.update();
+    });
+    
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('#sidebar-nav a');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                });
+            }
+        });
+    }, { rootMargin: "-50% 0px -50% 0px" });
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+
+});
+</script>
+
+</body>
+</html>
