@@ -8,6 +8,7 @@ using namespace std;
 void fillArray(int numeri[]);
 void countingSort(int numeri[]);
 void printArray(int out[]);
+int findMax(int numeri[]);
 
 int main(){
 
@@ -27,11 +28,7 @@ void fillArray(int numeri[]){
 void countingSort(int numeri[]){
 
     //trovo il massimo numero
-    int max = numeri[0];
-    for (int i = 0; i < DIM; i++){
-        if(numeri[i] > max)
-            max = numeri[i];
-    }
+    int max = findMax(numeri);
 
     //creo l'array in cui inserire i contatori dei numeri presenti in numeri, e lo inizializzo a 0
     int count[max+1];
@@ -65,6 +62,14 @@ void countingSort(int numeri[]){
     printArray(out);
 }
 
+int findMax(int numeri[]){
+    int max = numeri[0];
+    for (int i = 0; i < DIM; i++){
+        if(numeri[i] > max)
+            max = numeri[i];
+    }
+    return max;
+}
 void printArray(int out[]){
     for (int i = 0; i < DIM; i++){
         cout << out[i] << " ";
