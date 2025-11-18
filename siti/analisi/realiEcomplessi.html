@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modulo 2: Numeri Reali e Complessi</title>
+    
+    <!-- Importazione di MathJax 3 per il rendering LaTeX -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* --- Variabili Colore --- */
+        :root {
+            --color-primary: #003366; /* Blu scuro */
+            --color-secondary: #F4F7F6; /* Grigio chiaro */
+            --color-text: #333333;
+            --color-text-light: #FFFFFF;
+            --color-accent-1: #800020; /* Rosso Borgogna */
+            --color-accent-2: #D4AF37; /* Oro */
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-code: 'Courier New', Courier, monospace;
+        }
+
+        /* --- Reset e Stili Globali --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--color-secondary);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        /* --- Header e Navigazione --- */
+        .site-header {
+            background-color: var(--color-primary);
+            color: var(--color-text-light);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .site-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .main-nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .main-nav li {
+            margin: 0.25rem 0.5rem;
+        }
+
+        .main-nav a {
+            color: var(--color-text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .main-nav a:hover,
+        .main-nav a.active-link {
+            background-color: var(--color-text-light);
+            color: var(--color-primary);
+        }
+
+        /* --- Struttura Pagina (SPA) --- */
+        .page {
+            display: none; /* Nascosto di default */
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 1rem auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .page.active {
+            display: block; /* Mostra la pagina attiva */
+        }
+        
+        /* --- Stili Contenuto --- */
+        .page-title {
+            color: var(--color-primary);
+            font-size: 2.2rem;
+            font-weight: 700;
+            border-bottom: 3px solid var(--color-accent-1);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        h3 {
+            color: var(--color-primary);
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        p, li {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+        }
+
+        /* Box Speciali (Definizioni, Teoremi) */
+        .definition-box, .axiom-box, .theorem-box {
+            background-color: #fdfdfd;
+            border-left: 5px solid var(--color-accent-1);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .definition-box::before {
+            content: "Definizione";
+            font-weight: 700;
+            color: var(--color-accent-1);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .axiom-box::before {
+            content: "Assioma";
+            font-weight: 700;
+            color: var(--color-accent-1);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .theorem-box::before {
+            content: "Teorema";
+            font-weight: 700;
+            color: var(--color-accent-1);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- Homepage Cards --- */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .nav-card {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 51, 102, 0.1);
+            border-color: var(--color-primary);
+        }
+
+        .nav-card h3 {
+            color: var(--color-primary);
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+
+        .nav-card p {
+            font-size: 0.95rem;
+            margin-bottom: 0;
+        }
+
+        /* --- Elementi Interattivi --- */
+        .interactive-container {
+            border: 2px solid var(--color-primary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            background-color: #fcfcff;
+        }
+
+        .interactive-container h4 {
+            font-size: 1.4rem;
+            color: var(--color-accent-1);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background-color: var(--color-primary);
+            color: var(--color-text-light);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #004a8f;
+        }
+        
+        button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-bottom: 1rem;
+            font-family: var(--font-main);
+        }
+
+        /* Canvas (Reali e Complessi) */
+        .number-line, #complex-plane {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 100%;
+            cursor: crosshair;
+        }
+
+        #hole-viewer-output {
+            font-family: var(--font-code);
+            font-size: 1.1rem;
+            color: var(--color-accent-1);
+            margin-top: 1rem;
+        }
+
+        /* Sup/Inf Explorer */
+        #sup-inf-output table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        #sup-inf-output th, #sup-inf-output td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: center;
+        }
+        #sup-inf-output th {
+            background-color: #f4f4f4;
+            color: var(--color-primary);
+        }
+        #sup-inf-output td {
+            font-family: var(--font-code);
+            font-weight: 600;
+        }
+
+        /* Proof Builder */
+        .proof-step {
+            margin-bottom: 1.5rem;
+        }
+        .proof-step label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .proof-step input {
+            font-family: var(--font-code);
+        }
+        .feedback {
+            display: inline-block;
+            margin-left: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        /* Complex Plane */
+        #complex-converter {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+        
+        #complex-output {
+            background-color: #fdfdfd;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+        #complex-output strong {
+            display: block;
+            color: var(--color-primary);
+        }
+
+        /* --- Footer --- */
+        .site-footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #777;
+            border-top: 1px solid #ddd;
+        }
+
+        /* --- Responsività --- */
+        @media (max-width: 768px) {
+            .site-header {
+                padding: 1rem;
+            }
+            .main-nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            .page {
+                padding: 1rem;
+                margin: 0.5rem;
+            }
+            .page-title {
+                font-size: 1.8rem;
+            }
+            h3 {
+                font-size: 1.4rem;
+            }
+            #complex-converter {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header e Navigazione Principale -->
+    <header class="site-header">
+        <h1>Numeri Reali e Complessi: L'Ambiente dell'Analisi</h1>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="#home" data-page="home" class="active-link">Home</a></li>
+                <li><a href="#reali" data-page="reali">Numeri Reali (R)</a></li>
+                <li><a href="#completezza" data-page="completezza">Completezza e Sup/Inf</a></li>
+                <li><a href="#induzione" data-page="induzione">Principio di Induzione</a></li>
+                <li><a href="#complessi" data-page="complessi">Numeri Complessi (C)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenitore Principale per le Pagine -->
+    <main>
+
+        <!-- ======================================================= -->
+        <!-- Pagina 1: Homepage (/) -->
+        <!-- ======================================================= -->
+        <section id="page-home" class="page active">
+            <h2 class="page-title">Benvenuti al Modulo 2</h2>
+            <p class="lead">Dagli assiomi di \(\mathbb{R}\) alla potenza della formula di Eulero: esploriamo l'ambiente fondamentale dell'Analisi Matematica.</p>
+            
+            <h3>Perché questo modulo?</h3>
+            <p>
+                L'Analisi Matematica è lo studio rigoroso del "continuo", del calcolo e del cambiamento. Per fare ciò, non possiamo accontentarci dei numeri che già conosciamo. L'insieme dei numeri razionali \(\mathbb{Q}\) (le frazioni) è potente, ma "bucherellato".
+            </p>
+            <p>
+                Il problema fondamentale è che \(\mathbb{Q}\) non contiene soluzioni a equazioni semplici come \(x^2 = 2\). Non esiste nessuna frazione \(\frac{p}{q}\) il cui quadrato sia esattamente 2. Eppure, geometricamente, \(\sqrt{2}\) esiste: è la diagonale di un quadrato di lato 1.
+            </p>
+            <p>
+                Questo modulo costruisce l'ambiente di lavoro dell'Analisi:
+            </p>
+            <ol>
+                <li>Definiamo rigorosamente l'insieme dei <strong>Numeri Reali (\(\mathbb{R}\))</strong>, l'insieme che "tappa i buchi" di \(\mathbb{Q}\) attraverso l'Assioma di Completezza.</li>
+                <li>Studiamo la <strong>tecnica di dimostrazione</strong> fondamentale per le proprietà sui numeri naturali (\(\mathbb{N}\)), il Principio di Induzione.</li>
+                <li>Espandiamo il nostro orizzonte oltre la retta reale per introdurre i <strong>Numeri Complessi (\(\mathbb{C}\))</strong>, che forniscono soluzioni a equazioni come \(x^2 = -1\).</li>
+            </ol>
+            
+            <h3>Esplora il Modulo</h3>
+            <div class="card-container">
+                <div class="nav-card" data-page-link="reali">
+                    <h3>Numeri Reali</h3>
+                    <p>Costruiamo \(\mathbb{R}\) dagli assiomi e vediamo perché \(\mathbb{Q}\) non basta.</p>
+                </div>
+                <div class="nav-card" data-page-link="completezza">
+                    <h3>Ordinamento e Completezza</h3>
+                    <p>Cos'è che "completa" i numeri reali? Indaghiamo su Sup e Inf.</p>
+                </div>
+                <div class="nav-card" data-page-link="induzione">
+                    <h3>Principio di Induzione</h3>
+                    <p>Impara a dimostrare proprietà valide per tutti i numeri naturali.</p>
+                </div>
+                <div class="nav-card" data-page-link="complessi">
+                    <h3>Numeri Complessi</h3>
+                    <p>Esploriamo una nuova dimensione oltre la retta reale.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================= -->
+        <!-- Pagina 2: Numeri Reali e Assiomi (/reali) -->
+        <!-- ======================================================= -->
+        <section id="page-reali" class="page">
+            <h2 class="page-title">I Numeri Reali (\(\mathbb{R}\))</h2>
+            <p>Intuitivamente, conosciamo diversi insiemi numerici:</p>
+            <ul>
+                <li>I <strong>Numeri Naturali</strong> \(\mathbb{N} = \{0, 1, 2, 3, \dots\}\) (o partendo da 1, a seconda della convenzione).</li>
+                <li>I <strong>Numeri Interi</strong> \(\mathbb{Z} = \{\dots, -2, -1, 0, 1, 2, \dots\}\), che "chiudono" \(\mathbb{N}\) rispetto alla sottrazione.</li>
+                <li>I <strong>Numeri Razionali</strong> \(\mathbb{Q} = \{\frac{p}{q} \mid p \in \mathbb{Z}, q \in \mathbb{Z}, q \neq 0\}\), che "chiudono" \(\mathbb{Z}\) rispetto alla divisione (escluso lo zero).</li>
+            </ul>
+            <p>Per molto tempo, si è pensato che \(\mathbb{Q}\) fosse sufficiente a descrivere ogni quantità. Tuttavia, come scoperto (con terrore) dai Pitagorici, la diagonale di un quadrato di lato 1, \(\sqrt{2}\), non è un numero razionale. Ossia, \(\sqrt{2} \notin \mathbb{Q}\).</p>
+            <p>L'insieme \(\mathbb{R}\) dei Numeri Reali è l'insieme che include sia i razionali (\(\mathbb{Q}\)) sia gli irrazionali (come \(\sqrt{2}, \pi, e\)). Non lo "costruiamo" da zero, ma lo <strong>definiamo assiomaticamente</strong> come un insieme che soddisfa tre gruppi di proprietà.</p>
+
+            <h3>Gli Assiomi di \(\mathbb{R}\)</h3>
+            
+            <div class="axiom-box">
+                <strong>Assiomi Algebrici (Proprietà di Campo)</strong>
+                <p>Esistono due operazioni, somma (+) e prodotto (\(\cdot\)), che soddisfano le proprietà usuali: associativa, commutativa, distributiva, esistenza degli elementi neutri (0 e 1) e degli inversi (l'opposto \(-a\) e il reciproco \(a^{-1}\) per \(a \neq 0\)).</p>
+                <p>Un insieme con queste proprietà è chiamato <strong>Campo</strong>. Anche \(\mathbb{Q}\) è un campo.</p>
+            </div>
+            
+            <div class="axiom-box">
+                <strong>Assiomi di Ordinamento</strong>
+                <p>Esiste una relazione d'ordine totale \(\le\) che è compatibile con le operazioni algebriche:</p>
+                <ol>
+                    <li>Se \(a \le b\), allora \(a+c \le b+c\) per ogni \(c\).</li>
+                    <li>Se \(a \le b\) e \(c \ge 0\), allora \(a \cdot c \le b \cdot c\).</li>
+                </ol>
+                <p>Un campo con queste proprietà è un <strong>Campo Ordinato</strong>. Anche \(\mathbb{Q}\) è un campo ordinato.</p>
+            </div>
+
+            <p>Finora, \(\mathbb{R}\) e \(\mathbb{Q}\) sembrano indistinguibili. Ciò che fa la differenza è l'ultimo assioma, che studieremo nella prossima sezione.</p>
+
+            <div class="axiom-box">
+                <strong>Assioma di Completezza (o di Dedekind)</strong>
+                <p>Ogni sottoinsieme non vuoto e superiormente limitato di \(\mathbb{R}\) ammette estremo superiore (sup) in \(\mathbb{R}\).</p>
+                <p>Questo assioma, che \(\mathbb{Q}\) <em>non</em> soddisfa, è ciò che garantisce che \(\mathbb{R}\) non abbia "buchi".</p>
+            </div>
+
+            <div class="interactive-container">
+                <h4>Elemento Interattivo: Il Visualizzatore di Buchi</h4>
+                <p>L'insieme \(A = \{x \in \mathbb{Q} \mid x^2 < 2\}\) è un sottoinsieme di \(\mathbb{Q}\). È non vuoto (es. \(1 \in A\)) ed è superiormente limitato (es. 2 è un maggiorante). </p>
+                <p>Tuttavia, \(A\) non ha un estremo superiore <em>in \(\mathbb{Q}\)</em>. L'elemento \(\sqrt{2}\) che "dovrebbe" essere il suo sup, non appartiene a \(\mathbb{Q}\).</p>
+                <p>Visualizziamo una successione di numeri razionali \(x_n\) che si avvicinano a \(\sqrt{2}\) (il "buco" in \(\mathbb{Q}\)).</p>
+                
+                <canvas id="hole-viewer-canvas" class="number-line" width="900" height="150" aria-label="Retta numerica che mostra l'approssimazione di radice di 2"></canvas>
+                <button id="hole-viewer-btn">Avanti</button>
+                <div id="hole-viewer-output">Valore corrente: ---</div>
+            </div>
+        </section>
+        
+        <!-- ======================================================= -->
+        <!-- Pagina 3: Ordinamento e Completezza (/completezza) -->
+        <!-- ======================================================= -->
+        <section id="page-completezza" class="page">
+            <h2 class="page-title">Ordinamento, Topologia e Completezza</h2>
+            <p>Gli assiomi di ordinamento ci permettono di definire concetti fondamentali sulla "retta reale" \(\mathbb{R}\).</p>
+
+            <h3>Valore Assoluto</h3>
+            <div class="definition-box">
+                Il <strong>Valore Assoluto</strong> di \(x \in \mathbb{R}\) è definito come:
+                $$ |x| = \begin{cases} x & \text{se } x \ge 0 \\ -x & \text{se } x < 0 \end{cases} $$
+                Geometricamente, \(|x|\) rappresenta la distanza di \(x\) dall'origine 0. La distanza tra due punti \(x\) e \(y\) è \(|x-y|\).
+            </div>
+            
+            <p>La proprietà più importante del valore assoluto è la <strong>Disuguaglianza Triangolare</strong>:</p>
+            <div class="theorem-box">
+                Per ogni \(x, y \in \mathbb{R}\), vale:
+                $$ |x+y| \le |x| + |y| $$
+                Geometricamente: la distanza più breve tra due punti è la linea retta.
+            </div>
+
+            <h3>Topologia di \(\mathbb{R}\): Intervalli</h3>
+            <p>L'ordinamento definisce gli <strong>intervalli</strong>, i sottoinsiemi "connessi" di \(\mathbb{R}\). Ad esempio:</p>
+            <ul>
+                <li><strong>Chiuso e limitato:</strong> \([a, b] = \{x \in \mathbb{R} \mid a \le x \le b\}\)</li>
+                <li><strong>Aperto e limitato:</strong> \((a, b) = \{x \in \mathbb{R} \mid a < x < b\}\)</li>
+                <li><strong>Illimitato (super.):</strong> \([a, +\infty) = \{x \in \mathbb{R} \mid x \ge a\}\)</li>
+            </ul>
+
+            <h3>Completezza: Sup e Inf</h3>
+            <p>Questo è il concetto più profondo e distintivo di \(\mathbb{R}\).</p>
+            <div class="definition-box">
+                Sia \(A \subseteq \mathbb{R}\) un sottoinsieme non vuoto.
+                <ul>
+                    <li>Un numero \(M \in \mathbb{R}\) è un <strong>maggiorante</strong> di \(A\) se \(a \le M\) per ogni \(a \in A\).</li>
+                    <li>Se \(A\) ha almeno un maggiorante, si dice <strong>superiormente limitato</strong>.</li>
+                    <li>Un numero \(m \in \mathbb{R}\) è un <strong>minorante</strong> di \(A\) se \(m \le a\) per ogni \(a \in A\).</li>
+                    <li>Se \(A\) ha almeno un minorante, si dice <strong>inferiormente limitato</strong>.</li>
+                </ul>
+            </div>
+
+            <p><strong>Domanda chiave:</strong> Se un insieme è limitato, ha sempre un "limite" che appartiene all'insieme? No.</p>
+            <p>Consideriamo l'intervallo \(A = [0, 1)\). Il numero 1 è un maggiorante, ma \(1 \notin A\). Nessun numero più piccolo di 1 (es. 0.999) può essere un maggiorante. Il numero 1 è il "più piccolo dei maggioranti".</p>
+
+            <div class="definition-box">
+                <ul>
+                    <li>L' <strong>Estremo Superiore (sup)</strong> di \(A\) è il più piccolo dei maggioranti di \(A\).</li>
+                    <li>L' <strong>Estremo Inferiore (inf)</strong> di \(A\) è il più grande dei minoranti di \(A\).</li>
+                </ul>
+                <strong>Differenza tra Sup e Max:</strong>
+                <ul>
+                    <li>Il <strong>Massimo (Max)</strong> di \(A\) è un maggiorante che <em>appartiene</em> ad \(A\).</li>
+                    <li>Il <strong>Minimo (Min)</strong> di \(A\) è un minorante che <em>appartiene</em> ad \(A\).</li>
+                </ul>
+                <p>Se un insieme ha Massimo, allora \(\max(A) = \sup(A)\). Ma se il \(\sup(A)\) non appartiene all'insieme, allora l'insieme <em>non</em> ha Massimo.</p>
+            </div>
+
+            <div class="axiom-box" style="border-left-color: var(--color-accent-2);">
+                <strong>Assioma di Completezza (di Dedekind) - Enunciato Formale</strong>
+                <p>Ogni sottoinsieme non vuoto e superiormente limitato di \(\mathbb{R}\) ammette estremo superiore in \(\mathbb{R}\).</p>
+                (Si può dimostrare che ciò implica anche che ogni sottoinsieme non vuoto e inferiormente limitato ammette estremo inferiore).
+            </div>
+
+            <div class="interactive-container">
+                <h4>Elemento Interattivo: Sup/Inf Explorer</h4>
+                <p>Seleziona un insieme per analizzare i suoi estremi.</p>
+                <select id="sup-inf-select">
+                    <option value="A">A = [0, 1) (Aperto a destra)</option>
+                    <option value="B">B = (0, 1] (Aperto a sinistra)</option>
+                    <option value="C">C = {1/n | n ∈ N, n > 0}</option>
+                    <option value="D">D = Z (Interi)</option>
+                    <option value="E">E = {x ∈ Q | x² < 2}</option>
+                </select>
+                <div id="sup-inf-output">
+                    <!-- Il contenuto verrà generato da JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================= -->
+        <!-- Pagina 4: Principio di Induzione (/induzione) -->
+        <!-- ======================================================= -->
+        <section id="page-induzione" class="page">
+            <h2 class="page-title">Il Principio di Induzione</h2>
+            <p>Il Principio di Induzione è uno strumento potentissimo per dimostrare che una certa proprietà \(P(n)\) è vera per tutti i numeri naturali \(n \in \mathbb{N}\) (o da un certo punto in poi).</p>
+            <p>L'idea è quella di un "effetto domino":</p>
+            <ol>
+                <li>Se dimostri che la prima tessera del domino cade...</li>
+                <li>E se dimostri che la caduta di una tessera <em>qualsiasi</em> (la k-esima) provoca <em>sempre</em> la caduta della successiva (la (k+1)-esima)...</li>
+                <li>...allora hai dimostrato che tutte le tessere cadranno.</li>
+            </ol>
+
+            <h3>La Struttura della Dimostrazione</h3>
+            <p>Per dimostrare che \(P(n)\) è vera per ogni \(n \ge n_0\):</p>
+            
+            <div class="definition-box" style="border-left-color: var(--color-accent-2);">
+                <strong>1. Passo Base (o Base Induttiva)</strong>
+                <p>Verificare che \(P(n_0)\) è vera. (Far cadere la prima tessera). Spesso \(n_0=0\) o \(n_0=1\).</p>
+            </div>
+            
+            <div class="definition-box" style="border-left-color: var(--color-primary);">
+                <strong>2. Passo Induttivo</strong>
+                <p>Assumere che \(P(k)\) sia vera per un generico \(k \ge n_0\) (questa è l'<strong>Ipotesi Induttiva</strong>).</p>
+                <p>Usando questa ipotesi, dimostrare che <em>allora</em> anche \(P(k+1)\) è vera.</p>
+                <p>Simbolicamente: Dimostrare che \(P(k) \implies P(k+1)\) per ogni \(k \ge n_0\).</p>
+            </div>
+
+            <p>Se entrambi i passi sono validi, il Principio di Induzione ci garantisce che \(P(n)\) è vera per ogni \(n \ge n_0\).</p>
+
+            <h3>Esempio Guidato: Somma di Gauss</h3>
+            <p>Dimostriamo che la somma dei primi \(n\) numeri naturali è \(\sum_{i=1}^{n} i = \frac{n(n+1)}{2}\).</p>
+            <p>La nostra proprietà è \(P(n): \sum_{i=1}^{n} i = \frac{n(n+1)}{2}\).</p>
+            
+            <p><strong>Passo Base (n=1):</strong></p>
+            <p>Vogliamo verificare \(P(1)\).
+            \( \sum_{i=1}^{1} i = 1 \).
+            \( \frac{1(1+1)}{2} = \frac{1 \cdot 2}{2} = 1 \).
+            Dato che \(1=1\), \(P(1)\) è vera.</p>
+            
+            <p><strong>Passo Induttivo:</strong></p>
+            <p>Assumiamo (Ipotesi Induttiva) che \(P(k)\) sia vera per un generico \(k \ge 1\).
+            Cioè, assumiamo: \( \sum_{i=1}^{k} i = \frac{k(k+1)}{2} \) (Ipotesi Induttiva).</p>
+            <p>Dobbiamo dimostrare \(P(k+1)\), cioè che: \( \sum_{i=1}^{k+1} i = \frac{(k+1)((k+1)+1)}{2} = \frac{(k+1)(k+2)}{2} \) (Tesi).</p>
+            <p>Dimostriamo la tesi partendo da sinistra e usando l'ipotesi:</p>
+            <p> \( \sum_{i=1}^{k+1} i = (\sum_{i=1}^{k} i) + (k+1) \)</p>
+            <p>Usiamo l'Ipotesi Induttiva sul primo pezzo:</p>
+            <p> \( = \left( \frac{k(k+1)}{2} \right) + (k+1) \)</p>
+            <p>Ora, algebra. Mettiamo a denominatore comune:</p>
+            <p> \( = \frac{k(k+1) + 2(k+1)}{2} = \frac{(k+1)(k+2)}{2} \)</p>
+            <p>Che è esattamente la tesi \(P(k+1)\). Avendo dimostrato il Passo Base e il Passo Induttivo, la formula è vera per ogni \(n \ge 1\).</p>
+
+            <div class="interactive-container">
+                <h4>Elemento Interattivo: Costruttore di Dimostrazioni (Gauss)</h4>
+                <p>Completa i passi fondamentali della dimostrazione per induzione della formula di Gauss.</p>
+                <div class="proof-step">
+                    <label for="proof-base"><strong>Passo Base (n=1):</strong> Scrivi l'uguaglianza che devi verificare (es. A = B).</label>
+                    <input type="text" id="proof-base" placeholder="Es. 1 = 1(1+1)/2">
+                    <span class="feedback" id="feedback-base"></span>
+                </div>
+                <div class="proof-step">
+                    <label for="proof-hypothesis"><strong>Ipotesi Induttiva (P(k)):</strong> Scrivi la formula che assumi vera.</label>
+                    <input type="text" id="proof-hypothesis" placeholder="Es. sum(...) = k(k+1)/2">
+                    <span class="feedback" id="feedback-hypothesis"></span>
+                </div>
+                <div class="proof-step">
+                    <label for="proof-thesis"><strong>Tesi Induttiva (P(k+1)):</strong> Scrivi la formula che devi dimostrare.</label>
+                    <input type="text" id="proof-thesis" placeholder="Es. sum(...) = (k+1)(k+2)/2">
+                    <span class="feedback" id="feedback-thesis"></span>
+                </div>
+                <button id="check-proof-btn">Verifica la Struttura</button>
+            </div>
+        </section>
+
+        <!-- ======================================================= -->
+        <!-- Pagina 5: Numeri Complessi (/complessi) -->
+        <!-- ======================================================= -->
+        <section id="page-complessi" class="page">
+            <h2 class="page-title">I Numeri Complessi (\(\mathbb{C}\))</h2>
+            <p>In \(\mathbb{R}\), l'equazione \(x^2 = -1\) non ha soluzioni, perché il quadrato di qualsiasi numero reale è non-negativo (\(x^2 \ge 0\)).</p>
+            <p>Per risolvere questo problema, introduciamo un nuovo numero, l'<strong>unità immaginaria \(i\)</strong>, la cui proprietà fondamentale è:</p>
+            <div class="definition-box" style="border-left-color: var(--color-accent-2);">
+                \(i^2 = -1\)
+            </div>
+            <p>L'insieme dei <strong>Numeri Complessi \(\mathbb{C}\)</strong> è l'insieme dei numeri della forma:</p>
+            <p> \( z = a + ib \) </p>
+            <p>dove \(a\) e \(b\) sono numeri reali (\(a, b \in \mathbb{R}\)).</p>
+            <ul>
+                <li>\(a = \text{Re}(z)\) è la <strong>Parte Reale</strong> di \(z\).</li>
+                <li>\(b = \text{Im}(z)\) è la <strong>Parte Immaginaria</strong> di \(z\).</li>
+            </ul>
+            <p>Questa è la <strong>Forma Algebrica</strong> (o Cartesiana) di un numero complesso.</p>
+            <p>Le operazioni si svolgono trattando \(i\) come una variabile e ricordando che \(i^2 = -1\).</p>
+            
+            <h3>Il Piano di Argand-Gauss</h3>
+            <p>Possiamo visualizzare \(\mathbb{C}\) non come una retta, ma come un piano.</p>
+            <p>Il numero \(z = a + ib\) corrisponde al punto \((a, b)\) nel piano cartesiano.</p>
+            <ul>
+                <li>L'asse X è l'<strong>Asse Reale</strong>.</li>
+                <li>L'asse Y è l'<strong>Asse Immaginario</strong>.</li>
+            </ul>
+
+            <h3>Forma Trigonometrica ed Esponenziale</h3>
+            <p>Identificando \(z\) con un punto sul piano, possiamo usare le coordinate polari oltre a quelle cartesiane \((a, b)\).</p>
+            <div class="definition-box">
+                <ul>
+                    <li><strong>Modulo (\(|z|\)):</strong> La distanza dall'origine.
+                    \( |z| = \rho = \sqrt{a^2 + b^2} \)</li>
+                    <li><strong>Argomento (\(\arg(z)\)):</strong> L'angolo \(\theta\) che il vettore \((a, b)\) forma con il semiasse positivo reale.
+                    \( \theta = \text{atan2}(b, a) \)</li>
+                </ul>
+            </div>
+            
+            <p>Da \(a = \rho \cos\theta\) e \(b = \rho \sin\theta\), otteniamo la <strong>Forma Trigonometrica</strong>:</p>
+            <p> \( z = \rho (\cos\theta + i \sin\theta) \)</p>
+
+            <div class="theorem-box">
+                <strong>Formula di Eulero</strong>
+                <p>La formula più importante dell'Analisi Complessa lega l'esponenziale ai seni e coseni:</p>
+                $$ e^{i\theta} = \cos\theta + i \sin\theta $$
+            </div>
+
+            <p>Questo ci dà la <strong>Forma Esponenziale</strong>, la più compatta e potente:</p>
+            <p> \( z = \rho e^{i\theta} \)</p>
+            <p>Questa forma è straordinaria per moltiplicazioni, divisioni, potenze (<strong>Formula di De Moivre</strong>) e radici.</p>
+
+            <div class="interactive-container">
+                <h4>Elemento Interattivo: Convertitore sul Piano Complesso</h4>
+                <p>Trascina il punto \(z\) sul Piano di Argand-Gauss per vedere come cambiano le sue rappresentazioni in tempo reale.</p>
+                <div id="complex-converter">
+                    <canvas id="complex-plane" width="500" height="400" aria-label="Piano di Argand-Gauss interattivo"></canvas>
+                    <div id="complex-output">
+                        <strong>Punta e trascina:</strong>
+                        <hr>
+                        <span id="complex-alg"><strong>Algebrica:</strong> z = 1.00 + 1.00i</span>
+                        <span id="complex-trig"><strong>Trigonom.:</strong> z = 1.41(cos(0.79) + i sin(0.79))</span>
+                        <span id="complex-exp"><strong>Esponenz.:</strong> z = 1.41e<sup>i(0.79)</sup></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 Piattaforma Didattica di Analisi Matematica. Un progetto dimostrativo.</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- 1. GESTIONE NAVIGAZIONE SPA ---
+        const navLinks = document.querySelectorAll('.main-nav a');
+        const pages = document.querySelectorAll('.page');
+        const navCards = document.querySelectorAll('.nav-card');
+
+        function navigateTo(pageId) {
+            // Nascondi tutte le pagine
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            // Mostra la pagina richiesta
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+
+            // Aggiorna i link attivi nella nav
+            navLinks.forEach(link => {
+                link.classList.remove('active-link');
+                if (link.dataset.page === pageId) {
+                    link.classList.add('active-link');
+                }
+            });
+            
+            // Torna in cima alla pagina
+            window.scrollTo(0, 0);
+        }
+
+        // Click sulla navigazione principale
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = e.target.dataset.page;
+                navigateTo(pageId);
+                // Aggiorna l'hash nella URL per la cronologia
+                window.location.hash = pageId;
+            });
+        });
+
+        // Click sulle card della homepage
+        navCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                const pageId = card.dataset.pageLink;
+                navigateTo(pageId);
+                window.location.hash = pageId;
+            });
+        });
+        
+        // Controlla l'hash all'avvio
+        const initialHash = window.location.hash.substring(1);
+        if (initialHash) {
+            navigateTo(initialHash);
+        } else {
+            navigateTo('home'); // Pagina di default
+        }
+
+        // --- 2. INTERACTIVE COMPONENT: Hole Viewer (/reali) ---
+        const holeViewerCanvas = document.getElementById('hole-viewer-canvas');
+        const holeViewerBtn = document.getElementById('hole-viewer-btn');
+        const holeViewerOutput = document.getElementById('hole-viewer-output');
+
+        if (holeViewerCanvas) {
+            const ctx = holeViewerCanvas.getContext('2d');
+            const w = holeViewerCanvas.width;
+            const h = holeViewerCanvas.height;
+            const padding = 40;
+            const rangeMin = 1.0;
+            const rangeMax = 2.0;
+            
+            // Approssimazioni di sqrt(2)
+            const sequence = [
+                { val: 1.4, str: "1.4" },
+                { val: 1.41, str: "1.41" },
+                { val: 1.414, str: "1.414" },
+                { val: 1.4142, str: "1.4142" },
+                { val: 1.41421, str: "1.41421" },
+                { val: 1.414213, str: "1.414213" },
+            ];
+            let currentIndex = -1;
+            const sqrt2 = Math.sqrt(2);
+
+            // Funzione per mappare il valore alla posizione x
+            function mapX(val) {
+                return padding + (val - rangeMin) / (rangeMax - rangeMin) * (w - 2 * padding);
+            }
+
+            // Disegna la linea e gli assi
+            function drawHoleViewerBase() {
+                ctx.clearRect(0, 0, w, h);
+                ctx.fillStyle = '#f4f7f6';
+                ctx.fillRect(0,0,w,h);
+                
+                // Linea
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(padding, h / 2);
+                ctx.lineTo(w - padding, h / 2);
+                ctx.stroke();
+
+                // Ticks
+                const ticks = [1.0, 1.2, 1.4, 1.6, 1.8, 2.0];
+                ctx.font = "14px Arial";
+                ctx.fillStyle = '#333';
+                ctx.textAlign = 'center';
+                ticks.forEach(tick => {
+                    const x = mapX(tick);
+                    ctx.beginPath();
+                    ctx.moveTo(x, h / 2 - 5);
+                    ctx.lineTo(x, h / 2 + 5);
+                    ctx.stroke();
+                    ctx.fillText(tick.toFixed(1), x, h / 2 + 25);
+                });
+                
+                // Disegna il "buco" (sqrt(2))
+                const xSqrt2 = mapX(sqrt2);
+                ctx.strokeStyle = 'rgba(212, 175, 55, 0.8)'; // Oro
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(xSqrt2, h / 2 - 40);
+                ctx.lineTo(xSqrt2, h / 2 + 40);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = 'rgba(212, 175, 55, 1)';
+                ctx.fillText('← buco in Q (√2)', xSqrt2 + 60, h / 2 - 25);
+            }
+
+            // Disegna un punto
+            function drawPoint(val, color) {
+                const x = mapX(val);
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(x, h / 2, 5, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+
+            // Init
+            drawHoleViewerBase();
+            holeViewerOutput.textContent = 'Valore corrente: --- (Inizia da 1.4)';
+
+            // Evento click
+            holeViewerBtn.addEventListener('click', () => {
+                if (currentIndex < sequence.length - 1) {
+                    currentIndex++;
+                } else {
+                    currentIndex = 0; // Ricomincia
+                    drawHoleViewerBase(); // Pulisce i punti
+                }
+
+                const item = sequence[currentIndex];
+                drawPoint(item.val, 'rgba(128, 0, 32, 0.7)'); // Borgogna
+                holeViewerOutput.textContent = `Valore corrente: ${item.str} (Razionale)`;
+                
+                if (currentIndex === sequence.length - 1) {
+                    holeViewerBtn.textContent = 'Ricomincia';
+                } else {
+                    holeViewerBtn.textContent = 'Avanti';
+                }
+            });
+        }
+
+        // --- 3. INTERACTIVE COMPONENT: Sup/Inf Explorer (/completezza) ---
+        const supInfSelect = document.getElementById('sup-inf-select');
+        const supInfOutput = document.getElementById('sup-inf-output');
+
+        if (supInfSelect) {
+            const setsData = {
+                'A': { set: "[0, 1)", max: 'Non esiste', min: '0', sup: '1', inf: '0' },
+                'B': { set: "(0, 1]", max: '1', min: 'Non esiste', sup: '1', inf: '0' },
+                'C': { set: "{1/n | n ∈ N, n > 0}", max: '1', min: 'Non esiste', sup: '1', inf: '0' },
+                'D': { set: "Z (Interi)", max: 'Non esiste', min: 'Non esiste', sup: '+∞ (Non limitato)', inf: '-∞ (Non limitato)' },
+                'E': { set: "{x ∈ Q | x² < 2}", max: 'Non esiste (in Q)', min: 'Non esiste (in Q)', sup: '√2 (Non in Q)', inf: '-√2 (Non in Q)' }
+            };
+
+            function updateSupInf(setId) {
+                const data = setsData[setId];
+                supInfOutput.innerHTML = `
+                    <p style="text-align:center; font-size: 1.1rem; margin-top: 1rem;">Analisi per <strong>${data.set}</strong></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Max(A)</th>
+                                <th>Min(A)</th>
+                                <th>Sup(A)</th>
+                                <th>Inf(A)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${data.min}</td>
+                                <td>${data.max}</td>
+                                <td>${data.sup}</td>
+                                <td>${data.inf}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+                // Riassegna MathJax per renderizzare il nuovo contenuto (se necessario)
+                if (window.MathJax) {
+                    MathJax.typesetPromise([supInfOutput]).catch(function (err) {
+                        console.log('MathJax typeset error: ' + err.message);
+                    });
+                }
+            }
+            
+            // Init
+            updateSupInf('A');
+            // Evento change
+            supInfSelect.addEventListener('change', (e) => {
+                updateSupInf(e.target.value);
+            });
+        }
+
+        // --- 4. INTERACTIVE COMPONENT: Proof Builder (/induzione) ---
+        const checkProofBtn = document.getElementById('check-proof-btn');
+        if (checkProofBtn) {
+            const baseInput = document.getElementById('proof-base');
+            const hypothesisInput = document.getElementById('proof-hypothesis');
+            const thesisInput = document.getElementById('proof-thesis');
+            
+            const baseFeedback = document.getElementById('feedback-base');
+            const hypothesisFeedback = document.getElementById('feedback-hypothesis');
+            const thesisFeedback = document.getElementById('feedback-thesis');
+
+            // Funzione semplice di pulizia e confronto
+            const clean = (str) => str.replace(/\s/g, '').toLowerCase();
+
+            checkProofBtn.addEventListener('click', () => {
+                // Check Base
+                const baseVal = clean(baseInput.value);
+                if (baseVal === '1=1(1+1)/2' || baseVal === '1=1') {
+                    baseFeedback.textContent = '✅';
+                } else {
+                    baseFeedback.textContent = '❌';
+                }
+                
+                // Check Hypothesis
+                const hypVal = clean(hypothesisInput.value);
+                if (hypVal.includes('k(k+1)/2') && (hypVal.includes('sum') || hypVal.includes('i=1') || hypVal.includes('p(k)'))) {
+                   hypothesisFeedback.textContent = '✅';
+                } else {
+                   hypothesisFeedback.textContent = '❌';
+                }
+
+                // Check Thesis
+                const thesisVal = clean(thesisInput.value);
+                if (thesisVal.includes('(k+1)(k+2)/2') && (thesisVal.includes('sum') || thesisVal.includes('i=1') || thesisVal.includes('p(k+1)'))) {
+                   thesisFeedback.textContent = '✅';
+                } else {
+                   thesisFeedback.textContent = '❌';
+                }
+            });
+        }
+
+        // --- 5. INTERACTIVE COMPONENT: Complex Plane (/complessi) ---
+        const complexCanvas = document.getElementById('complex-plane');
+        if (complexCanvas) {
+            const ctx = complexCanvas.getContext('2d');
+            const w = complexCanvas.width;
+            const h = complexCanvas.height;
+            
+            // Output
+            const algOut = document.getElementById('complex-alg');
+            const trigOut = document.getElementById('complex-trig');
+            const expOut = document.getElementById('complex-exp');
+            
+            // Stato
+            let isDragging = false;
+            const origin = { x: w / 2, y: h / 2 };
+            const scale = 40; // 40 pixel = 1 unità
+            let z = { a: 2, b: 2 }; // Punto iniziale
+
+            function canvasToComplex(x, y) {
+                const a = (x - origin.x) / scale;
+                const b = (origin.y - y) / scale; // Y invertita
+                return { a, b };
+            }
+            
+            function complexToCanvas(a, b) {
+                const x = origin.x + a * scale;
+                const y = origin.y - b * scale; // Y invertita
+                return { x, y };
+            }
+            
+            function drawComplexPlane() {
+                // Sfondo
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, w, h);
+                
+                // Griglia
+                ctx.strokeStyle = '#eee';
+                ctx.lineWidth = 1;
+                for (let i = 1; origin.x + i * scale < w; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(origin.x + i * scale, 0); ctx.lineTo(origin.x + i * scale, h);
+                    ctx.moveTo(origin.x - i * scale, 0); ctx.lineTo(origin.x - i * scale, h);
+                    ctx.moveTo(0, origin.y + i * scale); ctx.lineTo(w, origin.y + i * scale);
+                    ctx.moveTo(0, origin.y - i * scale); ctx.lineTo(w, origin.y - i * scale);
+                    ctx.stroke();
+                }
+
+                // Assi
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                // Asse Reale (X)
+                ctx.beginPath();
+                ctx.moveTo(0, origin.y);
+                ctx.lineTo(w, origin.y);
+                ctx.stroke();
+                // Asse Immaginario (Y)
+                ctx.beginPath();
+                ctx.moveTo(origin.x, 0);
+                ctx.lineTo(origin.x, h);
+                ctx.stroke();
+                
+                // Etichette Assi
+                ctx.fillStyle = '#000';
+                ctx.font = '14px Arial';
+                ctx.fillText('Re', w - 20, origin.y - 10);
+                ctx.fillText('Im', origin.x + 10, 20);
+                
+                // Disegna il punto z e il vettore
+                const zPos = complexToCanvas(z.a, z.b);
+                
+                // Vettore dall'origine
+                ctx.strokeStyle = 'rgba(0, 51, 102, 0.7)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(origin.x, origin.y);
+                ctx.lineTo(zPos.x, zPos.y);
+                ctx.stroke();
+
+                // Punto
+                ctx.fillStyle = '#800020'; // Rosso Borgogna
+                ctx.beginPath();
+                ctx.arc(zPos.x, zPos.y, 6, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            
+            function updateComplexOutput() {
+                const a = z.a;
+                const b = z.b;
+                
+                const r = Math.sqrt(a * a + b * b);
+                const theta = Math.atan2(b, a); // atan2 gestisce tutti i quadranti
+                
+                // Algebrica
+                algOut.innerHTML = `<strong>Algebrica:</strong> z = ${a.toFixed(2)} ${b >= 0 ? '+' : '-'} ${Math.abs(b).toFixed(2)}i`;
+                
+                // Trigonometrica
+                trigOut.innerHTML = `<strong>Trigonom.:</strong> z = ${r.toFixed(2)}(cos(${theta.toFixed(2)}) + i sin(${theta.toFixed(2)}))`;
+                
+                // Esponenziale
+                expOut.innerHTML = `<strong>Esponenz.:</strong> z = ${r.toFixed(2)}e<sup>i(${theta.toFixed(2)})</sup>`;
+            }
+            
+            function onMouseMove(e) {
+                if (!isDragging) return;
+                const rect = complexCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                z = canvasToComplex(x, y);
+                drawComplexPlane();
+                updateComplexOutput();
+            }
+            
+            complexCanvas.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                onMouseMove(e); // Aggiorna subito al click
+            });
+            
+            complexCanvas.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+            
+            complexCanvas.addEventListener('mouseleave', () => {
+                isDragging = false;
+            });
+            
+            complexCanvas.addEventListener('mousemove', onMouseMove);
+            
+            // Init
+            z = canvasToComplex(300, 150); // Punto iniziale (diverso da z)
+            drawComplexPlane();
+            updateComplexOutput();
+        }
+
+    });
+    </script>
+</body>
+</html>

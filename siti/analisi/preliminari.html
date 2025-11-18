@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preliminari e Fondamenti di Matematica</title>
+    
+    <!-- Importazione Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Importazione Font (Inter e Source Serif Pro) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Configurazione MathJax per LaTeX -->
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        svg: {
+          fontCache: 'global'
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Configurazione Personalizzata Tailwind -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'primary': '#003366', // Blu scuro
+              'secondary': '#F4F7F6', // Grigio chiaro
+              'accent-teal': '#00A99D',
+              'accent-orange': '#E87722',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Source Serif Pro', 'serif'],
+              mono: ['monospace'],
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- Stili CSS Interni -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F7F6; /* secondary */
+        }
+        
+        /* Stile per definizioni e formule */
+        .definition-box {
+            background-color: white;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border-left-width: 4px;
+            border-left-color: #00A99D;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+            font-family: 'Source Serif Pro', serif;
+        }
+        
+        .math-example {
+            background-color: #1f2937;
+            color: white;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            overflow-x: auto;
+            font-family: 'monospace';
+        }
+
+        /* Stile per i link di navigazione attivi */
+        .nav-link.active {
+            background-color: #003366;
+            color: white;
+        }
+        
+        /* Stile per i pulsanti */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-teal {
+            background-color: #00A99D;
+        }
+        .btn-teal:hover {
+            background-color: rgba(0, 169, 157, 0.9);
+        }
+        .btn-orange {
+            background-color: #E87722;
+        }
+        .btn-orange:hover {
+            background-color: rgba(232, 119, 34, 0.9);
+        }
+        .btn-outline {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            background-color: white;
+            border: 1px solid #003366;
+            color: #003366;
+            transition: all 0.2s;
+        }
+        .btn-outline:hover {
+            background-color: #003366;
+            color: white;
+        }
+
+        /* Stili per il diagramma di Venn interattivo */
+        .venn-svg {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .venn-circle {
+            fill: #003366; /* primary */
+            fill-opacity: 0.1;
+            stroke: #003366; /* primary */
+            stroke-width: 2;
+        }
+        .venn-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            fill: #003366; /* primary */
+        }
+        .venn-area {
+            fill: transparent;
+            stroke: none;
+            transition: fill 0.3s ease;
+        }
+        .venn-area.highlight {
+            fill: #E87722; /* accent-orange */
+            fill-opacity: 0.7;
+        }
+
+        /* Stili per i diagrammi a frecce delle funzioni */
+        .function-diagram {
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            background-color: white;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        .function-diagram svg {
+            width: 100%;
+        }
+        .function-diagram .set-dot {
+            fill: #003366; /* primary */
+        }
+        .function-diagram .arrow {
+            stroke: #00A99D; /* accent-teal */
+            stroke-width: 2;
+            marker-end: url(#arrowhead);
+        }
+    </style>
+</head>
+
+<body class="bg-secondary text-gray-800 antialiased">
+
+    <!-- Header e Navigazione -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+            <!-- Titolo del sito -->
+            <div class="text-xl font-bold text-primary">
+                Fondamenti di Matematica
+            </div>
+            
+            <!-- Navigazione Desktop -->
+            <div class="hidden md:flex space-x-4">
+                <a href="#" class="nav-link text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium" data-page="home">Home</a>
+                <a href="#" class="nav-link text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium" data-page="logica">Logica</a>
+                <a href="#" class="nav-link text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium" data-page="insiemi">Insiemi</a>
+                <a href="#" class="nav-link text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium" data-page="funzioni">Funzioni</a>
+            </div>
+            
+            <!-- Pulsante Hamburger (Mobile) -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-button" class="text-primary focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Menu Mobile (nascosto) -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white shadow-lg">
+            <a href="#" class="nav-link block text-gray-700 hover:bg-gray-100 px-4 py-3 text-base font-medium" data-page="home">Home</a>
+            <a href="#" class="nav-link block text-gray-700 hover:bg-gray-100 px-4 py-3 text-base font-medium" data-page="logica">Logica</a>
+            <a href="#" class="nav-link block text-gray-700 hover:bg-gray-100 px-4 py-3 text-base font-medium" data-page="insiemi">Insiemi</a>
+            <a href="#" class="nav-link block text-gray-700 hover:bg-gray-100 px-4 py-3 text-base font-medium" data-page="funzioni">Funzioni</a>
+        </div>
+    </header>
+
+    <!-- Contenitore Principale delle Pagine -->
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8 min-h-screen">
+
+        <!-- ===== PAGINA HOME ===== -->
+        <section id="page-home" class="page-section">
+            <header class="text-center py-12">
+                <h1 class="text-4xl md:text-5xl font-bold text-primary mb-4">
+                    Preliminari e Fondamenti di Matematica
+                </h1>
+                <p class="text-xl text-gray-600 font-serif">
+                    Le basi per comprendere il linguaggio formale.
+                </p>
+            </header>
+
+            <section class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-primary mb-4">Obiettivi del Modulo</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Questo modulo è progettato per allineare le tue conoscenze e introdurti al linguaggio formale e al rigore logico necessari per gli studi scientifici avanzati. Affronteremo i concetti fondamentali che costituiscono le fondamenta dell'intera struttura matematica: la logica proposizionale, la teoria degli insiemi e le proprietà delle funzioni.
+                </p>
+                <p class="text-gray-700 leading-relaxed mt-4">
+                    Padroneggiare questi strumenti non solo ti aiuterà a superare gli esami, ma ti fornirà un metodo di pensiero critico e analitico essenziale in qualsiasi disciplina tecnica o scientifica.
+                </p>
+            </section>
+
+            <!-- Card di Navigazione -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 max-w-6xl mx-auto">
+                <!-- Card Logica -->
+                <div class="nav-card bg-white rounded-lg shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300" data-page="logica">
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-primary mb-3">Logica Elementare</h3>
+                        <p class="text-gray-600 mb-6">
+                            Impara a costruire e analizzare argomentazioni valide.
+                        </p>
+                        <span class="font-semibold text-accent-teal hover:text-accent-orange">Inizia ora &rarr;</span>
+                    </div>
+                </div>
+
+                <!-- Card Insiemi -->
+                <div class="nav-card bg-white rounded-lg shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300" data-page="insiemi">
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-primary mb-3">Teoria degli Insiemi</h3>
+                        <p class="text-gray-600 mb-6">
+                            Organizza e classifica gli oggetti matematici.
+                        </p>
+                        <span class="font-semibold text-accent-teal hover:text-accent-orange">Esplora ora &rarr;</span>
+                    </div>
+                </div>
+
+                <!-- Card Funzioni -->
+                <div class="nav-card bg-white rounded-lg shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300" data-page="funzioni">
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-primary mb-3">Relazioni e Funzioni</h3>
+                        <p class="text-gray-600 mb-6">
+                            Scopri come i concetti matematici interagiscono tra loro.
+                        </p>
+                        <span class="font-semibold text-accent-teal hover:text-accent-orange">Approfondisci &rarr;</span>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- ===== PAGINA LOGICA ===== -->
+        <section id="page-logica" class="page-section hidden">
+            <h1 class="text-4xl font-bold text-primary mb-6">Logica Elementare</h1>
+            <p class="text-lg text-gray-700 mb-8">
+                La logica è lo studio dei principi del ragionamento valido. Inizia con l'unità fondamentale: la proposizione, un'affermazione che può essere inequivocabilmente definita come Vera (V) o Falsa (F).
+            </p>
+
+            <!-- Connettivi Logici -->
+            <article class="bg-white p-8 rounded-lg shadow-lg mb-8">
+                <h2 class="text-3xl font-semibold text-primary mb-6">Connettivi Logici e Tabelle di Verità</h2>
+                <p class="mb-4">I connettivi logici combinano proposizioni semplici (come $p$ e $q$) per crearne di complesse. Le tabelle di verità mostrano il valore di verità della proposizione complessa per ogni possibile combinazione di verità delle sue parti.</p>
+                
+                <ul class="list-disc list-inside space-y-3 mb-6">
+                    <li><b>Negazione (NON):</b> $\neg p$ (o $\sim p$). È vera se $p$ è falsa, e viceversa.</li>
+                    <li><b>Congiunzione (E):</b> $p \land q$. È vera solo se $p$ e $q$ sono entrambe vere.</li>
+                    <li><b>Disgiunzione (O):</b> $p \lor q$. È vera se almeno una tra $p$ e $q$ è vera.</li>
+                    <li><b>Implicazione (SE... ALLORA):</b> $p \to q$. È falsa solo nel caso in cui $p$ sia vera e $q$ sia falsa.</li>
+                    <li><b>Doppia Implicazione (SE E SOLO SE):</b> $p \leftrightarrow q$. È vera se $p$ e $q$ hanno lo stesso valore di verità.</li>
+                </ul>
+
+                <!-- Elemento Interattivo: Costruttore Tabelle di Verità -->
+                <div class="bg-secondary p-6 rounded-lg border border-gray-200">
+                    <h3 class="text-2xl font-semibold text-primary mb-4">Costruttore di Tabelle di Verità</h3>
+                    <div class="flex flex-wrap items-center gap-4 mb-4">
+                        <label for="logic-select" class="font-semibold">Seleziona una proposizione:</label>
+                        <select id="logic-select" class="rounded-md border-gray-300 shadow-sm focus:border-accent-teal focus:ring focus:ring-accent-teal focus:ring-opacity-50">
+                            <option value="p_and_q">$p \land q$ (Congiunzione)</option>
+                            <option value="p_or_q">$p \lor q$ (Disgiunzione)</option>
+                            <option value="not_p">$\neg p$ (Negazione di p)</option>
+                            <option value="p_implies_q">$p \to q$ (Implicazione)</option>
+                            <option value="p_iff_q">$p \leftrightarrow q$ (Doppia Implicazione)</option>
+                            <option value="p_and_not_q">$p \land (\neg q)$</option>
+                            <option value="not_p_or_q">$(\neg p) \lor q$</option>
+                        </select>
+                        <button id="generate-truth-table" class="btn btn-teal">Genera Tabella</button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-md shadow">
+                            <thead id="truth-table-head" class="bg-primary text-white">
+                                <!-- Le intestazioni verranno generate da JS -->
+                            </thead>
+                            <tbody id="truth-table-body" class="text-center">
+                                <!-- I valori verranno generati da JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Quantificatori -->
+            <article class="bg-white p-8 rounded-lg shadow-lg mb-8">
+                <h2 class="text-3xl font-semibold text-primary mb-6">Quantificatori</h2>
+                <p class="mb-4">I quantificatori estendono la logica per descrivere proprietà di intere collezioni di oggetti.</p>
+                <ul class="list-disc list-inside space-y-3 mb-6">
+                    <li><b>Quantificatore Universale (Per Ogni):</b> $\forall x, P(x)$ significa "per ogni $x$, la proprietà $P(x)$ è vera".</li>
+                    <li><b>Quantificatore Esistenziale (Esiste):</b> $\exists x, P(x)$ significa "esiste almeno un $x$ per cui la proprietà $P(x)$ è vera".</li>
+                </ul>
+                
+                <div class="definition-box border-accent-orange">
+                    <h4 class="font-bold text-lg text-accent-orange mb-3">Esempi Chiari: L'ordine conta!</h4>
+                    <p class="mb-3">Consideriamo le seguenti affermazioni nell'insieme dei numeri naturali $\mathbb{N} = \{0, 1, 2, ...\}$:</p>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="math-example text-lg">$\forall x \in \mathbb{N}, \exists y \in \mathbb{N} : y > x$</p>
+                            <p class="mt-2"><b>Significato:</b> "Per ogni numero naturale $x$, esiste un numero naturale $y$ che è più grande di $x$."</p>
+                            <p class="font-semibold text-green-700">Questa affermazione è VERA. (Dato $x$, basta scegliere $y = x+1$).</p>
+                        </div>
+                        <div>
+                            <p class="math-example text-lg">$\exists y \in \mathbb{N} : \forall x \in \mathbb{N}, y > x$</p>
+                            <p class="mt-2"><b>Significato:</b> "Esiste un numero naturale $y$ che è più grande di ogni numero naturale $x$."</p>
+                            <p class="font-semibold text-red-700">Questa affermazione è FALSA. (Non esiste un numero naturale "più grande di tutti").</p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Quiz Veloce -->
+            <article class="bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-semibold text-primary mb-6">Quiz Veloce</h2>
+                <div id="quiz-container">
+                    <p class="mb-4 font-semibold">1. Qual è la negazione della proposizione "Tutti i gatti sono neri"?</p>
+                    <div class="space-y-2 mb-6">
+                        <div><input type="radio" name="q1" value="a"> Nessun gatto è nero.</div>
+                        <div><input type="radio" name="q1" value="b"> Tutti i gatti non sono neri.</div>
+                        <div><input type="radio" name="q1" value="c"> Esiste almeno un gatto che non è nero.</div>
+                    </div>
+                    
+                    <p class="mb-4 font-semibold">2. Se $p$ è Falsa e $q$ è Vera, quanto vale $p \to q$?</p>
+                    <div class="space-y-2 mb-6">
+                        <div><input type="radio" name="q2" value="a"> Vera</div>
+                        <div><input type="radio" name="q2" value="b"> Falsa</div>
+                    </div>
+
+                    <button id="check-quiz-btn" class="btn btn-orange">Controlla Risposte</button>
+                    <div id="quiz-result" class="mt-4 font-bold"></div>
+                </div>
+            </article>
+        </section>
+        
+        <!-- ===== PAGINA INSIEMI ===== -->
+        <section id="page-insiemi" class="page-section hidden">
+            <h1 class="text-4xl font-bold text-primary mb-6">Teoria degli Insiemi</h1>
+            <p class="text-lg text-gray-700 mb-8">
+                La teoria degli insiemi è il linguaggio fondamentale della matematica moderna. Un insieme è una collezione di oggetti distinti, chiamati elementi.
+            </p>
+            
+            <article class="bg-white p-8 rounded-lg shadow-lg mb-8">
+                <h2 class="text-3xl font-semibold text-primary mb-6">Appartenenza e Inclusione</h2>
+                <p class="mb-4">Non confondere questi due concetti chiave:</p>
+                <ul class="list-disc list-inside space-y-3 mb-6">
+                    <li><b>Appartenenza ($\in$):</b> Lega un elemento a un insieme. $x \in A$ si legge "$x$ appartiene ad $A$".</li>
+                    <li><b>Inclusione ($\subseteq$):</b> Lega due insiemi. $A \subseteq B$ si legge "$A$ è un sottoinsieme di $B$", e significa che ogni elemento di $A$ è anche un elemento di $B$.</li>
+                </ul>
+                <div class="definition-box">
+                    <h4 class="font-bold text-lg text-primary mb-3">Esempio</h4>
+                    <p>Sia $A = \{1, 2, 3\}$ e $B = \{1, 2, 3, 4\}$.</p>
+                    <p class="math-example">$2 \in A$ (Vero)</p>
+                    <p class="math-example">$A \subseteq B$ (Vero)</p>
+                    <p class="math-example">$\{2\} \subseteq A$ (Vero)</p>
+                    <p class="math-example">$A \in B$ (Falso! $A$ non è un elemento di $B$)</p>
+                </div>
+            </article>
+            
+            <article class="bg-white p-8 rounded-lg shadow-lg mb-8">
+                <h2 class="text-3xl font-semibold text-primary mb-6">Operazioni tra Insiemi</h2>
+                <p class="mb-4">Proprio come sommiamo numeri, possiamo eseguire operazioni sugli insiemi:</p>
+                <ul class="list-disc list-inside space-y-3 mb-6">
+                    <li><b>Unione ($A \cup B$):</b> L'insieme di tutti gli elementi che appartengono ad $A$ o a $B$ (o a entrambi).</li>
+                    <li><b>Intersezione ($A \cap B$):</b> L'insieme di tutti gli elementi che appartengono sia ad $A$ sia a $B$.</li>
+                    <li><b>Differenza ($A \setminus B$):</b> L'insieme degli elementi che appartengono ad $A$ ma non a $B$.</li>
+                    <li><b>Complementare ($A^c$):</b> L'insieme degli elementi che non appartengono ad $A$ (rispetto a un insieme universo $U$).</li>
+                </ul>
+
+                <!-- Elemento Interattivo: Diagramma di Venn -->
+                <div class="bg-secondary p-6 rounded-lg border border-gray-200">
+                    <h3 class="text-2xl font-semibold text-primary mb-4">Diagramma di Venn Interattivo</h3>
+                    <p class="text-center mb-4">Clicca sui pulsanti per visualizzare l'area corrispondente.</p>
+                    
+                    <!-- Contenitore SVG -->
+                    <div class="venn-svg">
+                        <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Testo -->
+                            <text x="25" y="10" class="venn-text">A</text>
+                            <text x="75" y="10" class="venn-text">B</text>
+                            
+                            <!-- Cerchi -->
+                            <circle cx="40" cy="30" r="20" class="venn-circle" />
+                            <circle cx="60" cy="30" r="20" class="venn-circle" />
+                            
+                            <!-- Aree cliccabili/evidenziabili (invisibili) -->
+                            <!-- Le path sono complesse, usiamo clip-path per semplicità -->
+                            <defs>
+                                <clipPath id="clip-a">
+                                    <circle cx="40" cy="30" r="20" />
+                                </clipPath>
+                                <clipPath id="clip-b">
+                                    <circle cx="60" cy="30" r="20" />
+                                </clipPath>
+                            </defs>
+                            
+                            <!-- Area A \ B -->
+                            <circle cx="40" cy="30" r="20" class="venn-area" id="venn-a-only" clip-path="url(#clip-a)" />
+                            <!-- Area B \ A -->
+                            <circle cx="60" cy="30" r="20" class="venn-area" id="venn-b-only" clip-path="url(#clip-b)" />
+                            <!-- Area A ∩ B -->
+                            <circle cx="40" cy="30" r="20" class="venn-area" id="venn-intersect" clip-path="url(#clip-b)" />
+                            
+                            <!-- Ridisegnamo i bordi sopra le aree -->
+                            <circle cx="40" cy="30" r="20" class="venn-circle" fill="none" />
+                            <circle cx="60" cy="30" r="20" class="venn-circle" fill="none" />
+                        </svg>
+                    </div>
+                    
+                    <!-- Pulsanti di controllo -->
+                    <div class="flex flex-wrap justify-center gap-3 mt-4">
+                        <button class="btn-outline" data-venn="union">$A \cup B$</button>
+                        <button class="btn-outline" data-venn="intersection">$A \cap B$</button>
+                        <button class="btn-outline" data-venn="diff_a_b">$A \setminus B$</button>
+                        <button class="btn-outline" data-venn="diff_b_a">$B \setminus A$</button>
+                        <button class="btn-outline" data-venn="reset">Reset</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-semibold text-primary mb-6">Prodotto Cartesiano</h2>
+                <p class="mb-4">Una <b>coppia ordinata</b> $(a, b)$ è una collezione di due oggetti in cui l'ordine conta (a differenza degli insiemi, dove $\{a, b\} = \{b, a\}$).
+                Il <b>Prodotto Cartesiano</b> di due insiemi $A$ e $B$, denotato $A \times B$, è l'insieme di tutte le possibili coppie ordinate $(a, b)$ dove $a \in A$ e $b \in B$.
+                </p>
+                <div class="definition-box">
+                    <h4 class="font-bold text-lg text-primary mb-3">Visualizzazione: $\mathbb{R} \times \mathbb{R}$</h4>
+                    <p>L'esempio più famoso di prodotto cartesiano è $\mathbb{R} \times \mathbb{R} = \mathbb{R}^2$, dove $\mathbb{R}$ è l'insieme dei numeri reali.
+                    Questo insieme di coppie ordinate $(x, y)$ non è altro che il <b>Piano Cartesiano</b> che usi in geometria e analisi!</p>
+                </div>
+            </article>
+        </section>
+
+        <!-- ===== PAGINA FUNZIONI ===== -->
+        <section id="page-funzioni" class="page-section hidden">
+            <h1 class="text-4xl font-bold text-primary mb-6">Relazioni e Funzioni</h1>
+            <p class="text-lg text-gray-700 mb-8">
+                Le funzioni sono uno degli strumenti più potenti e onnipresenti in matematica, e descrivono la dipendenza di una quantità da un'altra.
+            </p>
+
+            <article class="bg-white p-8 rounded-lg shadow-lg mb-8">
+                <h2 class="text-3xl font-semibold text-primary mb-6">Relazioni</h2>
+                <p class="mb-4">Formalmente, una <b>relazione</b> $\mathcal{R}$ tra due insiemi $A$ e $B$ è semplicemente un qualsiasi sottoinsieme del prodotto cartesiano $A \times B$. Scriviamo $a \mathcal{R} b$ per dire che $(a, b) \in \mathcal{R}$.</p>
+                <p>Quando $A=B$, possiamo studiare le proprietà di una relazione $\mathcal{R}$ su $A$:</p>
+                <div class="overflow-x-auto mt-6">
+                    <table class="min-w-full bg-white border">
+                        <thead class="bg-primary text-white">
+                            <tr>
+                                <th class="py-3 px-4 text-left">Proprietà</th>
+                                <th class="py-3 px-4 text-left">Definizione</th>
+                                <th class="py-3 px-4 text-left">Esempio (su $\mathbb{Z}$)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-3 px-4 font-semibold">Riflessiva</td>
+                                <td class="py-3 px-4 font-mono">$\forall a \in A, (a, a) \in \mathcal{R}$</td>
+                                <td class="py-3 px-4">$=$ (uguaglianza)</td>
+                            </tr>
+                            <tr class="border-b bg-secondary">
+                                <td class="py-3 px-4 font-semibold">Simmetrica</td>
+                                <td class="py-3 px-4 font-mono">$\forall a,b \in A, (a,b) \in \mathcal{R} \to (b,a) \in \mathcal{R}$</td>
+                                <td class="py-3 px-4">$=$ (uguaglianza)</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4 font-semibold">Antisimmetrica</td>
+                                <td class="py-3 px-4 font-mono">$\forall a,b \in A, [(a,b) \in \mathcal{R} \land (b,a) \in \mathcal{R}] \to a=b$</td>
+                                <td class="py-3 px-4">$\le$ (minore o uguale)</td>
+                            </tr>
+                            <tr class="border-b bg-secondary">
+                                <td class="py-3 px-4 font-semibold">Transitiva</td>
+                                <td class="py-3 px-4 font-mono">$\forall a,b,c \in A, [(a,b) \in \mathcal{R} \land (b,c) \in \mathcal{R}] \to (a,c) \in \mathcal{R}$</td>
+                                <td class="py-3 px-4">$<$ (minore stretto), $\le$, $=$</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="definition-box mt-6">
+                    <h4 class="font-bold text-lg text-primary mb-3">Focus: Relazioni d'Equivalenza</h4>
+                    <p>Una relazione che è <b>Riflessiva, Simmetrica E Transitiva</b> è chiamata <b>Relazione d'Equivalenza</b>. Queste relazioni sono speciali perché raggruppano gli elementi dell'insieme in "pacchetti" chiamati <b>classi di equivalenza</b>, dove tutti gli elementi in una classe sono considerati "equivalenti" tra loro.</p>
+                </div>
+            </article>
+
+            <article class="bg-white p-8 rounded-lg shadow-lg mb-8">
+                <h2 class="text-3xl font-semibold text-primary mb-6">Funzioni</h2>
+                <p class="mb-4">Una <b>funzione</b> $f$ da un insieme $A$ (Dominio) a un insieme $B$ (Codominio), scritta $f: A \to B$, è una relazione speciale che associa a <b>ogni</b> elemento $a \in A$ <b>uno e un solo</b> elemento $b \in B$. Scriviamo $f(a) = b$.</p>
+
+                <h3 class="text-2xl font-semibold text-primary my-6">Proprietà delle Funzioni: Iniettività e Suriettività</h3>
+                <p class="mb-6">Queste proprietà descrivono "come" la funzione mappa gli elementi dal dominio al codominio.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-4 border rounded-lg">
+                        <h4 class="font-bold text-lg text-primary">Funzione Iniettiva (o Iniezione)</h4>
+                        <p>Una funzione è iniettiva se "non appiattisce" elementi diversi sullo stesso arrivo. Elementi distinti del dominio hanno immagini distinte.</p>
+                        <p class="math-example mt-2">$a_1 \neq a_2 \implies f(a_1) \neq f(a_2)$</p>
+                    </div>
+                    <div class="p-4 border rounded-lg">
+                        <h4 class="font-bold text-lg text-primary">Funzione Suriettiva (o Suriezione)</h4>
+                        <p>Una funzione è suriettiva se "copre" tutto il codominio. Ogni elemento $b \in B$ è immagine di almeno un $a \in A$.</p>
+                        <p class="math-example mt-2">$\forall b \in B, \exists a \in A : f(a) = b$</p>
+                    </div>
+                </div>
+                <p class="text-center italic my-6">Una funzione che è sia iniettiva sia suriettiva si dice <b>Biettiva</b> (o Biiettiva).</p>
+
+                <!-- Elemento Interattivo: Diagrammi a Frecce -->
+                <div class="bg-secondary p-6 rounded-lg border border-gray-200">
+                    <h3 class="text-2xl font-semibold text-primary mb-4">Visualizzazione delle Proprietà</h3>
+                    <p class="mb-6 text-center">Osserva come le frecce collegano gli elementi del Dominio $A$ (a sinistra) al Codominio $B$ (a destra).</p>
+                    
+                    <!-- SVG Definitions -->
+                    <svg width="0" height="0" style="display:block;">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#00A99D" />
+                            </marker>
+                        </defs>
+                    </svg>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="function-diagrams-container">
+                        <!-- I diagrammi verranno generati e inseriti qui da JS -->
+                    </div>
+                </div>
+            </article>
+
+            <article class="bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-semibold text-primary mb-6">Operazioni con le Funzioni</h2>
+                <h3 class="text-2xl font-semibold text-primary mb-4">Composizione di Funzioni ($g \circ f$)</h3>
+                <p class="mb-4">Date due funzioni $f: A \to B$ e $g: B \to C$, la composizione $g \circ f$ (si legge "g composto f") è una nuova funzione $g \circ f: A \to C$ definita da $(g \circ f)(a) = g(f(a))$.
+                Significa: "applica prima $f$, e poi applica $g$ al risultato".</p>
+                
+                <h3 class="text-2xl font-semibold text-primary mt-8 mb-4">Funzione Inversa ($f^{-1}$)</h3>
+                <p>Una funzione $f: A \to B$ ammette una funzione inversa $f^{-1}: B \to A$ se e solo se $f$ è <b>Biettiva</b>.
+                La funzione inversa "disfa" ciò che $f$ ha fatto, riportando ogni elemento di $B$ al suo unico originatore in $A$.</p>
+            </article>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-8 mt-12 bg-gray-800 text-gray-300">
+        <p>&copy; 2025 Piattaforma Didattica di Matematica. Sviluppato per l'autoapprendimento.</p>
+    </footer>
+
+
+    <!-- Script JavaScript Principale -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- GESTIONE NAVIGAZIONE SPA ---
+            const pageContainer = document.querySelector('main');
+            const allPages = document.querySelectorAll('.page-section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const navCards = document.querySelectorAll('.nav-card');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            function showPage(pageId) {
+                // Nasconde tutte le pagine
+                allPages.forEach(page => {
+                    page.classList.add('hidden');
+                });
+                
+                // Mostra la pagina richiesta
+                const activePage = document.getElementById(`page-${pageId}`);
+                if (activePage) {
+                    activePage.classList.remove('hidden');
+                }
+
+                // Aggiorna lo stato attivo dei link
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.dataset.page === pageId);
+                    link.classList.toggle('bg-primary', link.dataset.page === pageId);
+                    link.classList.toggle('text-white', link.dataset.page === pageId);
+                });
+
+                // Chiude il menu mobile dopo la navigazione
+                mobileMenu.classList.add('hidden');
+                
+                // Scrolla all'inizio della pagina
+                window.scrollTo(0, 0);
+
+                // Esegue funzioni specifiche della pagina
+                if (pageId === 'logica') {
+                    // Genera la tabella di default all'apertura
+                    generateTruthTable();
+                }
+                if (pageId === 'insiemi') {
+                    // Resetta il diagramma di Venn
+                    resetVenn();
+                }
+                 if (pageId === 'funzioni') {
+                    // Disegna i diagrammi delle funzioni
+                    drawFunctionDiagrams();
+                }
+            }
+
+            // Aggiungi listener ai link di navigazione
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showPage(link.dataset.page);
+                });
+            });
+
+            // Aggiungi listener alle card di navigazione
+            navCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    showPage(card.dataset.page);
+                });
+                // Aggiunge lo stile cursore
+                card.style.cursor = 'pointer';
+            });
+
+            // Gestione menu mobile
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Mostra la pagina home all'avvio
+            showPage('home');
+
+            
+            // --- LOGICA: GENERATORE TABELLE DI VERITÀ ---
+            const logicSelect = document.getElementById('logic-select');
+            const generateTableBtn = document.getElementById('generate-truth-table');
+            const tableHead = document.getElementById('truth-table-head');
+            const tableBody = document.getElementById('truth-table-body');
+
+            const V = 'V'; // Vero
+            const F = 'F'; // Falso
+
+            // Mappa delle funzioni logiche
+            const logicOps = {
+                'p_and_q': (p, q) => p && q,
+                'p_or_q': (p, q) => p || q,
+                'not_p': (p, q) => !p,
+                'p_implies_q': (p, q) => !p || q,
+                'p_iff_q': (p, q) => (!p || q) && (!q || p),
+                'p_and_not_q': (p, q) => p && !q,
+                'not_p_or_q': (p, q) => !p || q,
+            };
+
+            // Mappa delle intestazioni
+            const logicHeaders = {
+                'p_and_q': ['$p \land q$'],
+                'p_or_q': ['$p \lor q$'],
+                'not_p': ['$\neg p$'],
+                'p_implies_q': ['$p \to q$'],
+                'p_iff_q': ['$p \leftrightarrow q$'],
+                'p_and_not_q': ['$\neg q$', '$p \land (\neg q)$'],
+                'not_p_or_q': ['$\neg p$', '$(\neg p) \lor q$'],
+            };
+
+            function generateTruthTable() {
+                const selection = logicSelect.value;
+                const operation = logicOps[selection];
+                const headers = logicHeaders[selection] || ['$Risultato$'];
+                
+                const truthValues = [true, false];
+                let baseCols = ['$p$', '$q$'];
+                let baseData = [];
+
+                if (selection === 'not_p') {
+                    baseCols = ['$p$'];
+                    baseData = truthValues.map(p => ({ p }));
+                } else {
+                    baseData = truthValues.flatMap(p => 
+                        truthValues.map(q => ({ p, q }))
+                    );
+                }
+
+                // Costruisci intestazione
+                tableHead.innerHTML = `<tr>
+                    ${baseCols.map(h => `<th class="py-3 px-4">${h}</th>`).join('')}
+                    ${headers.map(h => `<th class="py-3 px-4">${h}</th>`).join('')}
+                </tr>`;
+
+                // Costruisci corpo
+                tableBody.innerHTML = '';
+                baseData.forEach(vals => {
+                    const p = vals.p;
+                    const q = vals.q;
+                    const row = document.createElement('tr');
+                    row.className = 'border-b hover:bg-gray-50';
+                    
+                    let rowHTML = '';
+                    if (selection === 'not_p') {
+                        rowHTML += `<td class="py-3 px-4">${p ? V : F}</td>`;
+                    } else {
+                        rowHTML += `<td class="py-3 px-4">${p ? V : F}</td>`;
+                        rowHTML += `<td class="py-3 px-4">${q ? V : F}</td>`;
+                    }
+
+                    // Calcola risultati intermedi e finale
+                    let finalResult;
+                    if (selection === 'p_and_not_q') {
+                        const not_q = !q;
+                        finalResult = p && not_q;
+                        rowHTML += `<td class="py-3 px-4">${not_q ? V : F}</td>`;
+                        rowHTML += `<td class="py-3 px-4 font-bold">${finalResult ? V : F}</td>`;
+                    } else if (selection === 'not_p_or_q') {
+                        const not_p = !p;
+                        finalResult = not_p || q;
+                        rowHTML += `<td class="py-3 px-4">${not_p ? V : F}</td>`;
+                        rowHTML += `<td class="py-3 px-4 font-bold">${finalResult ? V : F}</td>`;
+                    } else {
+                        finalResult = operation(p, q);
+                        rowHTML += `<td class="py-3 px-4 font-bold">${finalResult ? V : F}</td>`;
+                    }
+                    
+                    row.innerHTML = rowHTML;
+                    tableBody.appendChild(row);
+                });
+
+                // Rirenderizza MathJax
+                if (window.MathJax) {
+                    MathJax.typesetPromise([tableHead]);
+                }
+            }
+
+            generateTableBtn.addEventListener('click', generateTruthTable);
+            
+            
+            // --- LOGICA: QUIZ VELOCE ---
+            const checkQuizBtn = document.getElementById('check-quiz-btn');
+            const quizResultEl = document.getElementById('quiz-result');
+
+            checkQuizBtn.addEventListener('click', () => {
+                const answers = {
+                    q1: document.querySelector('input[name="q1"]:checked')?.value,
+                    q2: document.querySelector('input[name="q2"]:checked')?.value,
+                };
+                
+                let score = 0;
+                if (answers.q1 === 'c') score++;
+                if (answers.q2 === 'a') score++;
+                
+                if(score === 2) {
+                    quizResultEl.textContent = 'Corretto! (2/2) Ottimo lavoro.';
+                    quizResultEl.className = 'mt-4 font-bold text-green-700';
+                } else {
+                    quizResultEl.textContent = `Hai totalizzato ${score}/2. Riprova!`;
+                    quizResultEl.className = 'mt-4 font-bold text-red-700';
+                }
+            });
+
+            
+            // --- INSIEMI: DIAGRAMMA DI VENN ---
+            const vennBtns = document.querySelectorAll('button[data-venn]');
+            const vennAOnly = document.getElementById('venn-a-only');
+            const vennBOnly = document.getElementById('venn-b-only');
+            const vennIntersect = document.getElementById('venn-intersect');
+            const vennAreas = [vennIntersect, vennAOnly, vennBOnly];
+
+            function resetVenn() {
+                vennAreas.forEach(area => area.classList.remove('highlight'));
+            }
+
+            vennBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    resetVenn();
+                    const operation = btn.dataset.venn;
+                    
+                    switch(operation) {
+                        case 'union':
+                            vennAreas.forEach(area => area.classList.add('highlight'));
+                            break;
+                        case 'intersection':
+                            vennIntersect.classList.add('highlight');
+                            break;
+                        case 'diff_a_b':
+                            vennAOnly.classList.add('highlight');
+                            break;
+                        case 'diff_b_a':
+                            vennBOnly.classList.add('highlight');
+                            break;
+                        case 'reset':
+                            // Reset è già stato fatto
+                            break;
+                    }
+                });
+            });
+
+            // --- FUNZIONI: DIAGRAMMI A FRECCE ---
+            const diagramsContainer = document.getElementById('function-diagrams-container');
+            let diagramsDrawn = false;
+
+            function drawFunctionDiagrams() {
+                // Disegna solo una volta
+                if (diagramsDrawn) return;
+                
+                const diagramsData = [
+                    {
+                        title: "Non Iniettiva, Non Suriettiva",
+                        setA: [1, 2, 3],
+                        setB: [1, 2, 3, 4],
+                        arrows: [{from: 1, to: 1}, {from: 2, to: 1}, {from: 3, to: 2}]
+                        // Non iniettiva: 1 e 2 -> 1
+                        // Non suriettiva: 3 e 4 non raggiunti
+                    },
+                    {
+                        title: "Iniettiva, Non Suriettiva",
+                        setA: [1, 2, 3],
+                        setB: [1, 2, 3, 4],
+                        arrows: [{from: 1, to: 1}, {from: 2, to: 2}, {from: 3, to: 3}]
+                        // Iniettiva: ok
+                        // Non suriettiva: 4 non raggiunto
+                    },
+                    {
+                        title: "Non Iniettiva, Suriettiva",
+                        setA: [1, 2, 3, 4],
+                        setB: [1, 2, 3],
+                        arrows: [{from: 1, to: 1}, {from: 2, to: 2}, {from: 3, to: 3}, {from: 4, to: 3}]
+                        // Non iniettiva: 3 e 4 -> 3
+                        // Suriettiva: 1, 2, 3 raggiunti
+                    },
+                    {
+                        title: "Biettiva (Iniettiva e Suriettiva)",
+                        setA: [1, 2, 3],
+                        setB: [1, 2, 3],
+                        arrows: [{from: 1, to: 2}, {from: 2, to: 3}, {from: 3, to: 1}]
+                        // Iniettiva e Suriettiva: ok
+                    }
+                ];
+
+                diagramsContainer.innerHTML = ''; // Pulisce
+
+                diagramsData.forEach(data => {
+                    const diagramEl = document.createElement('div');
+                    diagramEl.className = 'function-diagram';
+                    diagramEl.innerHTML = `
+                        <h4 class="text-lg font-semibold text-center text-primary mb-3">${data.title}</h4>
+                        <svg viewBox="0 0 100 100">
+                            ${createSvgSet(data.setA, 15, 'A')}
+                            ${createSvgSet(data.setB, 85, 'B')}
+                            ${createSvgArrows(data.arrows, data.setA, data.setB)}
+                        </svg>
+                    `;
+                    diagramsContainer.appendChild(diagramEl);
+                });
+
+                diagramsDrawn = true;
+            }
+
+            function createSvgSet(set, xPos, name) {
+                const totalHeight = 100;
+                const padding = 20;
+                const step = (totalHeight - 2 * padding) / (set.length - 1 || 1);
+                
+                let svg = `<text x="${xPos}" y="10" text-anchor="middle" font-weight="bold">${name}</text>`;
+                set.forEach((val, index) => {
+                    const yPos = (set.length === 1) ? totalHeight / 2 : padding + index * step;
+                    svg += `<circle cx="${xPos}" cy="${yPos}" r="3" class="set-dot" data-id="${name}-${val}" />`;
+                    svg += `<text x="${xPos - 5}" y="${yPos + 2}" text-anchor="end" font-size="5">${val}</text>`;
+                });
+                return svg;
+            }
+
+            function createSvgArrows(arrows, setA, setB) {
+                const totalHeight = 100;
+                const padding = 20;
+                const stepA = (totalHeight - 2 * padding) / (setA.length - 1 || 1);
+                const stepB = (totalHeight - 2 * padding) / (setB.length - 1 || 1);
+
+                return arrows.map(arrow => {
+                    const indexA = setA.indexOf(arrow.from);
+                    const indexB = setB.indexOf(arrow.to);
+                    
+                    const yA = (setA.length === 1) ? totalHeight / 2 : padding + indexA * stepA;
+                    const yB = (setB.length === 1) ? totalHeight / 2 : padding + indexB * stepB;
+                    
+                    return `<line x1="18" y1="${yA}" x2="82" y2="${yB}" class="arrow" />`;
+                }).join('');
+            }
+        });
+    </script>
+</body>
+</html>

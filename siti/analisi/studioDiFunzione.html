@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guida Studio di Funzione - Analisi 1</title>
+    <!-- Script TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- KaTeX per il rendering di LaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOucqM/oHNBYeJ2HqKgYMWngVSVvNwgAIRcfBSRfnPMp/d4RjBl2" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIOvGkYEuOwrTIsrUOZFMyTmyIYAL3W9wUfMCrImNdwZJnnPciA" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURPlLJSzFJU6DRCFZheWG3sdsGvOInsPNUeG6ppUnBERpoYRGYPmwe" crossorigin="anonymous"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Stile per la sezione attiva nella navigazione */
+        .nav-link.active {
+            background-color: rgb(29 78 216); /* bg-blue-700 */
+            color: white;
+        }
+        /* Stili per la barra di scorrimento */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; /* slate-100 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; /* slate-700 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1e293b; /* slate-800 */
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-900">
+
+    <!-- HEADER E NAVIGAZIONE -->
+    <header class="bg-slate-800 text-white p-4 sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold">Guida allo Studio di Funzione</h1>
+            <!-- Navigazione Desktop -->
+            <nav class="hidden md:flex space-x-2">
+                <button onclick="showSection('home', this)" class="nav-link active px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-700 transition-colors">Home</button>
+                <button onclick="showSection('prerequisiti', this)" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-700 transition-colors">Prerequisiti</button>
+                <button onclick="showSection('guida', this)" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-700 transition-colors">I 9 Passaggi</button>
+                <button onclick="showSection('esempi', this)" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-700 transition-colors">Esempi</button>
+                <button onclick="showSection('errori', this)" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-700 transition-colors">Errori</button>
+                <button onclick="showSection('focus', this)" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-slate-700 transition-colors">Focus</button>
+            </nav>
+            <!-- Bottone Hamburger Menu Mobile -->
+            <button id="menu-btn" class="md:hidden p-2 rounded-md hover:bg-slate-700" aria-label="Apri menu">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </div>
+        <!-- Menu Mobile -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 right-0 bg-slate-800 shadow-lg">
+            <nav class="flex flex-col p-2 space-y-1">
+                <button onclick="showSection('home', this)" class="nav-link active block px-3 py-2 rounded-md text-base font-medium text-left hover:bg-slate-700 transition-colors">Home</button>
+                <button onclick="showSection('prerequisiti', this)" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-left hover:bg-slate-700 transition-colors">Prerequisiti</button>
+                <button onclick="showSection('guida', this)" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-left hover:bg-slate-700 transition-colors">I 9 Passaggi</button>
+                <button onclick="showSection('esempi', this)" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-left hover:bg-slate-700 transition-colors">Esempi</button>
+                <button onclick="showSection('errori', this)" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-left hover:bg-slate-700 transition-colors">Errori</button>
+                <button onclick="showSection('focus', this)" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-left hover:bg-slate-700 transition-colors">Focus</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- CONTENUTO PRINCIPALE -->
+    <main class="container mx-auto p-4 md:p-8">
+
+        <!-- SEZIONE 1: Home Page -->
+        <section id="home" class="page-section">
+            <div class="bg-white p-8 rounded-lg shadow-xl">
+                <article class="prose prose-lg max-w-none">
+                    <h2 class="text-3xl font-bold text-slate-900 border-b-2 border-blue-500 pb-2">Dominare lo Studio di Funzione</h2>
+                    <p>Benvenuto/a. Lo studio di funzione è uno degli argomenti fondamentali di Analisi 1. Non è solo un "esercizio tipo" per l'esame, ma è la sintesi di tutti i concetti chiave che hai studiato: limiti, derivate e continuità.</p>
+                    <p>Per uno studente di Informatica come te, questo non è solo un esercizio, ma un allenamento al problem solving analitico: si tratta di imparare a scomporre un problema complesso (la funzione) nelle sue proprietà elementari (i 9 passaggi) per comprenderne il comportamento globale.</p>
+                    <p>In questo sito, pensato per gli studenti di Informatica dell'Università di Trento, troverai un metodo rigoroso e passo-passo per non perdere nessun dettaglio e disegnare un grafico corretto e completo.</p>
+                </article>
+                <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                    <button onclick="showSection('guida', this, true)" class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-all transform hover:scale-105">
+                        Inizia: I 9 Passaggi per un Grafico Perfetto
+                    </button>
+                    <button onclick="showSection('esempi', this, true)" class="w-full sm:w-auto px-6 py-3 bg-slate-600 text-white font-semibold rounded-lg shadow-md hover:bg-slate-700 transition-all transform hover:scale-105">
+                        Vai agli Esempi Svolti
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEZIONE 2: Prerequisiti Teorici -->
+        <section id="prerequisiti" class="page-section hidden">
+            <h2 class="text-3xl font-bold text-slate-900 mb-6 border-b-2 border-blue-500 pb-2">Cosa Devi Assolutamente Sapere</h2>
+            <p class="text-lg mb-8 text-slate-700">Prima di tuffarti nel metodo, assicurati di padroneggiare questi concetti. Sono i mattoni fondamentali su cui costruiremo tutto.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card Funzioni Elementari -->
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">Funzioni Elementari</h3>
+                    <p class="mb-4">Devi conoscere a memoria il grafico, il dominio, il codominio e le proprietà (monotonia, positività) delle seguenti funzioni:</p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-800">
+                        <li>Potenze: $x^\alpha$ (con $\alpha$ intero, frazionario, reale)</li>
+                        <li>Esponenziali: $a^x$ (in particolare $e^x$)</li>
+                        <li>Logaritmi: $\log_a(x)$ (in particolare $\ln(x)$)</li>
+                        <li>Trigonometriche: $\sin(x)$, $\cos(x)$, $\tan(x)$</li>
+                        <li>Trigonometriche Inverse: $\arcsin(x)$, $\arccos(x)$, $\arctan(x)$</li>
+                    </ul>
+                </div>
+                
+                <!-- Card Calcolo dei Limiti -->
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">Calcolo dei Limiti</h3>
+                    <p class="mb-4">Lo studio degli asintoti (Passaggio 4) è interamente basato sui limiti.</p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-800">
+                        <li>Forme Indeterminate: $\frac{0}{0}$, $\frac{\infty}{\infty}$, $0 \cdot \infty$, $\infty - \infty$, $1^\infty$, $0^0$, $\infty^0$.</li>
+                        <li>Limiti Notevoli: Vitali per risolvere le forme indeterminate.</li>
+                        <li><b>Focus Informatica (Gerarchia degli Infiniti):</b> È cruciale. Per $x \to +\infty$:
+                            $$ \ln(x) \ll x^\alpha \ll a^x \quad (\text{per } \alpha > 0, a > 1) $$
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Card Concetto di Derivata -->
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">Il Concetto di Derivata</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-800">
+                        <li><b>Significato Geometrico:</b> La derivata $f'(x_0)$ è il coefficiente angolare della retta tangente al grafico di $f$ nel punto $(x_0, f(x_0))$. Ti dice la "pendenza".</li>
+                        <li><b>Regole Algebriche:</b> Padroneggiare le regole di derivazione di somma, prodotto, quoziente e della funzione composta (chain rule).</li>
+                    </ul>
+                </div>
+                
+                <!-- Card Disequazioni -->
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-xl font-semibold mb-3 text-blue-700">Disequazioni</h3>
+                    <p class="mb-4">Questo è il prerequisito più importante. Sbagliare una disequazione significa sbagliare i passaggi 3, 6 e 8. Ripassa a fondo:</p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-800">
+                        <li>Disequazioni fratte</li>
+                        <li>Disequazioni logaritmiche ed esponenziali</li>
+                        <li>Disequazioni trigonometriche</li>
+                        <li>Disequazioni con valori assoluti e radici</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEZIONE 3: La Guida Metodologica -->
+        <section id="guida" class="page-section hidden">
+            <h2 class="text-3xl font-bold text-slate-900 mb-6 border-b-2 border-blue-500 pb-2">I 9 Passaggi per un Grafico Perfetto</h2>
+            <p class="text-lg mb-8 text-slate-700">Questa è la sezione chiave. Segui questi passaggi esattamente in questo ordine. Ogni passaggio si basa sui precedenti.</p>
+            
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-xl">
+                <ol class="space-y-10">
+                    <!-- Passaggio 1: Dominio -->
+                    <li class="border-b border-slate-200 pb-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-900">1. Dominio (o Insieme di Definizione)</h3>
+                        <div class="space-y-3 pl-4 border-l-4 border-blue-300">
+                            <p><strong>Cosa fare:</strong> Trovare l'insieme $D$ dei valori $x$ per cui la funzione $f(x)$ è definita e ha senso.</p>
+                            <p><strong>Perché si fa:</strong> È l'universo in cui lavoriamo. Non possiamo disegnare il grafico dove la funzione non esiste. Il dominio definisce i "bordi" del nostro piano.</p>
+                            <p><strong>Come si fa:</strong> Impostare e risolvere un sistema con tutte le Condizioni di Esistenza (C.E.):
+                                <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                                    <li>Denominatori: $\neq 0$</li>
+                                    <li>Argomenti di logaritmi: $> 0$</li>
+                                    <li>Argomenti di radici con indice pari: $\ge 0$</li>
+                                    <li>Argomenti di $\tan(x)$: $\neq \frac{\pi}{2} + k\pi$</li>
+                                    <li>Argomenti di $\arcsin(x)$ e $\arccos(x)$: $\in [-1, 1]$</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </li>
+                    
+                    <!-- Passaggio 2: Simmetrie -->
+                    <li class="border-b border-slate-200 pb-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-900">2. Simmetrie e Periodicità</h3>
+                        <div class="space-y-3 pl-4 border-l-4 border-blue-300">
+                            <p><strong>Cosa fare:</strong> Controllare se la funzione è Pari, Dispari o Periodica. <b>Importante:</b> Questo controllo ha senso solo se il dominio $D$ è simmetrico rispetto all'origine.</p>
+                            <p><strong>Perché si fa:</strong> Risparmia un'enorme quantità di lavoro.
+                                <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                                    <li>Se è <b>Pari</b> ($f(-x) = f(x)$): È simmetrica rispetto all'asse $y$. Basta studiarla per $x \ge 0$.</li>
+                                    <li>Se è <b>Dispari</b> ($f(-x) = -f(x)$): È simmetrica rispetto all'origine. Basta studiarla per $x \ge 0$.</li>
+                                </ul>
+                            </p>
+                            <p><strong>Come si fa:</strong> Calcolare $f(-x)$ e confrontarlo con $f(x)$ e $-f(x)$.</p>
+                        </div>
+                    </li>
+
+                    <!-- Passaggio 3: Intersezioni e Segno -->
+                    <li class="border-b border-slate-200 pb-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-900">3. Intersezioni con gli Assi e Studio del Segno</h3>
+                        <div class="space-y-3 pl-4 border-l-4 border-blue-300">
+                            <p><strong>Cosa fare:</strong> Trovare (1) dove il grafico tocca l'asse $y$, (2) dove tocca l'asse $x$ e (3) le regioni in cui il grafico sta sopra o sotto l'asse $x$.</p>
+                            <p><strong>Perché si fa:</strong> Fissa i primi "paletti" sul piano. Ci dice dove il grafico "vive" (regioni +) e dove non può stare (regioni -).</p>
+                            <p><strong>Come si fa:</strong>
+                                <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                                    <li><b>Asse y:</b> Calcolare $f(0)$. (Solo se $0 \in D$). Il punto è $(0, f(0))$.</li>
+                                    <li><b>Asse x:</b> Risolvere l'equazione $f(x) = 0$. I punti sono $(x_i, 0)$.</li>
+                                    <li><b>Segno:</b> Risolvere la disequazione $f(x) > 0$.</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </li>
+
+                    <!-- Passaggio 4: Limiti e Asintoti -->
+                    <li class="border-b border-slate-200 pb-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-900">4. Limiti e Asintoti</h3>
+                        <div class="space-y-3 pl-4 border-l-4 border-blue-300">
+                            <p><strong>Cosa fare:</strong> Studiare il comportamento di $f(x)$ quando $x$ si avvicina agli estremi del dominio e ai punti di discontinuità.</p>
+                            <p><strong>Perché si fa:</strong> Per capire dove "va" la funzione ai bordi e se ci sono "barriere" (gli asintoti).</p>
+                            <p><strong>Come si fa:</strong> Calcolare i limiti per $x \to \pm\infty$ e $x \to x_0^\pm$ (punti di frontiera).
+                                <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                                    <li><b>Verticale:</b> Se $\lim_{x \to x_0} f(x) = \pm\infty$, allora $x = x_0$ è Asintoto Verticale.</li>
+                                    <li><b>Orizzontale:</b> Se $\lim_{x \to \pm\infty} f(x) = L$ (finito), allora $y = L$ è Asintoto Orizzontale.</li>
+                                    <li><b>Obliquo:</b> Solo se non c'è l'Orizzontale. Si cerca $y = mx + q$ con:<br>
+                                        $m = \lim_{x \to \pm\infty} \frac{f(x)}{x}$ (finito e $\neq 0$).<br>
+                                        $q = \lim_{x \to \pm\infty} (f(x) - mx)$ (finito).
+                                    </li>
+                                </ul>
+                            </p>
+                        </div>
+                    </li>
+
+                    <!-- Passaggio 5: Derivata Prima -->
+                    <li class="border-b border-slate-200 pb-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-900">5. Calcolo della Derivata Prima</h3>
+                        <div class="space-y-3 pl-4 border-l-4 border-blue-300">
+                            <p><strong>Cosa fare:</strong> Calcolare $f'(x)$ usando le regole di derivazione.</p>
+                            <p><strong>Perché si fa:</strong> La $f'(x)$ è la "macchina" che ci dice la pendenza. Il suo segno determinerà dove la funzione sale e dove scende.</p>
+                            <p><strong>Come si fa:</strong> Applicare le regole con attenzione. Trovare anche il dominio di $f'(x)$.</p>
+                        </div>
+                    </li>
+
+                    <!-- Passaggio 6: Monotonia -->
+                    <li class="border-b border-slate-200 pb-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-900">6. Studio della Monotonia (Segno di $f'(x)$)</h3>
+                        <div class="space-y-3 pl-4 border-l-4 border-blue-300">
+                            <p><strong>Cosa fare:</strong> Risolvere la disequazione $f'(x) > 0$.</p>
+                            <p><strong>Perché si fa:</strong> Il segno di $f'(x)$ determina la monotonia di $f(x)$.</p>
+                            <p><strong>Come si fa:</strong>
+                                <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                                    <li>Dove $f'(x) > 0$, la funzione $f(x)$ è <b>crescente</b> (sale $\nearrow$).</li>
+                                    <li>Dove $f'(x) < 0$, la funzione $f(x)$ è <b>decrescente</b> (scende $\searrow$).</li>
+                                    <li>I punti in cui $f'(x) = 0$ (o non esiste) sono i <b>punti critici</b>.</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </li>
+
+                    <!-- Passaggio 7: Massimi e Minimi -->
+                    <li class="border-b border-slate-200 pb-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-900">7. Massimi, Minimi e Punti di Non Derivabilità</h3>
+                        <div class="space-y-3 pl-4 border-l-4 border-blue-300">
+                            <p><strong>Cosa fare:</strong> Classificare i punti critici trovati al passaggio 6.</p>
+                            <p><strong>Perché si fa:</strong> Sono i punti "interessanti" del grafico: picchi, valli e spigoli.</p>
+                            <p><strong>Come si fa (Test Monotonia):</strong> Si guarda il segno di $f'(x)$ attorno a $x_0$:
+                                <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                                    <li>Se $f'$ cambia da "+" a "-": $x_0$ è <b>Massimo Relativo</b> ($\nearrow \searrow$).</li>
+                                    <li>Se $f'$ cambia da "-" a "+": $x_0$ è <b>Minimo Relativo</b> ($\searrow \nearrow$).</li>
+                                    <li>Se $f'$ non cambia segno: $x_0$ è un <b>Flesso a Tangente Orizzontale</b>.</li>
+                                </ul>
+                            </p>
+                            <p><strong>Punti di non derivabilità:</strong> Analizzare $\lim_{x \to x_0} f'(x)$ nei punti dove $f$ è definita ma $f'$ no. Si possono trovare Cuspidi, Punti Angolosi o Flessi a Tangente Verticale.</p>
+                        </div>
+                    </li>
+
+                    <!-- Passaggio 8: Derivata Seconda -->
+                    <li class="border-b border-slate-200 pb-8">
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-900">8. Calcolo e Studio della Derivata Seconda (Concavità)</h3>
+                        <div class="space-y-3 pl-4 border-l-4 border-blue-300">
+                            <p><strong>Cosa fare:</strong> Calcolare $f''(x)$ e studiare il suo segno, $f''(x) > 0$.</p>
+                            <p><strong>Perché si fa:</strong> Ci dice la forma della curva (come sale o scende).</p>
+                            <p><strong>Come si fa:</strong>
+                                <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                                    <li>Dove $f''(x) > 0$, la funzione è <b>Convessa</b> (sorride $\smile$, "concavità verso l'alto").</li>
+                                    <li>Dove $f''(x) < 0$, la funzione è <b>Concava</b> (è triste $\frown$, "concavità verso il basso").</li>
+                                    <li>I punti in cui $f''(x)$ si annulla cambiando segno sono <b>Punti di Flesso</b>.</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </li>
+
+                    <!-- Passaggio 9: Il Grafico -->
+                    <li class="pb-4">
+                        <h3 class="text-2xl font-semibold mb-4 text-slate-900">9. Il Grafico</h3>
+                        <div class="space-y-3 pl-4 border-l-4 border-blue-300">
+                            <p><strong>Cosa fare:</strong> Mettere tutte le informazioni (passi 1-8) su un piano cartesiano e disegnare una curva coerente.</p>
+                            <p><strong>Perché si fa:</strong> È l'obiettivo finale, la sintesi visiva di tutto il lavoro.</p>
+                            <p><strong>Come si fa:</strong>
+                                <ol class="list-decimal list-inside ml-6 mt-2 space-y-1">
+                                    <li>Disegnare gli asintoti (tratteggiati).</li>
+                                    <li>Segnare i punti notevoli (intersezioni, max/min, flessi).</li>
+                                    <li>Cancellare le regioni del segno negativo (dal Passaggio 3).</li>
+                                    <li>Partendo da sinistra, unire i punti rispettando monotonia e concavità.</li>
+                                </ol>
+                            </p>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- SEZIONE 4: Esempi Svolti -->
+        <section id="esempi" class="page-section hidden">
+            <h2 class="text-3xl font-bold text-slate-900 mb-6 border-b-2 border-blue-500 pb-2">Dalla Teoria alla Pratica</h2>
+            <p class="text-lg mb-8 text-slate-700">Applichiamo il metodo a 3 funzioni "classiche" da esame di Analisi 1 per Informatica.</p>
+
+            <!-- Sistema di Tab per gli Esempi -->
+            <div>
+                <!-- Tab Buttons -->
+                <div class="border-b border-gray-300">
+                    <nav class="flex -mb-px space-x-4" aria-label="Tabs">
+                        <button onclick="showTab('esempio1', this)" class="tab-btn active whitespace-nowrap py-3 px-4 border-b-2 font-medium text-base text-blue-600 border-blue-600">
+                            Esempio 1: Razionale Fratta
+                        </button>
+                        <button onclick="showTab('esempio2', this)" class="tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium text-base text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300">
+                            Esempio 2: Esponenziali
+                        </button>
+                        <button onclick="showTab('esempio3', this)" class="tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium text-base text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300">
+                            Esempio 3: Radice/Modulo
+                        </button>
+                    </nav>
+                </div>
+                
+                <!-- Tab Content -->
+                <div class="mt-6">
+                    <!-- Esempio 1 -->
+                    <div id="esempio1" class="tab-content bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-semibold mb-4">Esempio 1: Funzione Razionale Fratta</h3>
+                        <p class="text-xl font-mono mb-4 text-blue-800">$f(x) = \frac{x^2 - 4}{x^3}$</p>
+                        <p class="mb-4"><b>Perché questa:</b> Ottima per testare lo studio del segno, i limiti agli estremi e la presenza di asintoti verticali e orizzontali.</p>
+                        <h4 class="text-lg font-semibold mt-4 mb-2">Punti Chiave dello Svolgimento:</h4>
+                        <article class="prose max-w-none">
+                            <ul>
+                                <li><b>Dominio:</b> $x^3 \neq 0 \implies D = \mathbb{R} \setminus \{0\}$.</li>
+                                <li><b>Simmetrie:</b> $f(-x) = \frac{(-x)^2 - 4}{(-x)^3} = \frac{x^2 - 4}{-x^3} = -f(x)$. È <b>dispari</b>. La studiamo solo per $x > 0$.</li>
+                                <li><b>Segno:</b> $f(x) > 0 \implies \frac{x^2 - 4}{x^3} > 0$. (Num: $x < -2 \lor x > 2$; Den: $x > 0$). Sol: $x \in (-2, 0) \cup (2, +\infty)$.</li>
+                                <li><b>Asintoti:</b><br>
+                                    $\lim_{x \to 0^+} f(x) = \frac{-4}{0^+} = -\infty$. (Asintoto Verticale $x=0$).<br>
+                                    $\lim_{x \to +\infty} f(x) = 0$. (Asintoto Orizzontale $y=0$).
+                                </li>
+                                <li>... (Svolgimento completo dei 9 passaggi) ...</li>
+                            </ul>
+                        </article>
+                    </div>
+                    
+                    <!-- Esempio 2 -->
+                    <div id="esempio2" class="tab-content hidden bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-semibold mb-4">Esempio 2: Funzione con Esponenziali/Logaritmi</h3>
+                        <p class="text-xl font-mono mb-4 text-blue-800">$f(x) = x \cdot e^{-x}$</p>
+                        <p class="mb-4"><b>Perché questa:</b> Un classico per la gerarchia degli infiniti e lo studio di monotonia e concavità.</p>
+                        <h4 class="text-lg font-semibold mt-4 mb-2">Punti Chiave dello Svolgimento:</h4>
+                        <article class="prose max-w-none">
+                            <ul>
+                                <li><b>Dominio:</b> $D = \mathbb{R}$.</li>
+                                <li><b>Simmetrie:</b> Nessuna.</li>
+                                <li><b>Segno:</b> $e^{-x}$ è sempre $> 0$. Il segno dipende solo da $x$. Quindi $f(x) > 0 \iff x > 0$.</li>
+                                <li><b>Asintoti:</b><br>
+                                    $\lim_{x \to +\infty} x e^{-x} = \lim_{x \to +\infty} \frac{x}{e^x} = 0$ (per gerarchia infiniti). (As. Orizzontale $y=0$ a $+\infty$).<br>
+                                    $\lim_{x \to -\infty} x e^{-x} = (-\infty) \cdot (+\infty) = -\infty$. (No As. Obliquo).
+                                </li>
+                                <li><b>Monotonia:</b> $f'(x) = 1 \cdot e^{-x} + x \cdot (-e^{-x}) = e^{-x} (1-x)$.</li>
+                                <li><b>Max/Min:</b> $f'(x) > 0 \implies 1-x > 0 \implies x < 1$. La funzione cresce fino a $x=1$ e poi decresce. C'è un <b>Massimo Assoluto</b> in $x=1$, che vale $f(1) = 1/e$.</li>
+                                <li>... (Svolgimento completo) ...</li>
+                            </ul>
+                        </article>
+                    </div>
+                    
+                    <!-- Esempio 3 -->
+                    <div id="esempio3" class="tab-content hidden bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-2xl font-semibold mb-4">Esempio 3: Funzione con Modulo o Radice</h3>
+                        <p class="text-xl font-mono mb-4 text-blue-800">$f(x) = \sqrt{x^2 - x}$</p>
+                        <p class="mb-4"><b>Perché questa:</b> Perfetta per un dominio non banale e per analizzare i punti di non derivabilità.</p>
+                        <h4 class="text-lg font-semibold mt-4 mb-2">Punti Chiave dello Svolgimento:</h4>
+                        <article class="prose max-w-none">
+                            <ul>
+                                <li><b>Dominio:</b> C.E. $x^2 - x \ge 0 \implies x(x-1) \ge 0$. Sol: $D = (-\infty, 0] \cup [1, +\infty)$. La funzione "non esiste" tra 0 e 1.</li>
+                                <li><b>Segno:</b> $f(x) > 0$ sempre nel dominio, tranne in $x=0$ e $x=1$ dove vale 0.</li>
+                                <li><b>Asintoti:</b> C'è un Asintoto Obliquo $y = x - 1/2$ a $+\infty$ e $y = -x + 1/2$ a $-\infty$. (Calcolo non banale!).</li>
+                                <li><b>Derivata:</b> $f'(x) = \frac{2x - 1}{2\sqrt{x^2 - x}}$.</li>
+                                <li><b>Non Derivabilità:</b> Analizziamo $f'$ nei punti "bordo" $x=0$ e $x=1$.<br>
+                                    $\lim_{x \to 0^-} f'(x) = \frac{-1}{0^+} = -\infty$.<br>
+                                    $\lim_{x \to 1^+} f'(x) = \frac{+1}{0^+} = +\infty$.<br>
+                                    La funzione parte da $(0,0)$ e $(1,0)$ con <b>tangente verticale</b>.
+                                </li>
+                                <li>... (Svolgimento completo) ...</li>
+                            </ul>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEZIONE 5: Errori Comuni -->
+        <section id="errori" class="page-section hidden">
+            <h2 class="text-3xl font-bold text-slate-900 mb-6 border-b-2 border-red-500 pb-2">Dove si Sbaglia di Più (e Come Evitarlo)</h2>
+            <p class="text-lg mb-8 text-slate-700">Una checklist delle trappole più frequenti. Stai in guardia.</p>
+
+            <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow-lg">
+                <ul class="list-disc list-inside space-y-3 text-red-900">
+                    <li><b>Il Nemico N.1: L'Algebra.</b> La maggior parte degli studi di funzione fallisce su banali errori di calcolo. Ricontrolla i conti due volte.</li>
+                    <li><b>Confondere $f(x)$ e $f'(x)$:</b> Non confondere lo studio del segno ($f(x) > 0$) con lo studio della monotonia ($f'(x) > 0$). La prima ti dice se il grafico è sopra l'asse x, la seconda ti dice se sta salendo.</li>
+                    <li><b>Dimenticare il Dominio:</b> Qualsiasi studio (segno, monotonia, concavità) va fatto sempre e solo all'interno del dominio $D$.</li>
+                    <li><b>La trappola $f'(x_0) = 0$:</b> Se $f'(x_0) = 0$, $x_0$ è un punto critico, non automaticamente un massimo o minimo. Potrebbe essere un flesso (es. $f(x) = x^3$). È il cambio di segno di $f'$ che conta.</li>
+                    <li><b>Asintoti Superflui:</b> Non cercare l'asintoto obliquo se hai già trovato un asintoto orizzontale a $\pm\infty$.</li>
+                    <li><b>Radici vs. Logaritmi:</b> Le C.E. sono diverse! $\sqrt{A(x)} \implies A(x) \ge 0$. Invece $\ln(A(x)) \implies A(x) > 0$.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SEZIONE 6: Focus Informatica -->
+        <section id="focus" class="page-section hidden">
+            <h2 class="text-3xl font-bold text-slate-900 mb-6 border-b-2 border-green-500 pb-2">Focus Informatica (Bonus): Verificare con il Codice</h2>
+            <p class="text-lg mb-8 text-slate-700">Da studente di Informatica, hai a disposizione strumenti potenti per verificare il tuo studio analitico.</p>
+
+            <div class="bg-white p-6 md:p-8 rounded-lg shadow-xl">
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">
+                    <p class="font-semibold">Disclaimer Fondamentale</p>
+                    <p>Attenzione: all'esame di Analisi 1 è richiesto lo studio analitico (i 9 passaggi). I software sono uno strumento di verifica e di intuizione, non sostituiscono la comprensione del metodo. Usali <b>dopo</b> aver finito lo studio a mano.</p>
+                </div>
+                
+                <h3 class="text-2xl font-semibold mb-4">Verifica Rapida con Python</h3>
+                <p class="mb-4">Puoi usare <code>matplotlib</code> e <code>numpy</code> per plottare la funzione e avere un'idea "a colpo d'occhio". Per un'analisi simbolica (derivate, limiti), <code>sympy</code> è lo strumento di elezione.</p>
+                <p class="mb-4">Ecco un esempio di verifica per la funzione $f(x) = x e^{-x}$ (Esempio 2).</p>
+
+                <!-- Blocco Codice Python -->
+                <div class="bg-gray-900 text-white p-4 rounded-lg overflow-x-auto">
+                    <pre><code class="language-python">
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 1. Definiamo l'intervallo di x che ci interessa
+# Dal nostro studio, sappiamo che è interessante tra -1 e 5
+x = np.linspace(-1, 5, 400) 
+
+# 2. Definiamo la nostra funzione
+def f(x_val):
+    return x_val * np.exp(-x_val)
+
+y = f(x)
+
+# 3. Creiamo il plot
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, label='f(x) = x * e^(-x)', color='blue')
+
+# 4. Aggiungiamo al plot i risultati del nostro studio analitico
+# per confermarli visivamente
+
+# Dal Passaggio 7, abbiamo un Massimo in (1, 1/e)
+max_x = 1
+max_y = 1 / np.e
+plt.scatter([max_x], [max_y], color='red', zorder=5, label=f'Massimo (1, {max_y:.2f})')
+
+# Dal Passaggio 4, abbiamo un Asintoto Orizzontale y=0 a +inf
+plt.axhline(0, color='gray', linestyle='--', label='Asintoto y=0')
+
+# Dal Passaggio 8, abbiamo un Flesso in x=2
+flex_x = 2
+flex_y = 2 / np.exp(2)
+plt.scatter([flex_x], [flex_y], color='green', zorder=5, label=f'Flesso (2, {flex_y:.2f})')
+
+# 5. Abbelliamo il grafico
+plt.title('Verifica Grafica dello Studio di Funzione')
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.legend()
+plt.grid(True)
+plt.ylim(-0.5, 0.5) # Zoomiamo sull'asse y per vedere meglio
+plt.show()
+                    </code></pre>
+                </div>
+                
+                <p class="mt-6">Questo grafico conferma visivamente le nostre scoperte analitiche:</p>
+                <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                    <li>La funzione è negativa per $x<0$ e positiva per $x>0$.</li>
+                    <li>Cresce fino a $x=1$ (Massimo) e poi decresce.</li>
+                    <li>Tende a 0 per $x \to +\infty$ (Asintoto).</li>
+                    <li>Cambia concavità (da $\frown$ a $\smile$) in $x=2$ (Flesso).</li>
+                </ul>
+                <p class="mt-4">Se il tuo grafico disegnato a mano assomiglia a questo, hai fatto un ottimo lavoro!</p>
+                <img src="https://placehold.co/600x400/eeeeee/333333?text=Grafico+Python+di+f(x)=xe%5E-x" alt="Grafico di esempio della funzione x*e^(-x) con massimo e flesso evidenziati" class="mt-4 rounded-lg shadow-md mx-auto">
+            </div>
+        </section>
+
+    </main>
+    
+    <script>
+        // --- LOGICA DI NAVIGAZIONE ---
+        const sections = document.querySelectorAll('.page-section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuBtn = document.getElementById('menu-btn');
+
+        function showSection(sectionId, clickedLink, isButton = false) {
+            // Nascondi tutte le sezioni
+            sections.forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Mostra la sezione richiesta
+            const activeSection = document.getElementById(sectionId);
+            if (activeSection) {
+                activeSection.classList.remove('hidden');
+            }
+            
+            // Aggiorna lo stato attivo dei link
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                // Aggiunge 'active' al link corretto, sia nel menu mobile che desktop
+                if (!isButton && link.getAttribute('onclick').includes(`'${sectionId}'`)) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Se a cliccare è un link della navbar (e non un bottone CTA)
+            if (!isButton && clickedLink) {
+                 clickedLink.classList.add('active');
+            }
+            // Se è un bottone CTA (es. "Inizia"), attiva il link corrispondente nella navbar
+            if (isButton) {
+                navLinks.forEach(link => {
+                    if (link.getAttribute('onclick').includes(`'${sectionId}'`)) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            // Chiudi il menu mobile dopo la selezione
+            mobileMenu.classList.add('hidden');
+            
+            // Porta in cima alla pagina
+            window.scrollTo(0, 0);
+        }
+
+        // --- LOGICA MENU HAMBURGER ---
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // --- LOGICA TAB ESEMPI ---
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        function showTab(tabId, clickedButton) {
+            // Nascondi tutti i contenuti
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Deseleziona tutti i bottoni
+            tabButtons.forEach(button => {
+                button.classList.remove('active', 'text-blue-600', 'border-blue-600');
+                button.classList.add('text-gray-500', 'border-transparent', 'hover:text-gray-700', 'hover:border-gray-300');
+            });
+            
+            // Mostra il contenuto e attiva il bottone selezionato
+            document.getElementById(tabId).classList.remove('hidden');
+            clickedButton.classList.add('active', 'text-blue-600', 'border-blue-600');
+            clickedButton.classList.remove('text-gray-500', 'border-transparent', 'hover:text-gray-700', 'hover:border-gray-300');
+        }
+
+        // --- LOGICA RENDER KATEX ---
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true}
+                ],
+                throwOnError: false
+            });
+        });
+    </script>
+</body>
+</html>
