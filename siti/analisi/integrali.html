@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolo Integrale: L'Arte dell'Accumulazione</title>
+    
+    <!-- MathJax per il rendering LaTeX -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Mermaid JS per i grafici -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+    <!-- Highlight.js per il codice Python -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
+    <!-- Markdown Parser per le risposte AI -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --accent: #38bdf8; /* Sky blue */
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #10b981;
+            --code-bg: #0d1117;
+            --ai-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        nav {
+            width: 280px;
+            background-color: #020617;
+            border-right: 1px solid var(--border);
+            padding: 2rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            display: none; /* Hidden on mobile by default */
+            z-index: 10;
+        }
+
+        @media(min-width: 1024px) {
+            nav { display: block; }
+            main { margin-left: 280px; }
+        }
+
+        nav h1 {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        nav ul { list-style: none; padding: 0; }
+        nav li { margin-bottom: 0.8rem; }
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+            display: block;
+            padding: 5px 0;
+        }
+        nav a:hover, nav a.active { color: var(--accent); font-weight: 600; }
+        
+        nav a.ai-link {
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem 1rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 2rem;
+        }
+
+        h2 { color: var(--accent); margin-top: 0; font-size: 2rem; }
+        h3 { color: var(--text-main); margin-top: 1.5rem; }
+        p { color: var(--text-muted); font-size: 1.1rem; }
+
+        /* Cards per Metodi */
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            opacity: 0.5;
+        }
+
+        .card.active .card-content {
+            max-height: 500px; /* Arbitrary large height */
+            opacity: 1;
+            margin-top: 1rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: var(--code-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        
+        .ai-btn {
+            background: var(--ai-gradient);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .ai-btn:hover { opacity: 0.9; }
+        .ai-btn:disabled { opacity: 0.5; cursor: wait; }
+
+        /* AI Chat Section */
+        .chat-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+        }
+
+        .message.user {
+            background-color: #334155;
+            align-self: flex-end;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.ai {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            align-self: flex-start;
+            color: #e2e8f0;
+            border-bottom-left-radius: 2px;
+        }
+        
+        .message.ai strong { color: var(--accent); }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid var(--border);
+            background-color: #0f172a;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background-color: #1e293b;
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 6px;
+            color: white;
+            font-family: inherit;
+        }
+
+        .chat-input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+
+        /* Interactive Riemann Canvas */
+        .interactive-container {
+            background-color: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+            border: 1px solid var(--border);
+        }
+
+        canvas {
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            cursor: crosshair;
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+        }
+
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type=range] {
+            width: 100%;
+            max-width: 400px;
+            accent-color: var(--accent);
+        }
+
+        .stat-box {
+            display: flex;
+            gap: 20px;
+            font-family: monospace;
+            color: var(--accent);
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Mermaid Override */
+        .mermaid {
+            background-color: var(--bg-card);
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* Loading indicator */
+        .typing-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h1>UniTN | Calcolo Computazionale</h1>
+        <ul>
+            <li><a href="#intro" class="active">1. L'Operatore Inverso</a></li>
+            <li><a href="#methods">2. Toolbox: Algoritmi</a></li>
+            <li><a href="#riemann">3. Il Cuore Algoritmico</a></li>
+            <li><a href="#ftc">4. Il Ponte (Teorema Fond.)</a></li>
+            <li><a href="#code">5. Python Lab</a></li>
+            <li><a href="#flowchart">6. Flowchart Decisionale</a></li>
+            <li><a href="#ai-tutor" class="ai-link">7. Tutor AI ✨</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- INTRO -->
+        <section id="intro">
+            <h2>1. Intro: L'Operatore Inverso</h2>
+            <p>In Informatica, siamo abituati a pensare alle operazioni in coppie: Push/Pop, Enqueue/Dequeue, Codifica/Decodifica. L'integrazione è l'operazione inversa (il "rollback") della derivazione.</p>
+            
+            <h3>La Primitiva \(F(x)\)</h3>
+            <p>
+                Se derivare significa trovare il tasso di cambiamento (la velocità), integrare significa accumulare quel cambiamento per trovare la quantità totale (la distanza).
+                Data una funzione \(f(x)\), cerchiamo \(F(x)\) tale che:
+                $$ F'(x) = f(x) $$
+            </p>
+
+            <div style="background: rgba(56,189,248,0.1); padding: 15px; border-left: 4px solid var(--accent); border-radius: 4px; margin: 20px 0;">
+                <strong>La costante \(c\):</strong> Geometricamente, \(F(x) + c\) rappresenta una famiglia di curve parallele traslate verticalmente. In termini informatici, \(c\) è lo stato iniziale della memoria prima dell'accumulazione.
+            </div>
+        </section>
+
+        <!-- TOOLBOX / CARDS -->
+        <section id="methods">
+            <h2>2. Toolbox: Algoritmi di Integrazione</h2>
+            <p>Non memorizzare regole, impara i <strong>Design Patterns</strong>. Clicca sulle card per vedere l'algoritmo.</p>
+            
+            <div class="methods-grid">
+                <!-- Scomposizione -->
+                <div class="card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <span>Linearità</span>
+                        <span class="tag">Divide & Conquer</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Se il problema è complesso, spezzalo in sottoproblemi più semplici.</p>
+                        $$ \int [af(x) + bg(x)] dx = a\int f(x)dx + b\int g(x)dx $$
+                        <p>Simile a parallelizzare un processo: integriamo i termini separatamente.</p>
+                    </div>
+                </div>
+
+                <!-- Sostituzione -->
+                <div class="card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <span>Sostituzione</span>
+                        <span class="tag">Refactoring</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Cambio di variabile. Rinominiamo una parte complessa della funzione come \(t\) per semplificare la sintassi.</p>
+                        $$ \int f(g(x))g'(x)dx \xrightarrow{t=g(x)} \int f(t)dt $$
+                        <p><strong>Algoritmo:</strong><br>1. Cerca una funzione interna \(g(x)\).<br>2. Controlla se la sua derivata \(g'(x)\) è presente come fattore.<br>3. Sostituisci e risolvi.</p>
+                    </div>
+                </div>
+
+                <!-- Per Parti -->
+                <div class="card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <span>Per Parti</span>
+                        <span class="tag">Regola del Prodotto Inv.</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Usato per integrare prodotti di funzioni di "natura diversa" (es. \(x e^x\)).</p>
+                        $$ \int f(x)g'(x)dx = f(x)g(x) - \int f'(x)g(x)dx $$
+                        <p>Strategia: Riduciamo il grado di complessità derivando la parte polinomiale (\(f\)) e integrando la parte ciclica/esponenziale (\(g'\)).</p>
+                    </div>
+                </div>
+                
+                <!-- Fratti Semplici -->
+                <div class="card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <span>Fratti Semplici</span>
+                        <span class="tag">Decomposizione</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Algoritmo per funzioni razionali (rapporto di polinomi).</p>
+                        <p>Se \(deg(Num) \ge deg(Den) \rightarrow\) Fai la divisione polinomiale.<br>
+                        Se \(deg(Num) < deg(Den) \rightarrow\) Scomponi il denominatore e scrivi come somma di frazioni A, B, C...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIEMANN SUMS (INTERACTIVE) -->
+        <section id="riemann">
+            <h2>3. Integrale Definito: Il Ciclo For</h2>
+            <p>
+                Per un informatico, l'integrale definito non è magia. È un ciclo <code>for</code>.
+                Stiamo sommando aree di rettangoli infinitesimi.
+            </p>
+            
+            <div class="code-comparison" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div>
+                    <h4>Notazione Matematica</h4>
+                    $$ \int_a^b f(x) dx = \lim_{n \to \infty} \sum_{i=0}^{n-1} f(x_i) \cdot \Delta x $$
+                </div>
+                <div>
+                    <h4>Pseudo-Codice</h4>
+                    <pre><code class="python">area = 0
+dx = (b - a) / n
+for i in range(n):
+    x = a + i * dx
+    area += f(x) * dx</code></pre>
+                </div>
+            </div>
+
+            <div class="interactive-container">
+                <h3>Visualizzatore Somme di Riemann</h3>
+                <canvas id="riemannCanvas"></canvas>
+                
+                <div class="controls">
+                    <label for="rectCount">Numero di Rettangoli (\(n\)): <span id="rectVal" style="color:var(--accent); font-weight:bold;">10</span></label>
+                    <input type="range" id="rectCount" min="2" max="200" value="10">
+                    
+                    <div class="stat-box">
+                        <span>Integrale Esatto: <span id="exactArea">0.3333</span></span>
+                        <span>Somma Riemann: <span id="approxArea">0.0000</span></span>
+                        <span>Errore: <span id="errorVal" style="color: #f87171">0.0000</span></span>
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; margin-top: 10px;">Funzione: \(f(x) = x^2\) nell'intervallo \([0, 1]\)</p>
+            </div>
+        </section>
+
+        <!-- TEORIA FONDAMENTALE -->
+        <section id="ftc">
+            <h2>4. Il Teorema Fondamentale</h2>
+            <p>La formula di Torricelli-Barrow è il "ponte" tra il mondo differenziale (velocità) e quello integrale (distanza).</p>
+            $$ \int_a^b f(x)dx = F(b) - F(a) $$
+            <p>Invece di sommare infiniti rettangoli (costoso computazionalmente), possiamo semplicemente valutare la primitiva agli estremi (\(O(1)\) vs \(O(n)\)).</p>
+        </section>
+
+        <!-- PYTHON LAB -->
+        <section id="code">
+            <h2>5. Laboratorio: Simbolico vs Numerico</h2>
+            <p>In Informatica spesso non possiamo trovare la primitiva esatta (o la funzione è definita solo da dati campionati). Qui entra in gioco il calcolo numerico.</p>
+            
+            <pre><code class="python" id="python-code">import scipy.integrate as integrate
+import sympy as sp
+import numpy as np
+
+# 1. APPROCCIO SIMBOLICO (Esatto - Math Engine)
+x = sp.Symbol('x')
+f_sym = x**2
+# Trova la primitiva esatta
+primitiva = sp.integrate(f_sym, x)
+print(f"Primitiva: {primitiva}")  # Output: x**3/3
+
+# 2. APPROCCIO NUMERICO (Approssimato - Real World)
+# Definizione lambda function per SciPy
+func = lambda x: x**2
+
+# quad usa tecniche avanzate (simili a Riemann ma ottimizzate)
+risultato, errore = integrate.quad(func, 0, 1)
+
+print(f"Area numerica: {risultato}") 
+# Output: 0.33333333333333337
+print(f"Stima errore: {errore}")     
+# Output: 3.700743415417189e-15 (Precisione macchina)</code></pre>
+
+            <div id="explanation-panel" style="display:none; margin-top: 15px; background: #1e293b; padding: 15px; border-radius: 8px; border: 1px solid var(--accent);">
+                <h4 style="margin-top:0; color: var(--accent);">Spiegazione AI del Codice</h4>
+                <div id="explanation-content"></div>
+            </div>
+            
+            <button onclick="explainCode()" class="ai-btn" id="explainBtn">
+                <span>✨ Spiega Codice con AI</span>
+            </button>
+        </section>
+
+        <!-- FLOWCHART -->
+        <section id="flowchart">
+            <h2>6. Diagramma di Flusso Decisionale</h2>
+            <p>Non sai come risolvere un integrale? Segui l'algoritmo.</p>
+            <div class="mermaid">
+                graph TD
+                Start((Start: Hai un Integrale)) --> CheckImmediate{È immediato?}
+                
+                %% Ramo Immediati
+                CheckImmediate -- SÌ --> Risolvi[Applica formula e aggiungi +c]
+                
+                %% Ramo Non Immediati
+                CheckImmediate -- NO --> CheckSemplifica{Puoi semplificare?}
+                CheckSemplifica -- SÌ --> Semplifica[Algebra: Dividi/Scomponi] 
+                Semplifica --> Start
+                
+                CheckSemplifica -- NO --> CheckComposta{Vedi f e la sua derivata?}
+                
+                %% Sostituzione
+                CheckComposta -- SÌ --> Sostituzione[Metodo: SOSTITUZIONE]
+                
+                %% Fratte
+                CheckComposta -- NO --> CheckFratta{È frazione di polinomi?}
+                CheckFratta -- SÌ --> CheckGradi{Grado Num >= Den?}
+                CheckGradi -- SÌ --> DivPol[Divisione Polinomiale]
+                CheckGradi -- NO --> Fratti[Scomposizione FRATTI SEMPLICI]
+                
+                %% Per Parti
+                CheckFratta -- NO --> CheckParti{È un prodotto misto?}
+                CheckParti -- SÌ --> Parti[Metodo: PER PARTI]
+                
+                %% Ultima spiaggia
+                CheckParti -- NO --> Disperazione{Niente funziona?}
+                Disperazione -.-> Numerical[Calcolo Numerico Approssimato]
+                
+                %% Stili
+                style Start fill:#2563eb,stroke:#3b82f6,color:white
+                style Risolvi fill:#059669,stroke:#10b981,color:white
+                style Numerical fill:#db2777,stroke:#f472b6,stroke-dasharray: 5 5,color:white
+                style Sostituzione fill:#1e293b,stroke:#38bdf8,color:#38bdf8
+                style Parti fill:#1e293b,stroke:#38bdf8,color:#38bdf8
+                
+                linkStyle default stroke:#64748b,stroke-width:2px;
+            </div>
+        </section>
+
+        <!-- AI TUTOR SECTION -->
+        <section id="ai-tutor">
+            <h2>7. Tutor Virtuale ✨</h2>
+            <p>Hai dubbi su un integrale specifico? Chiedi al Tutor AI, esperto di Calcolo e Python.</p>
+            
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai">
+                        Ciao! Sono il tuo assistente di Analisi 1. Chiedimi di risolvere un integrale, generare un esercizio o spiegare un concetto!
+                        <br><br>
+                        <em>Esempio: "Come si integra ln(x)?" oppure "Genera un esercizio difficile".</em>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Scrivi qui la tua domanda..." onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()" class="ai-btn" style="margin-top:0;">Invia</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- GEMINI API CONFIGURATION ---
+        const apiKey = ""; // INJECTED BY ENVIRONMENT
+        
+        async function callGemini(prompt, systemInstruction = "") {
+            if (!apiKey) {
+                alert("API Key mancante. Impossibile contattare Gemini.");
+                return null;
+            }
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text;
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                return "Errore di connessione al servizio AI. Riprova più tardi.";
+            }
+        }
+
+        // --- FEATURE 1: EXPLAIN CODE ---
+        async function explainCode() {
+            const btn = document.getElementById('explainBtn');
+            const code = document.getElementById('python-code').innerText;
+            const panel = document.getElementById('explanation-panel');
+            const content = document.getElementById('explanation-content');
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="typing-indicator"></div> Analizzando...';
+            
+            const prompt = `Spiega il seguente codice Python agli studenti di informatica.
+            Focalizzati su:
+            1. La differenza tra 'scipy.integrate' (numerico) e 'sympy' (simbolico).
+            2. Il concetto di "errore di macchina" nell'output.
+            Mantieni la spiegazione concisa e usa elenchi puntati. Usa l'italiano.
+            
+            Codice:
+            ${code}`;
+
+            const response = await callGemini(prompt, "Sei un docente esperto di Python e Calcolo Numerico.");
+            
+            if (response) {
+                panel.style.display = 'block';
+                content.innerHTML = marked.parse(response);
+                btn.innerHTML = '✨ Spiega di nuovo';
+            } else {
+                btn.innerHTML = 'Errore - Riprova';
+            }
+            btn.disabled = false;
+        }
+
+        // --- FEATURE 2: AI TUTOR CHAT ---
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            // Add User Message
+            addMessage(text, 'user');
+            chatInput.value = '';
+
+            // Add Loading Message
+            const loadingId = addMessage('<div class="typing-indicator"></div>', 'ai');
+
+            // Prepare Context
+            const systemPrompt = `Sei un professore universitario di Calcolo Computazionale. 
+            Rispondi agli studenti in Italiano. 
+            Quando scrivi formule matematiche, DEVI usare il formato LaTeX racchiuso tra doppi dollari per i blocchi ($$...$$) e singoli dollari per l'inline ($...$). 
+            Esempio: "L'integrale di $x^2$ è $$ \\int x^2 dx = \\frac{x^3}{3} + c $$".
+            Sii conciso, preciso e orientato all'informatica.`;
+
+            // Call API
+            const response = await callGemini(text, systemPrompt);
+            
+            // Remove Loading and Add Response
+            document.getElementById(loadingId).remove();
+            if (response) {
+                addMessage(marked.parse(response), 'ai');
+                // Trigger MathJax refresh
+                MathJax.typesetPromise();
+            }
+        }
+
+        function addMessage(html, sender) {
+            const id = 'msg-' + Date.now();
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            div.id = id;
+            div.innerHTML = html;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return id;
+        }
+
+        // --- EXISTING APP LOGIC ---
+        hljs.highlightAll();
+
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            securityLevel: 'loose'
+        });
+
+        function toggleCard(element) {
+            element.classList.toggle('active');
+        }
+
+        const canvas = document.getElementById('riemannCanvas');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('rectCount');
+        const rectVal = document.getElementById('rectVal');
+        const approxDisplay = document.getElementById('approxArea');
+        const errorDisplay = document.getElementById('errorVal');
+        const exactAreaDisplay = document.getElementById('exactArea');
+
+        const f = (x) => x * x;
+        const startX = 0;
+        const endX = 1;
+        const exactValue = 1/3;
+
+        function draw() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            ctx.clearRect(0, 0, rect.width, rect.height);
+            
+            const n = parseInt(slider.value);
+            rectVal.textContent = n;
+
+            const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+            const width = rect.width - margin.left - margin.right;
+            const height = rect.height - margin.top - margin.bottom;
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 2;
+            ctx.moveTo(margin.left, margin.top);
+            ctx.lineTo(margin.left, height + margin.top);
+            ctx.lineTo(width + margin.left, height + margin.top);
+            ctx.stroke();
+
+            const scaleX = (val) => margin.left + (val / (endX - startX)) * width;
+            const scaleY = (val) => margin.top + height - (val / 1) * height;
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 3;
+            for (let px = 0; px <= width; px++) {
+                const xVal = (px / width) * (endX - startX) + startX;
+                const yVal = f(xVal);
+                if (px === 0) ctx.moveTo(scaleX(xVal), scaleY(yVal));
+                else ctx.lineTo(scaleX(xVal), scaleY(yVal));
+            }
+            ctx.stroke();
+
+            const dx = (endX - startX) / n;
+            let currentSum = 0;
+
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.3)'; 
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.8)';
+
+            for (let i = 0; i < n; i++) {
+                const x = startX + i * dx;
+                const y = f(x);
+                
+                const xPos = scaleX(x);
+                const yPos = scaleY(y);
+                const rWidth = (width / n); 
+                const rHeight = scaleY(0) - yPos;
+
+                ctx.fillRect(xPos, yPos, rWidth, rHeight);
+                ctx.strokeRect(xPos, yPos, rWidth, rHeight);
+
+                currentSum += y * dx;
+            }
+
+            approxDisplay.textContent = currentSum.toFixed(6);
+            errorDisplay.textContent = Math.abs(exactValue - currentSum).toFixed(6);
+            exactAreaDisplay.textContent = exactValue.toFixed(6);
+        }
+
+        slider.addEventListener('input', draw);
+        window.addEventListener('resize', draw);
+        draw();
+    </script>
+</body>
+</html>
