@@ -341,6 +341,24 @@ int reverseNumber(int n, int rev = 0) {
     return reverseNumber(n / 10, rev * 10 + n % 10);
 }
 
+int numeroOcco(int arr[10], int n, int i, int numToCount){
+    if(i == n) return 0;
+    
+    if(arr[i] == numToCount) return 1 + numeroOcco(arr, n, i+1, numToCount);
+    
+    return numeroOcco(arr, n, i+1, numToCount);
+}
+
+int maxOfArray(int arr[], int n, int max) {
+    if (n == 0) return max;  // caso base: ho esaminato tutto
+
+    if (arr[n-1] > max)
+        return maxOfArray(arr, n-1, arr[n-1]);  // aggiorno massimo e continuo
+    else
+        return maxOfArray(arr, n-1, max);        // massimo invariato, continuo
+
+}
+
 // ============= LINKED LIST =============
 
 struct Node {
