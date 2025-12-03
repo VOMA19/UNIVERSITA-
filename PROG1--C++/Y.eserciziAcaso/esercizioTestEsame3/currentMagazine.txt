@@ -1,0 +1,4 @@
+123 Laptop 899.99 5
+456 Mouse 19.99 25
+789 Tastiera 49.99 12
+234 giovanni 12.99 48
