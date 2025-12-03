@@ -8,113 +8,123 @@ using namespace std;
 // ============= FUNCTION DECLARATIONS =============
 
 // ARRAY UTILITIES
-void printArray(int arr[], int size);
-void fillArray(int arr[], int size, int value);
-void fillArrayRandom(int arr[], int size, int min, int max);
-int sumArray(int arr[], int size);
-double avgArray(int arr[], int size);
-int maxArray(int arr[], int size);
-int minArray(int arr[], int size);
-void copyArray(int src[], int dest[], int size);
-void reverseArray(int arr[], int size);
-int searchArray(int arr[], int size, int value);
-void sortArray(int arr[], int size);
-int countOccurrences(int arr[], int size, int value);
+void printArray(int arr[], int size);                    // Stampa tutti gli elementi di un array su una riga
+void fillArray(int arr[], int size, int value);          // Riempie un array con un valore specifico
+void fillArrayRandom(int arr[], int size, int min, int max); // Riempie un array con valori casuali compresi tra min e max
+int sumArray(int arr[], int size);                       // Calcola la somma di tutti gli elementi dell'array
+double avgArray(int arr[], int size);                    // Calcola la media aritmetica degli elementi dell'array
+int maxArray(int arr[], int size);                       // Trova l'elemento massimo nell'array
+int minArray(int arr[], int size);                       // Trova l'elemento minimo nell'array
+void copyArray(int src[], int dest[], int size);         // Copia tutti gli elementi da array sorgente a array destinazione
+void reverseArray(int arr[], int size);                  // Inverte l'ordine degli elementi nell'array
+int searchArray(int arr[], int size, int value);         // Cerca un valore nell'array e restituisce l'indice (-1 se non trovato)
+void sortArray(int arr[], int size);                     // Ordina l'array in ordine crescente usando bubble sort
+int countOccurrences(int arr[], int size, int value);    // Conta quante volte appare un valore nell'array
 
 // MATRIX UTILITIES
-void printMatrix(int mat[][100], int rows, int cols);
-void fillMatrix(int mat[][100], int rows, int cols, int value);
-int sumMatrix(int mat[][100], int rows, int cols);
-int sumDiagonal(int mat[][100], int size);
-int sumAntiDiagonal(int mat[][100], int size);
-void transposeMatrix(int mat[][100], int mat_t[][100], int rows, int cols);
-int sumRow(int mat[][100], int cols, int row);
-int sumColumn(int mat[][100], int rows, int col);
-int maxMatrix(int mat[][100], int rows, int cols);
-int minMatrix(int mat[][100], int rows, int cols);
+void printMatrix(int mat[][100], int rows, int cols);    // Stampa una matrice formattata per righe e colonne
+void fillMatrix(int mat[][100], int rows, int cols, int value); // Riempie una matrice con un valore specifico
+int sumMatrix(int mat[][100], int rows, int cols);       // Calcola la somma di tutti gli elementi della matrice
+int sumDiagonal(int mat[][100], int size);               // Calcola la somma della diagonale principale (matrice quadrata)
+int sumAntiDiagonal(int mat[][100], int size);           // Calcola la somma della diagonale secondaria (matrice quadrata)
+void transposeMatrix(int mat[][100], int mat_t[][100], int rows, int cols); // Crea la matrice trasposta
+int sumRow(int mat[][100], int cols, int row);           // Calcola la somma di una riga specifica
+int sumColumn(int mat[][100], int rows, int col);        // Calcola la somma di una colonna specifica
+int maxMatrix(int mat[][100], int rows, int cols);       // Trova l'elemento massimo nella matrice
+int minMatrix(int mat[][100], int rows, int cols);       // Trova l'elemento minimo nella matrice
 
 // STRING UTILITIES (Char Arrays)
-int stringLength(char str[]);
-void copyString(char src[], char dest[]);
-void concatenateStrings(char str1[], char str2[], char result[]);
-void reverseString(char str[]);
-int compareStrings(char str1[], char str2[]);
-void toUpperCase(char str[]);
-void toLowerCase(char str[]);
-int countVowels(char str[]);
-int countConsonants(char str[]);
-bool isPalindrome(char str[]);
+int stringLength(char str[]);                            // Calcola la lunghezza di una stringa (caratteri fino a '\0')
+void copyString(char src[], char dest[]);                // Copia una stringa sorgente nella stringa destinazione
+void concatenateStrings(char str1[], char str2[], char result[]); // Concatena due stringhe in una stringa risultato
+void reverseString(char str[]);                          // Inverte l'ordine dei caratteri nella stringa
+int compareStrings(char str1[], char str2[]);            // Confronta due stringhe (0=uguali, <0 se str1<str2, >0 se str1>str2)
+void toUpperCase(char str[]);                            // Converte tutti i caratteri della stringa in maiuscolo
+void toLowerCase(char str[]);                            // Converte tutti i caratteri della stringa in minuscolo
+int countVowels(char str[]);                             // Conta il numero di vocali nella stringa
+int countConsonants(char str[]);                         // Conta il numero di consonanti nella stringa
+bool isPalindrome(char str[]);                           // Verifica se la stringa è un palindromo
 
 // NUMERIC UTILITIES
-int factorial(int n);
-int fibonacci(int n);
-int power(int base, int exp);
-int gcd(int a, int b);
-bool isPrime(int n);
-int countDigits(int n);
-int sumDigits(int n);
-int reverseNumber(int n, int rev = 0);
-int numeroOcco(int arr[10], int n, int i, int numToCount);
-int maxOfArray(int arr[], int n, int max);
+int factorial(int n);                                    // Calcola il fattoriale di n ricorsivamente
+int fibonacci(int n);                                    // Calcola l'n-esimo numero di Fibonacci ricorsivamente
+int power(int base, int exp);                            // Calcola base^exp ricorsivamente
+int gcd(int a, int b);                                   // Calcola il massimo comune divisore usando algoritmo di Euclide
+bool isPrime(int n);                                     // Verifica se un numero è primo
+int countDigits(int n);                                  // Conta il numero di cifre in un numero
+int sumDigits(int n);                                    // Calcola la somma delle cifre di un numero ricorsivamente
+int reverseNumber(int n, int rev = 0);                   // Inverte le cifre di un numero ricorsivamente
+int numeroOcco(int arr[10], int n, int i, int numToCount); // Conta occorrenze di un numero in array ricorsivamente
+int maxOfArray(int arr[], int n, int max);               // Trova massimo in array ricorsivamente
 
 // TREE UTILITIES
-struct Nodo {
-    int valore;
-    Nodo* sinistro;
-    Nodo* destro;
+struct Nodo {                                            // Struttura per nodo di albero binario
+    int valore;                                          // Valore memorizzato nel nodo
+    Nodo* sinistro;                                      // Puntatore al figlio sinistro
+    Nodo* destro;                                        // Puntatore al figlio destro
 };
-int altezzaAlberoRic(Nodo* radice);
-int contaNodiRic(Nodo* radice);
+int altezzaAlberoRic(Nodo* radice);                     // Calcola altezza dell'albero ricorsivamente
+int contaNodiRic(Nodo* radice);                         // Conta numero totale di nodi nell'albero ricorsivamente
 
 // PERMUTATION UTILITIES
-void swap(int *a, int *b);
-void permutaRic(int a[], int n, int pos);
-void permutaRicHelper(int a[], int n, int pos, int current);
+void swap(int *a, int *b);                              // Scambia i valori di due variabili usando puntatori
+void permutaRic(int a[], int n, int pos);               // Genera tutte le permutazioni di un array ricorsivamente
+void permutaRicHelper(int a[], int n, int pos, int current); // Funzione helper per generare permutazioni
 
 // LINKED LIST UTILITIES
-struct Node {
-    int data;
-    Node* next;
+struct Node {                                           // Struttura per nodo di lista collegata
+    int data;                                           // Dato memorizzato nel nodo
+    Node* next;                                         // Puntatore al nodo successivo
 };
-Node* createNode(int data);
-void insertAtHead(Node*& head, int data);
-void insertAtTail(Node*& head, int data);
-void printList(Node* head);
-int listLength(Node* head);
-bool searchList(Node* head, int value);
-int sumList(Node* head);
-int sumListRecursive(Node* head);
-void deleteNode(Node*& head, int value);
-Node* reverseListRecursive(Node* head);
-void deleteList(Node*& head);
+Node* createNode(int data);                             // Crea un nuovo nodo con il valore specificato
+void insertAtHead(Node*& head, int data);              // Inserisce un nuovo nodo all'inizio della lista
+void insertAtTail(Node*& head, int data);              // Inserisce un nuovo nodo alla fine della lista
+void printList(Node* head);                            // Stampa tutti gli elementi della lista
+int listLength(Node* head);                            // Calcola la lunghezza della lista
+bool searchList(Node* head, int value);                // Cerca un valore nella lista
+int sumList(Node* head);                               // Calcola la somma di tutti gli elementi (iterativo)
+int sumListRecursive(Node* head);                      // Calcola la somma di tutti gli elementi (ricorsivo)
+void deleteNode(Node*& head, int value);               // Elimina il primo nodo con il valore specificato
+Node* reverseListRecursive(Node* head);                // Inverte la lista ricorsivamente
+void deleteList(Node*& head);                          // Elimina tutti i nodi della lista
 
 // STRUCTURE UTILITIES
-struct Persona {
-    char name[50];
-    int age;
-    char email[50];
+struct Persona {                                        // Struttura per memorizzare dati di una persona
+    char name[50];                                      // Nome della persona (max 49 caratteri)
+    int age;                                            // Età della persona
+    char email[50];                                     // Email della persona (max 49 caratteri)
 };
-void printPersona(Persona p);
-void printPersonas(Persona arr[], int size);
-void sortPersonasByAge(Persona arr[], int size);
-int searchPersona(Persona arr[], int size, char name[]);
+void printPersona(Persona p);                          // Stampa i dati di una singola persona
+void printPersonas(Persona arr[], int size);           // Stampa i dati di un array di persone
+void sortPersonasByAge(Persona arr[], int size);       // Ordina array di persone per età crescente
+int searchPersona(Persona arr[], int size, char name[]); // Cerca una persona per nome nell'array
 
 // RECURSIVE UTILITIES
-int sumArrayRecursive(int arr[], int size);
-void printArrayRecursive(int arr[], int size, int index = 0);
-int maxArrayRecursive(int arr[], int size, int index = 0, int max = -2147483648);
-int minArrayRecursive(int arr[], int size, int index = 0, int min = 2147483647);
-int searchArrayRecursive(int arr[], int size, int value, int index = 0);
-int countOccurrencesRecursive(int arr[], int size, int value, int index = 0);
-int prodottoArrayRic(int arr[], int n);
+int sumArrayRecursive(int arr[], int size);             // Calcola somma array ricorsivamente
+void printArrayRecursive(int arr[], int size, int index = 0); // Stampa array ricorsivamente
+int maxArrayRecursive(int arr[], int size, int index = 0, int max = -2147483648); // Trova massimo ricorsivamente
+int minArrayRecursive(int arr[], int size, int index = 0, int min = 2147483647);  // Trova minimo ricorsivamente
+int searchArrayRecursive(int arr[], int size, int value, int index = 0); // Cerca valore ricorsivamente
+int countOccurrencesRecursive(int arr[], int size, int value, int index = 0); // Conta occorrenze ricorsivamente
+int prodottoArrayRic(int arr[], int n);                 // Calcola prodotto di tutti gli elementi ricorsivamente
 
 // FILE UTILITIES
-void readFromFile(const char* filename, int arr[], int& size);
-void writeToFile(const char* filename, int arr[], int size);
-void readStringFromFile(const char* filename, char strings[][100], int& count);
-void writeStringToFile(const char* filename, char strings[][100], int count);
-int countLinesInFile(const char* filename);
-void appendToFile(const char* filename, int arr[], int size);
+void readFromFile(const char* filename, int arr[], int& size); // Legge numeri interi da file e li memorizza in array
+void writeToFile(const char* filename, int arr[], int size);   // Scrive array di numeri interi su file
+void readStringFromFile(const char* filename, char strings[][100], int& count); // Legge stringhe da file
+void writeStringToFile(const char* filename, char strings[][100], int count);   // Scrive stringhe su file
+int countLinesInFile(const char* filename);             // Conta il numero di righe in un file
+void appendToFile(const char* filename, int arr[], int size); // Aggiunge numeri alla fine di un file esistente
+
+// INPUT UTILITIES
+bool readInt(int& n);                                    // Legge un intero con controllo di validità
+int* maxArrayPtr(int arr[], int size);                   // Restituisce puntatore all'elemento massimo dell'array
+int* allocArray(int size);                              // Alloca dinamicamente un array di interi
+void deallocArray(int* arr);                            // Dealloca un array allocato dinamicamente
+Persona* allocPersonas(int size);                       // Alloca dinamicamente un array di struct Persona
+void freePersonas(Persona* arr, int size);              // Dealloca un array di struct Persona
+bool isSorted(int arr[], int size);                     // Verifica se un array è ordinato in modo crescente
+bool isSortedRecursive(int arr[], int size, int index = 0); // Verifica ordinamento ricorsivamente
 
 // ============= MAIN FUNCTION =============
 
@@ -352,6 +362,90 @@ int main() {
     for(int i = 0; i < stringCount; i++)
         cout << "- " << stringheLette[i] << endl;
     
+    // ============= INPUT UTILITIES =============
+    cout << "--- INPUT UTILITIES ---" << endl;
+    
+    // Test readInt
+    int numero;
+    cout << "Test lettura numero con controllo:" << endl;
+    if (readInt(numero)) {
+        cout << "Numero letto correttamente: " << numero << endl;
+    } else {
+        cout << "Errore nella lettura del numero" << endl;
+    }
+    
+    // Test maxArrayPtr
+    int testPtrArr[5] = {10, 45, 20, 55, 30};
+    cout << "\nArray per test puntatori: ";
+    printArray(testPtrArr, 5);
+    
+    int* maxPtr = maxArrayPtr(testPtrArr, 5);
+    if (maxPtr != nullptr) {
+        cout << "Indirizzo elemento massimo: " << maxPtr << endl;
+        cout << "Valore elemento massimo: " << *maxPtr << endl;
+        *maxPtr = 100; // Modifica tramite puntatore
+        cout << "Array dopo modifica tramite puntatore: ";
+        printArray(testPtrArr, 5);
+    }
+    
+    // Test allocazione dinamica array
+    int dimensione = 5;
+    int* dynArray = allocArray(dimensione);
+    if (dynArray != nullptr) {
+        cout << "\nArray dinamico allocato di dimensione " << dimensione << endl;
+        
+        // Riempimento array dinamico
+        for (int i = 0; i < dimensione; i++)
+            dynArray[i] = (i + 1) * 10;
+        
+        cout << "Array dinamico riempito: ";
+        printArray(dynArray, dimensione);
+        
+        deallocArray(dynArray);
+        cout << "Array dinamico deallocato" << endl;
+    }
+    
+    // Test allocazione dinamica struct Persona
+    int numPersone = 2;
+    Persona* personePtr = allocPersonas(numPersone);
+    if (personePtr != nullptr) {
+        cout << "\nArray dinamico di " << numPersone << " persone allocato" << endl;
+        
+        // Riempimento dati persone
+        copyString("Marco", personePtr[0].name);
+        personePtr[0].age = 28;
+        copyString("marco@test.com", personePtr[0].email);
+        
+        copyString("Sara", personePtr[1].name);
+        personePtr[1].age = 24;
+        copyString("sara@test.com", personePtr[1].email);
+        
+        cout << "Persone inserite dinamicamente:" << endl;
+        printPersonas(personePtr, numPersone);
+        
+        freePersonas(personePtr, numPersone);
+        cout << "Array dinamico persone deallocato" << endl;
+    }
+    
+    // Test isSorted
+    int sortedArr[5] = {1, 3, 5, 7, 9};
+    int unsortedArr[5] = {5, 2, 8, 1, 4};
+    
+    cout << "\nTest ordinamento array:" << endl;
+    cout << "Array ordinato: ";
+    printArray(sortedArr, 5);
+    cout << "E' ordinato? " << (isSorted(sortedArr, 5) ? "Si" : "No") << endl;
+    
+    cout << "Array non ordinato: ";
+    printArray(unsortedArr, 5);
+    cout << "E' ordinato? " << (isSorted(unsortedArr, 5) ? "Si" : "No") << endl;
+    
+    // Test isSortedRecursive
+    cout << "\nTest ordinamento ricorsivo:" << endl;
+    cout << "Array ordinato (ricorsivo): " << (isSortedRecursive(sortedArr, 5) ? "Si" : "No") << endl;
+    cout << "Array non ordinato (ricorsivo): " << (isSortedRecursive(unsortedArr, 5) ? "Si" : "No") << endl;
+    
+    cout << endl;
     cout << "\n=== FINE DIMOSTRAZIONE ===" << endl;
     
     return 0;
@@ -955,3 +1049,56 @@ void appendToFile(const char* filename, int arr[], int size) {
         file << arr[i] << "\n";
     file.close();
 }
+
+// ============= INPUT UTILITIES =============
+
+bool readInt(int& n) {
+    cout << "Inserisci un numero intero: ";
+    if (!(cin >> n)) {
+        cin.clear();
+        cin.ignore(10000, '\n');
+        return false;
+    }
+    return true;
+}
+
+int* maxArrayPtr(int arr[], int size) {
+    if (size <= 0) return nullptr;
+    int* max = &arr[0];
+    for (int i = 1; i < size; i++)
+        if (arr[i] > *max) max = &arr[i];
+    return max;
+}
+
+int* allocArray(int size) {
+    if (size <= 0) return nullptr;
+    return new int[size];
+}
+
+void deallocArray(int* arr) {
+    delete[] arr;
+}
+
+Persona* allocPersonas(int size) {
+    if (size <= 0) return nullptr;
+    return new Persona[size];
+}
+
+void freePersonas(Persona* arr, int size) {
+    delete[] arr;
+}
+
+bool isSorted(int arr[], int size) {
+    for (int i = 0; i < size - 1; i++)
+        if (arr[i] > arr[i + 1]) return false;
+    return true;
+}
+
+bool isSortedRecursive(int arr[], int size, int index) {
+    if (index >= size - 1) return true;
+    if (arr[index] > arr[index + 1]) return false;
+    return isSortedRecursive(arr, size, index + 1);
+}
+
+
+    
