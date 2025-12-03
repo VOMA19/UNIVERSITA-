@@ -358,7 +358,50 @@ int maxOfArray(int arr[], int n, int max) {
         return maxOfArray(arr, n-1, max);        // massimo invariato, continuo
 
 }
+struct Nodo {
+    int valore;
+    Nodo* sinistro;
+    Nodo* destro;
+};
 
+int altezzaAlberoRic(Nodo* radice) {
+    if (radice == nullptr) return 0;   // caso base corretto
+    int hSx = altezzaAlberoRic(radice->sinistro);
+    int hDx = altezzaAlberoRic(radice->destro);
+    return 1 + (hSx > hDx ? hSx : hDx);
+}
+
+int contaNodiRic(Nodo* radice) {
+    if(radice == nullptr) return 0;           // caso base ✓
+
+    int sinistri = contaNodiRic(radice->sinistro);  // sottoalbero sx ✓
+    int destri = contaNodiRic(radice->destro);      // sottoalbero dx ✓
+
+    return 1 + sinistri + destri;                   // totale ✓
+}
+
+void swap(int *a, int *b) {
+    int t = *a; *a = *b; *b = t;
+}
+
+void permutaRic(int a[], int n, int pos) {
+    if (pos == n) {          // caso base: permutacompleta
+        printArrayRecursive(a, n);
+        return;
+    }
+    // Funzione helper per generare permutazioni da posizione pos a n-1
+    permutaRicHelper(a, n, pos, pos);
+}
+
+void permutaRicHelper(int a[], int n, int pos, int current) {
+    if (current == n) return;  // ho provato tutti gli elementi per questa posizione
+    
+    swap(&a[pos], &a[current]);      // scelta
+    permutaRic(a, n, pos + 1);       // ricorsione per posizione successiva
+    swap(&a[pos], &a[current]);      // backtrack
+    
+    permutaRicHelper(a, n, pos, current + 1);  // prova elemento successivo
+}
 // ============= LINKED LIST =============
 
 struct Node {
@@ -562,6 +605,11 @@ int countOccurrencesRecursive(int arr[], int size, int value, int index = 0) {
     if (index == size) return 0;
     int count = (arr[index] == value) ? 1 : 0;
     return count + countOccurrencesRecursive(arr, size, value, index + 1);
+}
+
+int prodottoArrayRic(int arr[], int n){
+    if(n == 0) return 1;
+    return arr[n-1]*prodottoArrayRic(arr, n-1);
 }
 
 // ============= FILE UTILITIES =============

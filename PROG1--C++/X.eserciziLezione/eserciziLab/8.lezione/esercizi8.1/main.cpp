@@ -125,8 +125,11 @@ int main(){
     
     return 0;
 }
-
-
+struct Nodo {
+    int valore;
+    Nodo* sinistro;
+    Nodo* destro;
+};
 
 
 
