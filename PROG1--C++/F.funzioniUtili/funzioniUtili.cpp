@@ -125,6 +125,10 @@ Persona* allocPersonas(int size);                       // Alloca dinamicamente 
 void freePersonas(Persona* arr, int size);              // Dealloca un array di struct Persona
 bool isSorted(int arr[], int size);                     // Verifica se un array è ordinato in modo crescente
 bool isSortedRecursive(int arr[], int size, int index = 0); // Verifica ordinamento ricorsivamente
+int** allocMatrix(int rows, int cols);                  // Alloca dinamicamente una matrice di interi rows x cols
+void deallocMatrix(int** mat, int rows);                // Dealloca una matrice allocata dinamicamente
+void printDynamicMatrix(int** mat, int rows, int cols); // Stampa una matrice allocata dinamicamente
+void fillDynamicMatrix(int** mat, int rows, int cols, int value); // Riempie una matrice dinamica con un valore
 
 // ============= MAIN FUNCTION =============
 
@@ -444,6 +448,44 @@ int main() {
     cout << "\nTest ordinamento ricorsivo:" << endl;
     cout << "Array ordinato (ricorsivo): " << (isSortedRecursive(sortedArr, 5) ? "Si" : "No") << endl;
     cout << "Array non ordinato (ricorsivo): " << (isSortedRecursive(unsortedArr, 5) ? "Si" : "No") << endl;
+    
+    // ============= DYNAMIC MATRIX UTILITIES TEST =============
+    cout << "\n--- DYNAMIC MATRIX UTILITIES ---" << endl;
+    
+    int righe = 3, colonne = 4;
+    
+    // Allocazione matrice dinamica
+    int** matriceDinamica = allocMatrix(righe, colonne);
+    if (matriceDinamica != nullptr) {
+        cout << "Matrice dinamica " << righe << "x" << colonne << " allocata" << endl;
+        
+        // Riempimento con valore specifico
+        fillDynamicMatrix(matriceDinamica, righe, colonne, 7);
+        cout << "Matrice riempita con valore 7:" << endl;
+        printDynamicMatrix(matriceDinamica, righe, colonne);
+        
+        // Riempimento con valori progressivi
+        int valore = 1;
+        for (int i = 0; i < righe; i++) {
+            for (int j = 0; j < colonne; j++) {
+                matriceDinamica[i][j] = valore++;
+            }
+        }
+        
+        cout << "\nMatrice con valori progressivi:" << endl;
+        printDynamicMatrix(matriceDinamica, righe, colonne);
+        
+        // Modifica di elementi specifici
+        matriceDinamica[1][2] = 99;
+        cout << "\nMatrice dopo modifica elemento [1][2] = 99:" << endl;
+        printDynamicMatrix(matriceDinamica, righe, colonne);
+        
+        // Deallocazione
+        deallocMatrix(matriceDinamica, righe);
+        cout << "Matrice dinamica deallocata" << endl;
+    } else {
+        cout << "Errore nell'allocazione della matrice dinamica" << endl;
+    }
     
     cout << endl;
     cout << "\n=== FINE DIMOSTRAZIONE ===" << endl;
@@ -1100,5 +1142,44 @@ bool isSortedRecursive(int arr[], int size, int index) {
     return isSortedRecursive(arr, size, index + 1);
 }
 
+// ============= DYNAMIC MATRIX UTILITIES =============
 
+int** allocMatrix(int rows, int cols) {
+    if (rows <= 0 || cols <= 0) return nullptr;
     
+    int** matrix = new int*[rows];
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = new int[cols];
+    }
+    return matrix;
+}
+
+void deallocMatrix(int** mat, int rows) {
+    if (mat == nullptr) return;
+    
+    for (int i = 0; i < rows; i++) {
+        delete[] mat[i];
+    }
+    delete[] mat;
+}
+
+void printDynamicMatrix(int** mat, int rows, int cols) {
+    if (mat == nullptr) return;
+    
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            cout << mat[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+void fillDynamicMatrix(int** mat, int rows, int cols, int value) {
+    if (mat == nullptr) return;
+    
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            mat[i][j] = value;
+        }
+    }
+}
