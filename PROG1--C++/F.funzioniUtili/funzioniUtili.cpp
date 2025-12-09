@@ -9,7 +9,7 @@ using namespace std;
 
 // ARRAY UTILITIES
 void printArray(int arr[], int size);                    // Stampa tutti gli elementi di un array su una riga
-void fillArray(int arr[], int size, int value);          // Riempie un array con un valore specifico
+void fillArray(int arr[], int size, int value);           // Riempie un array con un valore specifico
 void fillArrayRandom(int arr[], int size, int min, int max); // Riempie un array con valori casuali compresi tra min e max
 int sumArray(int arr[], int size);                       // Calcola la somma di tutti gli elementi dell'array
 double avgArray(int arr[], int size);                    // Calcola la media aritmetica degli elementi dell'array
