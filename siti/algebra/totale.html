@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solver Geometria & Algebra (Full Examples Edition)</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 850: '#1e293b', 900: '#0f172a', 950: '#020617' }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                pageReady: () => {
+                    return MathJax.startup.defaultPageReady().then(() => {
+                        console.log('MathJax initial typesetting complete');
+                    });
+                }
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #e2e8f0; }
+        .mono { font-family: 'Roboto Mono', monospace; }
+        
+        /* Card Styling */
+        .algo-card { 
+            background: #1e293b; border: 1px solid #334155; border-left: 4px solid #10b981; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: all 0.2s;
+        }
+        .theory-card {
+            background: #1e293b; border: 1px solid #334155; border-left: 4px solid #8b5cf6; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); margin-bottom: 1.5rem;
+        }
+        .glossary-card {
+            background: #1e293b; border: 1px solid #334155; border-left: 4px solid #f59e0b;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); margin-bottom: 1rem;
+        }
+
+        .card-hover:hover { transform: translateY(-2px); border-color: #475569; }
+        
+        .step-circle {
+            width: 24px; height: 24px; background: #334155; color: #34d399; border: 1px solid #10b981;
+            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: bold; margin-right: 8px; flex-shrink: 0;
+        }
+
+        .nav-item:hover { background-color: #1e293b; color: #f8fafc; }
+        .nav-active { background-color: #1e293b; color: #34d399; border-right: 3px solid #10b981; font-weight: 600; }
+
+        .math-box {
+            background-color: #020617; border-radius: 6px; padding: 12px;
+            font-family: 'Roboto Mono', monospace; font-size: 0.9rem; color: #e2e8f0;
+            border: 1px solid #334155; display: block; margin: 0.5rem 0; overflow-x: auto;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        #page-loader { position: fixed; inset: 0; background: #0f172a; z-index: 100; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden text-sm md:text-base">
+
+    <!-- Loading Screen -->
+    <div id="page-loader">
+        <div class="animate-spin h-10 w-10 border-4 border-emerald-500 rounded-full border-t-transparent mb-4"></div>
+        <p class="text-slate-400 font-medium font-mono">Caricamento Matrix...</p>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0">
+        <div class="p-5 border-b border-slate-800 bg-slate-900">
+            <h1 class="text-xl font-extrabold text-white tracking-tight">GeoAlg <span class="text-emerald-500">Solver</span></h1>
+            <p class="text-xs text-slate-500 mt-1 font-mono">Ultimate v5.0</p>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-2">
+            <!-- Modules Section -->
+            <div class="px-4 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Moduli Didattici</div>
+            <ul id="nav-list" class="space-y-1 px-2 mb-6"></ul>
+            
+            <!-- Tools Section -->
+            <div class="px-4 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Strumenti</div>
+            <ul class="space-y-1 px-2">
+                <li>
+                    <button onclick="loadGlossary()" class="nav-item w-full text-left px-4 py-3 flex items-center gap-3 rounded-md text-sm text-slate-400 hover:text-white">
+                        <span class="text-amber-500 text-lg">📖</span>
+                        <span>Glossario Definizioni</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col h-full relative bg-slate-950">
+        <div class="md:hidden bg-slate-900 p-4 border-b border-slate-800 flex justify-between items-center shadow-lg z-10">
+            <span class="font-bold text-white">GeoAlg Solver</span>
+            <button id="mobile-menu-toggle" class="text-slate-400 hover:text-white">Menu</button>
+        </div>
+
+        <header class="bg-slate-900 border-b border-slate-800 p-4 md:px-8 flex flex-col md:flex-row justify-between items-center gap-4 shrink-0 shadow-lg z-10">
+            <div>
+                <h2 id="current-section-title" class="text-2xl font-bold text-white tracking-tight">Benvenuto</h2>
+                <p id="current-section-desc" class="text-slate-400 text-sm">Seleziona un modulo o consulta il glossario.</p>
+            </div>
+            <div class="relative w-full md:w-64 mt-2 md:mt-0">
+                <input type="text" id="search-input" placeholder="Cerca termine..." class="w-full rounded-lg p-2.5 pl-10 text-sm placeholder-slate-500 transition-all focus:border-emerald-500 bg-slate-900 border-slate-700 text-slate-200">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+            </div>
+        </header>
+
+        <div id="content-area" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8">
+            <!-- Dynamic Content -->
+        </div>
+    </main>
+
+    <script>
+        // --- HELPER: Safe Typeset ---
+        function safeTypeset(element) {
+            if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+                window.MathJax.typesetPromise([element]).catch(err => console.log('MathJax error:', err));
+            }
+        }
+
+        // --- GLOSSARY DATA ---
+        const glossary = [
+            { term: "Autovalore / Autovettore", def: "Uno scalare $\\lambda$ è autovalore di $A$ se esiste un vettore non nullo $v$ (autovettore) tale che $Av = \\lambda v$. (Dispensa 8)" },
+            { term: "Autospazio $E(\\lambda)$", def: "Sottospazio vettoriale formato da tutti gli autovettori relativi a $\\lambda$ più il vettore nullo. $E(\\lambda) = Ker(A - \\lambda I)$. (Dispensa 8)" },
+            { term: "Base", def: "Un insieme di vettori $\\mathcal{B}$ è una base di $V$ se è un sistema di generatori per $V$ ed è linearmente indipendente. (Dispensa 5)" },
+            { term: "Base Ortonormale", def: "Base composta da vettori a due a due ortogonali e di norma 1 ($u_i \\cdot u_j = \\delta_{ij}$). (Dispensa 9)" },
+            { term: "Combinazione Lineare", def: "Un vettore $v$ è comb. lin. di $v_1, ..., v_k$ se $v = c_1v_1 + ... + c_kv_k$. (Dispensa 4)" },
+            { term: "Determinante", def: "Numero associato a una matrice quadrata. Se $\\neq 0$, la matrice è invertibile. Geometricamente misura il volume del parallelepipedo generato dai vettori riga. (Dispensa 6)" },
+            { term: "Dimensione", def: "Numero di elementi di una base. È un invariante dello spazio vettoriale. (Dispensa 5)" },
+            { term: "Formula di Grassmann", def: "$\\dim(U+W) = \\dim(U) + \\dim(W) - \\dim(U \\cap W)$. (Dispensa 5)" },
+            { term: "Funzione Lineare", def: "Funzione $T: V \\to W$ che preserva somma e prodotto per scalare: $T(av+bw) = aT(v) + bT(w)$. (Dispensa 7)" },
+            { term: "Immagine ($Im T$)", def: "Sottospazio del codominio formato da tutti i vettori $w$ tali che $w=T(v)$ per qualche $v$. Coincide con lo spazio delle colonne della matrice associata. (Dispensa 7)" },
+            { term: "Indipendenza Lineare", def: "Vettori $v_1, ..., v_k$ sono indipendenti se l'unica loro combinazione lineare che dà 0 è quella con tutti coefficienti nulli. (Dispensa 4)" },
+            { term: "Matrice Inversa", def: "Matrice $A^{-1}$ tale che $AA^{-1} = A^{-1}A = I$. Esiste sse $\\det(A) \\neq 0$. (Dispensa 2)" },
+            { term: "Matrice Ortogonale", def: "Matrice quadrata $P$ tale che $P^T P = I$, ovvero $P^{-1} = P^T$. Le sue colonne formano una base ortonormale. (Dispensa 9)" },
+            { term: "Matrice Simmetrica", def: "Matrice quadrata tale che $A = A^T$. Ha autovalori tutti reali ed è sempre diagonalizzabile. (Dispensa 9)" },
+            { term: "Molteplicità Algebrica ($m_a$)", def: "Numero di volte che un autovalore $\\lambda$ è radice del polinomio caratteristico. (Dispensa 8)" },
+            { term: "Molteplicità Geometrica ($m_g$)", def: "Dimensione dell'autospazio relativo a $\\lambda$: $m_g = n - rg(A - \\lambda I)$. Vale sempre $1 \\le m_g \\le m_a$. (Dispensa 8)" },
+            { term: "Nucleo ($Ker T$)", def: "Sottospazio del dominio formato dai vettori $v$ tali che $T(v)=0$. $T$ è iniettiva sse $Ker T = \\{0\\}$. (Dispensa 7)" },
+            { term: "Polinomio Caratteristico", def: "$p(\\lambda) = \\det(A - \\lambda I)$. Le sue radici sono gli autovalori di A. (Dispensa 8)" },
+            { term: "Prodotto Scalare (Euclideo)", def: "Operazione $\\mathbb{R}^n \\times \\mathbb{R}^n \\to \\mathbb{R}$ definita da $\\vec{v} \\cdot \\vec{w} = \\sum v_i w_i$. Se nullo, i vettori sono ortogonali. (Dispensa 1/9)" },
+            { term: "Rango", def: "Numero massimo di righe (o colonne) linearmente indipendenti. Coincide con il numero di pivot nella forma a scalini. (Dispensa 4)" },
+            { term: "Sottospazio Vettoriale", def: "Sottoinsieme $W \\subseteq V$ che è esso stesso uno spazio vettoriale (chiuso rispetto a somma e prodotto per scalare, contiene 0). (Dispensa 4)" },
+            { term: "Teorema Spettrale", def: "Ogni matrice reale simmetrica è diagonalizzabile tramite una matrice ortogonale. (Dispensa 9)" },
+            { term: "Teorema Rouché-Capelli", def: "Un sistema $Ax=b$ ha soluzioni se e solo se $rg(A) = rg(A|b)$. (Dispensa 3)" }
+        ];
+
+        // --- DATABASE SECTIONS (Theory + Exercises) ---
+        const database = {
+            "F1": {
+                title: "F1: Vettori e Geometria 3D",
+                desc: "Dispensa 1: Vettori geometrici, rette, piani.",
+                theory: [
+                    {
+                        title: "1. Vettori Geometrici: Definizioni",
+                        content: `
+                            <p><strong>Vettore Geometrico:</strong> Dati due punti $A=(x_A, y_A)$ e $B=(x_B, y_B)$ nel piano, il vettore $\\vec{AB}$ ha componenti $(x_B-x_A, y_B-y_A)$.</p>
+                            <p><strong>Somma:</strong> Regola del parallelogramma. $\\vec{AB} + \\vec{AC} = \\vec{AD}$. In componenti: $(a_1+b_1, a_2+b_2)$.</p>
+                            <p><strong>Prodotto per scalare:</strong> $t\\vec{v}$ è un vettore parallelo a $\\vec{v}$ con lunghezza $|t|$ volte quella di $\\vec{v}$.</p>
+                        `
+                    },
+                    {
+                        title: "2. Rette e Piani (Parametriche vs Cartesiane)",
+                        content: `
+                            <p><strong>Retta per due punti $P_1, P_2$:</strong>
+                            $$ \\begin{cases} x = x_1 + t(x_2-x_1) \\\\ y = y_1 + t(y_2-y_1) \\\\ z = z_1 + t(z_2-z_1) \\end{cases} $$
+                            Eliminando $t$ si ottengono le equazioni cartesiane.</p>
+                            <p><strong>Piano per tre punti $P_1, P_2, P_3$:</strong>
+                            Parametrica: $\\vec{P} = \\vec{P_1} + s(\\vec{P_2} - \\vec{P_1}) + t(\\vec{P_3} - \\vec{P_1})$.<br>
+                            Cartesiana: $ax+by+cz=d$, dove $(a,b,c)$ è normale al piano.</p>
+                        `
+                    },
+                    {
+                        title: "3. Prodotti e Formule Metriche",
+                        content: `
+                            <p><strong>Prodotto Scalare:</strong> $\\vec{v} \\cdot \\vec{w} = |\\vec{v}| |\\vec{w}| \\cos \\theta$. $\\vec{v} \\perp \\vec{w} \\iff \\vec{v} \\cdot \\vec{w} = 0$.</p>
+                            <p><strong>Prodotto Vettoriale (solo $\\mathbb{R}^3$):</strong> $\\vec{v} \\times \\vec{w}$ è ortogonale a entrambi. $|\\vec{v} \\times \\vec{w}|$ = Area parallelogramma.</p>
+                            <p><strong>Distanza Punto-Piano:</strong> $d(P_0, \\pi) = \\frac{|ax_0+by_0+cz_0-d|}{\\sqrt{a^2+b^2+c^2}}$.</p>
+                        `
+                    }
+                ],
+                exercises: [
+                    { 
+                        title: "Retta per 2 punti (Parametrica & Cartesiana)", 
+                        ref: "Es 1.2", 
+                        tags: ["retta", "2 punti"], 
+                        steps: [
+                            "Dati $A(x_A, y_A, z_A)$ e $B(x_B, y_B, z_B)$.",
+                            "1. Calcola il vettore direzione $\\vec{v} = B - A = (l, m, n)$.",
+                            "2. <strong>Parametrica:</strong> $x = x_A + lt$, $y = y_A + mt$, $z = z_A + nt$.",
+                            "3. <strong>Cartesiana:</strong> Ricava $t$ da ogni equazione e uguaglia: $\\frac{x-x_A}{l} = \\frac{y-y_A}{m} = \\frac{z-z_A}{n}$. (Se un denominatore è 0, quell'equazione diventa separata, es. $z=z_A$)."
+                        ] 
+                    },
+                    { 
+                        title: "Piano per 3 punti A, B, C", 
+                        ref: "Es 1.3, 1.17", 
+                        tags: ["piano", "3 punti"], 
+                        steps: [
+                            "1. Calcola $\\vec{v_1}=B-A$ e $\\vec{v_2}=C-A$.",
+                            "2. Imposta il determinante formale $\\det(P-A, v_1, v_2) = 0$: $$\\det \\begin{pmatrix} x-x_A & y-y_A & z-z_A \\\\ v_{1x} & v_{1y} & v_{1z} \\\\ v_{2x} & v_{2y} & v_{2z} \\end{pmatrix} = 0$$",
+                            "3. Sviluppa con Laplace (1ª riga) per ottenere $ax+by+cz+d=0$."
+                        ] 
+                    },
+                    { 
+                        title: "Posizione Reciproca Rette (Incidenti, Parallele, Sghembe)", 
+                        ref: "Es 1.4, 1.12", 
+                        tags: ["rette", "sghembe"], 
+                        steps: [
+                            "Date $r$ (punto $A$, dir $\\vec{v}$) e $s$ (punto $B$, dir $\\vec{w}$).",
+                            "1. <strong>Parallele?</strong> Controlla se $\\vec{v} = k\\vec{w}$. Se sì $\\to$ Parallele.",
+                            "2. <strong>Incidenti o Sghembe?</strong> Calcola $\\det(\\vec{AB}, \\vec{v}, \\vec{w})$.",
+                            "   - Se $\\det = 0 \\to$ Complanari (Incidenti). Risolvi il sistema per trovare il punto.",
+                            "   - Se $\\det \\neq 0 \\to$ <strong>Sghembe</strong>."
+                        ] 
+                    },
+                    { 
+                        title: "Distanza Punto - Piano", 
+                        ref: "Es 1.11", 
+                        tags: ["distanza", "piano"], 
+                        steps: [
+                            "Dato $P(x_0, y_0, z_0)$ e piano $ax+by+cz+d=0$.",
+                            "1. Usa la formula diretta: $$d(P, \\pi) = \\frac{|ax_0+by_0+cz_0+d|}{\\sqrt{a^2+b^2+c^2}}$$."
+                        ] 
+                    },
+                    { 
+                        title: "Distanza Punto - Retta", 
+                        ref: "Es 1.10", 
+                        tags: ["distanza", "retta"], 
+                        steps: [
+                            "Dato $P$ e retta $r$ (direzione $\\vec{v}=(l,m,n)$).",
+                            "1. Trova l'equazione del <strong>piano ausiliario</strong> $\\pi$ passante per $P$ e perpendicolare a $r$. (I coefficienti del piano sono proprio $l,m,n$: $lx+my+nz=k$, trova $k$ imponendo passaggio per $P$).",
+                            "2. Trova il punto di intersezione $H = r \\cap \\pi$.",
+                            "3. Distanza = $||P - H||$."
+                        ] 
+                    },
+                    { 
+                        title: "Distanza tra due Rette Sghembe", 
+                        ref: "Es 1.21, 1.22", 
+                        tags: ["distanza", "sghembe"], 
+                        steps: [
+                            "Siano $r$ e $s$ due rette sghembe.",
+                            "<b>Metodo del Piano Parallelo (Prof):</b>",
+                            "1. Trova il piano $\\pi$ che contiene $r$ ed è parallelo a $s$. (Passa per un punto $P_r$ di $r$, vettori direttori $\\vec{v_r}$ e $\\vec{v_s}$).",
+                            "2. Scegli un punto qualsiasi $Q$ sulla retta $s$.",
+                            "3. La distanza cercata è la distanza punto-piano $d(Q, \\pi)$."
+                        ] 
+                    },
+                    { 
+                        title: "Area del Triangolo nello Spazio", 
+                        ref: "Es 1.17", 
+                        tags: ["area", "triangolo"], 
+                        steps: [
+                            "Dati i vertici $A, B, C$.",
+                            "1. Calcola i vettori $\\vec{u} = B-A$ e $\\vec{v} = C-A$.",
+                            "2. Calcola il <strong>prodotto vettoriale</strong> $\\vec{w} = \\vec{u} \\times \\vec{v}$.",
+                            "3. Area = $\\frac{1}{2} ||\\vec{w}||$ (metà della norma del prodotto vettoriale)."
+                        ] 
+                    },
+                    { 
+                        title: "Proiezione Ortogonale (Punto su Piano)", 
+                        ref: "Es 1.9, 1.15", 
+                        tags: ["proiezione"], 
+                        steps: [
+                            "Dato $P$ e piano $\\pi: ax+by+cz=d$.",
+                            "1. Scrivi la retta $r$ passante per $P$ e perpendicolare a $\\pi$. (Il vettore direttore di $r$ è il vettore normale del piano $(a,b,c)$).",
+                            "2. Trova l'intersezione $H = r \\cap \\pi$.",
+                            "3. $H$ è la proiezione cercata."
+                        ] 
+                    }
+                ]
+            },
+            "F2": {
+                title: "F2: Matrici e Operazioni",
+                desc: "Dispensa 2: Calcolo matriciale.",
+                theory: [
+                    {
+                        title: "1. Spazi di n-uple e Matrici",
+                        content: `
+                            <p><strong>Matrice $m \\times n$:</strong> Tabella di $m$ righe e $n$ colonne. Somma e prodotto per scalare definiti elemento per elemento.</p>
+                        `
+                    },
+                    {
+                        title: "2. Prodotto Righe per Colonne",
+                        content: `
+                            <p>Se $A$ è $(m,n)$ e $B$ è $(n,p)$, $C=AB$ è $(m,p)$. Elemento $c_{ik} = \\sum_{j=1}^n a_{ij} b_{jk}$. NON Commutativo ($AB \\neq BA$).</p>
+                        `
+                    },
+                    {
+                        title: "3. Inversa e Trasposta",
+                        content: `
+                            <p><strong>Inversa ($A^{-1}$):</strong> Esiste sse $\\det(A) \\neq 0$. $AA^{-1}=I$.</p>
+                            <p><strong>Trasposta ($A^T$):</strong> Scambia righe con colonne. $(AB)^T = B^T A^T$.</p>
+                        `
+                    }
+                ],
+                exercises: [
+                    { title: "Inversa 2x2", ref: "Es 2.3", tags: ["inversa"], steps: ["Calcola $\\Delta = ad-bc$.", "Se $\\Delta \\neq 0$, $A^{-1} = \\frac{1}{\\Delta} \\begin{pmatrix} d & -b \\\\ -c & a \\end{pmatrix}$."] }
+                ]
+            },
+            "F3": {
+                title: "F3: Sistemi Lineari",
+                desc: "Dispensa 3: Gauss-Jordan, Rango, Rouché-Capelli.",
+                theory: [
+                    {
+                        title: "1. Operazioni Elementari e Gauss",
+                        content: `
+                            <p>Operazioni lecite: Scambio righe ($S_{ij}$), Moltiplicazione ($D_i(c)$), Somma ($E_{ij}(c)$).</p>
+                            <p>Obiettivo: <strong>Forma a scalini (rref)</strong>.</p>
+                        `
+                    },
+                    {
+                        title: "2. Teorema di Rouché-Capelli",
+                        content: `
+                            <p>Risolubile $\\iff rg(A) = rg(A|b)$.</p>
+                            <ul class="list-disc pl-5">
+                                <li>$rg=n$ (incognite) $\\to$ 1 soluzione.</li>
+                                <li>$rg < n$ $\\to$ $\\infty^{n-rg}$ soluzioni.</li>
+                            </ul>
+                        `
+                    }
+                ],
+                exercises: [
+                    { title: "Sistema Parametrico", ref: "Es 3.3, 3.6", tags: ["sistema", "k"], steps: ["1. Riduci $(A|b)$ a scala.", "2. Se pivot dipende da $k$, discuti quando si annulla.", "3. Se riga diventa $[0...0 | \\neq 0] \\to$ Impossibile."] }
+                ]
+            },
+            "F4": {
+                title: "F4: Spazi Vettoriali",
+                desc: "Dispensa 4: Sottospazi, Generatori, Indipendenza.",
+                theory: [
+                    {
+                        title: "1. Sottospazi Vettoriali",
+                        content: `
+                            <p>$W \\subseteq V$ è sottospazio se contiene $\\vec{0}$, è chiuso rispetto alla somma e al prodotto scalare.</p>
+                            <p><em>Esempi:</em> $Sol(Ax=0)$ è sottospazio. $Sol(Ax=b)$ con $b \\neq 0$ NO.</p>
+                        `
+                    },
+                    {
+                        title: "2. Indipendenza Lineare",
+                        content: `
+                            <p>Vettori $v_1, ..., v_k$ sono indipendenti se $c_1v_1 + ... + c_kv_k = 0 \\implies c_i=0$.</p>
+                            <p>In $\\mathbb{R}^n$: metti i vettori in matrice. Indipendenti $\\iff rg(A) = k$.</p>
+                        `
+                    }
+                ],
+                exercises: [
+                    { title: "Rango Parametrico", ref: "Es 4.1", tags: ["rango"], steps: ["1. Cerca un minore con $\\det \\neq 0$ indipendente da $k$.", "2. Orla il minore.", "3. Annulla i determinanti degli orlati per trovare i $k$ critici."] }
+                ]
+            },
+            "F5": {
+                title: "F5: Basi e Dimensione",
+                desc: "Dispensa 5: Basi, Coordinate, Grassmann.",
+                theory: [
+                    {
+                        title: "1. Basi e Coordinate",
+                        content: `
+                            <p><strong>Base:</strong> Generatori linearmente indipendenti. Ogni vettore ha coordinate uniche.</p>
+                            <p><strong>Dimensione:</strong> Numero vettori della base.</p>
+                        `
+                    },
+                    {
+                        title: "2. Formula di Grassmann",
+                        content: `
+                            <div class="math-box text-center">$\\dim(U+W) = \\dim(U) + \\dim(W) - \\dim(U \\cap W)$</div>
+                        `
+                    }
+                ],
+                exercises: [
+                    { title: "Intersezione/Somma", ref: "Es 6.2", tags: ["grassmann"], steps: ["Somma: Metti tutti i generatori in matrice e riduci.", "Intersezione: Metti a sistema le equazioni cartesiane di $U$ e $W$."] }
+                ]
+            },
+            "F6": {
+                title: "F6: Determinante",
+                desc: "Dispensa 6: Laplace, Binet, Cramer.",
+                theory: [
+                    {
+                        title: "1. Definizione e Proprietà",
+                        content: `
+                            <p>Si calcola con Laplace.</p>
+                            <ul class="list-disc pl-5">
+                                <li>$\\det(A) \\neq 0 \\iff A$ invertibile.</li>
+                                <li>$\\det(AB) = \\det(A)\\det(B)$ (Binet).</li>
+                                <li>Scambio righe $\\to$ cambia segno.</li>
+                            </ul>
+                        `
+                    }
+                ],
+                exercises: [
+                    { title: "Rango via Determinante", ref: "Es 7.4", tags: ["determinante"], steps: ["1. Calcola det(A).", "2. Se $\\neq 0$, rango max.", "3. Se $0$, sostituisci $k$ e controlla minori."] }
+                ]
+            },
+            "F7": {
+                title: "F7: Applicazioni Lineari",
+                desc: "Dispensa 7: Ker, Im, Teorema Dimensioni.",
+                theory: [
+                    {
+                        title: "1. Nucleo e Immagine",
+                        content: `
+                            <p><strong>Nucleo ($N(T)$):</strong> $v \\in V : T(v)=0$. $T$ iniettiva $\\iff N(T)=\\{0\\}$.</p>
+                            <p><strong>Immagine ($Im(T)$):</strong> Generata dalle immagini della base. $T$ suriettiva $\\iff Im(T)=W$.</p>
+                            <p><strong>Teorema:</strong> $\\dim(V) = \\dim(N(T)) + \\dim(Im(T))$.</p>
+                        `
+                    },
+                    {
+                        title: "2. Matrice Associata",
+                        content: `
+                            <p>$M_{\\mathcal{B}}^{\\mathcal{C}}(T)$ ha nella j-esima colonna le coordinate di $T(v_j)$ rispetto alla base $\\mathcal{C}$.</p>
+                        `
+                    }
+                ],
+                exercises: [
+                    { title: "Studio $T_k$", ref: "Es 8.18", tags: ["lineare"], steps: ["1. Scrivi matrice $A(k)$.", "2. Calcola rango. $rg(A) = \\dim(Im)$.", "3. $\\dim(Ker) = n - rg(A)$."] }
+                ]
+            },
+            "F8": {
+                title: "F8: Diagonalizzazione",
+                desc: "Dispensa 8: Autovalori, Autospazi.",
+                theory: [
+                    {
+                        title: "1. Autovalori e Autovettori",
+                        content: `
+                            <p>$Av = \\lambda v$. $\\lambda$ autovalore, $v$ autovettore.</p>
+                            <p><strong>Polinomio Caratteristico:</strong> $p(\\lambda) = \\det(A - \\lambda I)$. Radici = autovalori.</p>
+                            <p><strong>Autospazio $E(\\lambda)$:</strong> $N(A-\\lambda I)$.</p>
+                        `
+                    },
+                    {
+                        title: "2. Criterio Diagonalizzabilità",
+                        content: `
+                            <p>Diagonalizzabile sse:</p>
+                            <ol class="list-decimal pl-5">
+                                <li>Somma $m_{alg} = n$.</li>
+                                <li>Per ogni $\\lambda$, $m_{alg}(\\lambda) = m_{geo}(\\lambda) = n - rg(A-\\lambda I)$.</li>
+                            </ol>
+                        `
+                    }
+                ],
+                exercises: [
+                    { title: "Diagonalizzazione", ref: "Es 9.7", tags: ["diagonalizzazione"], steps: ["1. $p(\\lambda)=0 \\to$ autovalori.", "2. Calcola $m_{geo}$ per ogni $\\lambda$.", "3. Se OK, $P$ ha per colonne gli autovettori."] }
+                ]
+            },
+            "F9": {
+                title: "F9: Teorema Spettrale",
+                desc: "Dispensa 9: Gram-Schmidt, Matrici Simmetriche.",
+                theory: [
+                    {
+                        title: "1. Gram-Schmidt",
+                        content: `
+                            <p>Ortogonalizza una base $\\{v_i\\}$:</p>
+                            <p>$$ u_k = v_k - \\sum_{j<k} \\frac{v_k \\cdot u_j}{u_j \\cdot u_j} u_j $$</p>
+                            <p>Poi normalizza.</p>
+                        `
+                    },
+                    {
+                        title: "2. Teorema Spettrale (Reale)",
+                        content: `
+                            <p>Se $A$ è <strong>simmetrica</strong> ($A=A^T$):</p>
+                            <ul class="list-disc pl-5">
+                                <li>Autovalori tutti reali.</li>
+                                <li>Sempre diagonalizzabile con matrice $P$ ortogonale ($P^T = P^{-1}$).</li>
+                            </ul>
+                        `
+                    }
+                ],
+                exercises: [
+                    { title: "Spettrale", ref: "Es 10.11", tags: ["simmetrica"], steps: ["1. Autovalori/Autovettori.", "2. Gram-Schmidt se $m_{geo}>1$.", "3. Normalizza.", "4. $P$ è la matrice degli autovettori normalizzati."] }
+                ]
+            }
+        };
+
+        // --- RENDER LOGIC ---
+
+        const navList = document.getElementById('nav-list');
+        const contentArea = document.getElementById('content-area');
+        const searchInput = document.getElementById('search-input');
+        const sectionTitle = document.getElementById('current-section-title');
+        const sectionDesc = document.getElementById('current-section-desc');
+        const pageLoader = document.getElementById('page-loader');
+
+        // Helper: Check if MathJax is ready and re-render safely
+        function safeTypeset(element) {
+            if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+                window.MathJax.typesetPromise([element]).catch(err => console.log('MathJax error:', err));
+            }
+        }
+
+        // Initial Render
+        function renderNav() {
+            navList.innerHTML = Object.keys(database).map(key => `
+                <li>
+                    <button onclick="loadSection('${key}')" class="nav-item w-full text-left px-4 py-3 flex items-center gap-3 rounded-md text-sm text-slate-400">
+                        <span class="font-bold text-emerald-500 w-6">${key}</span>
+                        <span>${database[key].title.split(':')[1]}</span>
+                    </button>
+                </li>
+            `).join('');
+        }
+
+        // Load Section
+        function loadSection(key) {
+            const data = database[key];
+            sectionTitle.textContent = data.title;
+            sectionDesc.textContent = data.desc;
+            
+            // Highlight nav
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('nav-active', 'bg-slate-800', 'text-white');
+                btn.classList.add('text-slate-400');
+                if(btn.textContent.includes(key.split(':')[1])) {
+                    btn.classList.add('nav-active', 'bg-slate-800', 'text-white');
+                    btn.classList.remove('text-slate-400');
+                }
+            });
+
+            let html = '';
+
+            // 1. Render Theory (Pillole)
+            if (data.theory && data.theory.length > 0) {
+                html += `<div class="mb-8"><h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2"><span class="text-violet-400">📚</span> Pillole di Teoria</h3>`;
+                html += data.theory.map(t => `
+                    <div class="theory-card p-6 rounded-lg card-hover">
+                        <h4 class="text-lg font-bold text-violet-400 mb-3">${t.title}</h4>
+                        <div class="text-slate-300 text-sm leading-relaxed space-y-2">${t.content}</div>
+                    </div>
+                `).join('');
+                html += `</div>`;
+            }
+
+            // 2. Render Algorithms (Exercises)
+            if (data.exercises && data.exercises.length > 0) {
+                html += `<div><h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2"><span class="text-emerald-400">⚙️</span> Algoritmi</h3>`;
+                html += data.exercises.map(ex => `
+                    <div class="algo-card p-6 rounded-lg mb-6 card-hover">
+                        <div class="flex justify-between items-start mb-4">
+                            <h4 class="text-lg font-bold text-white">${ex.title}</h4>
+                            <span class="text-xs text-emerald-400 font-mono bg-slate-900 px-2 py-1 rounded border border-slate-700">Rif: ${ex.ref}</span>
+                        </div>
+                        <div class="space-y-3">
+                            ${ex.steps.map((step, idx) => `
+                                <div class="flex items-start gap-3">
+                                    <span class="step-circle">${idx + 1}</span>
+                                    <div class="text-slate-300 text-sm pt-0.5 leading-relaxed">${step}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+                html += `</div>`;
+            } else if (!data.theory || data.theory.length === 0) {
+                html = `<div class="text-center text-slate-500 mt-10">Contenuto in arrivo per questa sezione...</div>`;
+            }
+
+            contentArea.innerHTML = html;
+            safeTypeset(contentArea);
+            
+            if (window.innerWidth < 768) document.querySelector('aside').classList.add('hidden');
+        }
+
+        // Load Glossary (NEW)
+        function loadGlossary() {
+            sectionTitle.textContent = "Glossario Definizioni";
+            sectionDesc.textContent = "Dizionario rapido dei concetti fondamentali (da Dispense 1-9).";
+            
+            // Remove active state from module list
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('nav-active', 'bg-slate-800', 'text-white'));
+
+            glossary.sort((a, b) => a.term.localeCompare(b.term));
+
+            let html = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+            html += glossary.map(item => `
+                <div class="glossary-card p-5 rounded-lg card-hover">
+                    <h4 class="text-lg font-bold text-amber-400 mb-2">${item.term}</h4>
+                    <div class="text-slate-300 text-sm leading-relaxed">${item.def}</div>
+                </div>
+            `).join('');
+            html += `</div>`;
+
+            contentArea.innerHTML = html;
+            safeTypeset(contentArea);
+            
+            if (window.innerWidth < 768) document.querySelector('aside').classList.add('hidden');
+        }
+
+        // Search
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            if (term.length < 2) return;
+
+            let html = `<h3 class="text-xl font-bold text-white mb-6">Risultati ricerca: "${term}"</h3>`;
+            
+            // Search in Glossary
+            const glosMatches = glossary.filter(g => g.term.toLowerCase().includes(term) || g.def.toLowerCase().includes(term));
+            if (glosMatches.length > 0) {
+                html += `<div class="mb-8"><h4 class="text-amber-400 font-bold mb-3 border-b border-slate-800 pb-2">Glossario</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+                html += glosMatches.map(g => `
+                    <div class="glossary-card p-4 rounded-lg">
+                        <div class="font-bold text-amber-400 mb-1">${g.term}</div>
+                        <div class="text-sm text-slate-300">${g.def}</div>
+                    </div>
+                `).join('');
+                html += `</div></div>`;
+            }
+
+            // Search in Database
+            Object.keys(database).forEach(key => {
+                const data = database[key];
+                const theoryMatches = data.theory?.filter(t => t.title.toLowerCase().includes(term) || t.content.toLowerCase().includes(term)) || [];
+                const exMatches = data.exercises?.filter(ex => ex.title.toLowerCase().includes(term)) || [];
+
+                if (theoryMatches.length || exMatches.length) {
+                    html += `<div class="mb-6"><h4 class="text-emerald-400 font-bold mb-3 border-b border-slate-800 pb-2">${data.title}</h4>`;
+                    theoryMatches.forEach(t => {
+                        html += `<div class="theory-card p-4 rounded-lg mb-2"><div class="font-bold text-violet-400 mb-1">${t.title}</div><div class="text-sm text-slate-300">${t.content}</div></div>`;
+                    });
+                    exMatches.forEach(ex => {
+                        html += `<div class="algo-card p-4 rounded-lg mb-2"><div class="font-bold text-white">${ex.title}</div><div class="text-xs text-slate-400">Algoritmo disponibile nel modulo.</div></div>`;
+                    });
+                    html += `</div>`;
+                }
+            });
+
+            contentArea.innerHTML = html || "<p class='text-center text-slate-500'>Nessun risultato.</p>";
+            safeTypeset(contentArea);
+        });
+
+        document.getElementById('mobile-menu-toggle').onclick = () => document.querySelector('aside').classList.toggle('hidden');
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNav();
+            loadSection('F1');
+            setTimeout(() => {
+                pageLoader.style.display = 'none';
+            }, 500);
+        });
+
+    </script>
+</body>
+</html>
