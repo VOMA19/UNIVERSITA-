@@ -272,6 +272,22 @@ void stackOverflowTest(int depth);                     // Test ricorsivo per cau
 
 // FILE UTILITIES
 void readFromFile(const char* filename, int arr[], int& size); // Legge numeri interi da file e li memorizza in array
+void readFromFileWithCheck(const char* filename, int arr[], int& size, bool& success); // Legge da file con controllo di successo
+void readFromFileSafe(const char* filename, int arr[], int maxSize, int& size); // Legge da file con limite di sicurezza
+void readIntegersFromFile(const char* filename, int arr[], int& size); // Alias di readFromFile
+void loadArrayFromFile(const char* filename, int arr[], int& size); // Legge array da file
+void readFromBinaryFile(const char* filename, int arr[], int& size); // Legge numeri da file binario
+void readFromFileUntilValue(const char* filename, int arr[], int& size, int stopValue); // Legge fino a trovare un valore specifico
+void readFromFileSkipNegatives(const char* filename, int arr[], int& size); // Legge saltando valori negativi
+void readFromFileInRange(const char* filename, int arr[], int& size, int min, int max); // Legge solo valori in un range
+void writeToFileBinary(const char* filename, int arr[], int size); // Scrive array su file binario
+void writeToFileFormatted(const char* filename, int arr[], int size); // Scrive con formattazione
+void writeToFileWithHeader(const char* filename, int arr[], int size); // Scrive con intestazione
+void writeToFileIndexed(const char* filename, int arr[], int size); // Scrive con indici
+void overwriteFile(const char* filename, int arr[], int size); // Sovrascrive completamente un file
+void writeArrayToFile(const char* filename, int arr[], int size); // Alias di writeToFile
+void saveArrayToFile(const char* filename, int arr[], int size); // Scrive array su file
+void writeToFileWithTimestamp(const char* filename, int arr[], int size); // Scrive con timestamp
 void writeToFile(const char* filename, int arr[], int size);   // Scrive array di numeri interi su file
 void readStringFromFile(const char* filename, char strings[][100], int& count); // Legge stringhe da file
 void writeStringToFile(const char* filename, char strings[][100], int count);   // Scrive stringhe su file
@@ -291,6 +307,37 @@ int** allocMatrix(int rows, int cols);                  // Alloca dinamicamente 
 void deallocMatrix(int** mat, int rows);                // Dealloca una matrice allocata dinamicamente
 void printDynamicMatrix(int** mat, int rows, int cols); // Stampa una matrice allocata dinamicamente
 void fillDynamicMatrix(int** mat, int rows, int cols, int value); // Riempie una matrice dinamica con un valore
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ============= MAIN FUNCTION =============
 
@@ -968,6 +1015,96 @@ int main() {
     cout << "Lette " << stringCount << " stringhe dal file:" << endl;
     for(int i = 0; i < stringCount; i++)
         cout << "- " << stringheLette[i] << endl;
+
+    // ============= ADDITIONAL FILE UTILITIES TEST =============
+        cout << "\n--- ADDITIONAL FILE UTILITIES ---" << endl;
+        
+        // Test readFromFileWithCheck
+        int checkArray[10];
+        int checkSize;
+        bool success;
+        readFromFileWithCheck("test_numbers.txt", checkArray, checkSize, success);
+        if (success) {
+            cout << "readFromFileWithCheck - File letto con successo (" << checkSize << " elementi): ";
+            printArray(checkArray, checkSize);
+        } else {
+            cout << "readFromFileWithCheck - Errore nella lettura del file" << endl;
+        }
+        
+        // Test readFromFileSafe
+        int safeArray[5];
+        int safeSize;
+        readFromFileSafe("test_numbers.txt", safeArray, 5, safeSize);
+        cout << "readFromFileSafe - Letti " << safeSize << " elementi (max 5): ";
+        printArray(safeArray, safeSize);
+        
+        // Test readIntegersFromFile
+        int integersArray[10];
+        int integersSize;
+        readIntegersFromFile("test_numbers.txt", integersArray, integersSize);
+        cout << "readIntegersFromFile - Letti " << integersSize << " elementi: ";
+        printArray(integersArray, integersSize);
+        
+        // Test writeToFileBinary e readFromBinaryFile
+        int binaryArray[5] = {100, 200, 300, 400, 500};
+        writeToFileBinary("test_binary.bin", binaryArray, 5);
+        cout << "writeToFileBinary - Scritti 5 numeri in formato binario" << endl;
+        
+        int readBinaryArray[10];
+        int binarySize;
+        readFromBinaryFile("test_binary.bin", readBinaryArray, binarySize);
+        cout << "readFromBinaryFile - Letti " << binarySize << " numeri: ";
+        printArray(readBinaryArray, binarySize);
+        
+        // Test writeToFileFormatted
+        int formattedArray[4] = {11, 22, 33, 44};
+        writeToFileFormatted("test_formatted.txt", formattedArray, 4);
+        cout << "writeToFileFormatted - File formattato creato" << endl;
+        
+        // Test writeToFileWithHeader
+        int headerArray[3] = {777, 888, 999};
+        writeToFileWithHeader("test_header.txt", headerArray, 3);
+        cout << "writeToFileWithHeader - File con intestazione creato" << endl;
+        
+        // Test writeToFileIndexed
+        int indexedArray[4] = {5, 15, 25, 35};
+        writeToFileIndexed("test_indexed.txt", indexedArray, 4);
+        cout << "writeToFileIndexed - File con indici creato" << endl;
+        
+        // Test readFromFileUntilValue
+        int untilArray[10];
+        int untilSize;
+        readFromFileUntilValue("test_numbers.txt", untilArray, untilSize, 40);
+        cout << "readFromFileUntilValue - Letti elementi fino a 40 (" << untilSize << " elementi): ";
+        printArray(untilArray, untilSize);
+        
+        // Test readFromFileSkipNegatives
+        int mixedArray[6] = {10, -5, 20, -10, 30, 40};
+        writeToFile("test_mixed.txt", mixedArray, 6);
+        int positiveArray[10];
+        int positiveSize;
+        readFromFileSkipNegatives("test_mixed.txt", positiveArray, positiveSize);
+        cout << "readFromFileSkipNegatives - Letti solo positivi (" << positiveSize << " elementi): ";
+        printArray(positiveArray, positiveSize);
+        
+        // Test readFromFileInRange
+        int rangeArray[10];
+        int rangeSize;
+        readFromFileInRange("test_numbers.txt", rangeArray, rangeSize, 20, 50);
+        cout << "readFromFileInRange (20-50) - Letti " << rangeSize << " elementi: ";
+        printArray(rangeArray, rangeSize);
+        
+        // Test overwriteFile
+        int overwriteArray[3] = {1111, 2222, 3333};
+        overwriteFile("test_overwrite.txt", overwriteArray, 3);
+        cout << "overwriteFile - File sovrascritto con 3 elementi" << endl;
+        
+        // Test writeToFileWithTimestamp
+        int timestampArray[3] = {99, 88, 77};
+        writeToFileWithTimestamp("test_timestamp.txt", timestampArray, 3);
+        cout << "writeToFileWithTimestamp - File con timestamp creato" << endl;
+        
+        cout << endl;
     
     // ============= INPUT UTILITIES =============
     cout << "--- INPUT UTILITIES ---" << endl;
@@ -1095,6 +1232,53 @@ int main() {
     
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ============= FUNCTION IMPLEMENTATIONS =============
 
@@ -1785,6 +1969,226 @@ void appendToFile(const char* filename, int arr[], int size) {
         file << arr[i] << "\n";
     file.close();
 }
+
+// ============= ADDITIONAL FILE UTILITIES IMPLEMENTATIONS =============
+
+void readFromFileWithCheck(const char* filename, int arr[], int& size, bool& success) {
+    ifstream file(filename);
+    success = file.is_open();
+    
+    if (!success) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        size = 0;
+        return;
+    }
+    
+    size = 0;
+    while (file >> arr[size]) {
+        size++;
+    }
+    file.close();
+}
+
+void readFromFileSafe(const char* filename, int arr[], int maxSize, int& size) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        size = 0;
+        return;
+    }
+    
+    size = 0;
+    int value;
+    while (file >> value && size < maxSize) {
+        arr[size++] = value;
+    }
+    
+    if (size >= maxSize) {
+        cout << "Attenzione: raggiunto limite massimo di " << maxSize << " elementi" << endl;
+    }
+    
+    file.close();
+}
+
+void readIntegersFromFile(const char* filename, int arr[], int& size) {
+    readFromFile(filename, arr, size);
+}
+
+void loadArrayFromFile(const char* filename, int arr[], int& size) {
+    readFromFile(filename, arr, size);
+}
+
+void readFromBinaryFile(const char* filename, int arr[], int& size) {
+    ifstream file(filename, ios::binary);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file binario" << endl;
+        size = 0;
+        return;
+    }
+    
+    size = 0;
+    while (file.read((char*)&arr[size], sizeof(int))) {
+        size++;
+    }
+    file.close();
+}
+
+void readFromFileUntilValue(const char* filename, int arr[], int& size, int stopValue) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        size = 0;
+        return;
+    }
+    
+    size = 0;
+    int value;
+    while (file >> value) {
+        if (value == stopValue) {
+            break;
+        }
+        arr[size++] = value;
+    }
+    file.close();
+}
+
+void readFromFileSkipNegatives(const char* filename, int arr[], int& size) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        size = 0;
+        return;
+    }
+    
+    size = 0;
+    int value;
+    while (file >> value) {
+        if (value >= 0) {
+            arr[size++] = value;
+        }
+    }
+    file.close();
+}
+
+void readFromFileInRange(const char* filename, int arr[], int& size, int min, int max) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        size = 0;
+        return;
+    }
+    
+    size = 0;
+    int value;
+    while (file >> value) {
+        if (value >= min && value <= max) {
+            arr[size++] = value;
+        }
+    }
+    file.close();
+}
+
+void writeToFileBinary(const char* filename, int arr[], int size) {
+    ofstream file(filename, ios::binary);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file binario" << endl;
+        return;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        file.write((char*)&arr[i], sizeof(int));
+    }
+    file.close();
+}
+
+void writeToFileFormatted(const char* filename, int arr[], int size) {
+    ofstream file(filename);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        return;
+    }
+    
+    file << "Array di " << size << " elementi:" << endl;
+    file << "[ ";
+    for (int i = 0; i < size; i++) {
+        file << arr[i];
+        if (i < size - 1) file << ", ";
+    }
+    file << " ]" << endl;
+    file.close();
+}
+
+void writeToFileWithHeader(const char* filename, int arr[], int size) {
+    ofstream file(filename);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        return;
+    }
+    
+    file << "=== ARRAY DATA ===" << endl;
+    file << "Size: " << size << endl;
+    file << "Elements:" << endl;
+    for (int i = 0; i < size; i++) {
+        file << arr[i] << endl;
+    }
+    file << "=== END ===" << endl;
+    file.close();
+}
+
+void writeToFileIndexed(const char* filename, int arr[], int size) {
+    ofstream file(filename);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        return;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        file << "[" << i << "] = " << arr[i] << endl;
+    }
+    file.close();
+}
+
+void overwriteFile(const char* filename, int arr[], int size) {
+    ofstream file(filename, ios::trunc);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        return;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        file << arr[i] << endl;
+    }
+    file.close();
+}
+
+void writeArrayToFile(const char* filename, int arr[], int size) {
+    writeToFile(filename, arr, size);
+}
+
+void saveArrayToFile(const char* filename, int arr[], int size) {
+    writeToFile(filename, arr, size);
+}
+
+void writeToFileWithTimestamp(const char* filename, int arr[], int size) {
+    ofstream file(filename);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        return;
+    }
+    
+    time_t now = time(0);
+    char* dt = ctime(&now);
+    
+    file << "Timestamp: " << dt;
+    file << "Number of elements: " << size << endl;
+    file << "Data:" << endl;
+    
+    for (int i = 0; i < size; i++) {
+        file << arr[i] << endl;
+    }
+    file.close();
+}
+
 
 // ============= INPUT UTILITIES =============
 
