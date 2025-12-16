@@ -1903,7 +1903,7 @@ void stackOverflowTest(int depth) {
 // ============= FILE UTILITIES =============
 
 void readFromFile(const char* filename, int arr[], int& size) {
-    ifstream file(filename);
+    fstream file(filename, ios::in);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         return;
@@ -1915,7 +1915,7 @@ void readFromFile(const char* filename, int arr[], int& size) {
 }
 
 void writeToFile(const char* filename, int arr[], int size) {
-    ofstream file(filename);
+    fstream file(filename, ios::out);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         return;
@@ -1926,7 +1926,7 @@ void writeToFile(const char* filename, int arr[], int size) {
 }
 
 void readStringFromFile(const char* filename, char strings[][100], int& count) {
-    ifstream file(filename);
+    fstream file(filename, ios::in);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         return;
@@ -1938,7 +1938,7 @@ void readStringFromFile(const char* filename, char strings[][100], int& count) {
 }
 
 void writeStringToFile(const char* filename, char strings[][100], int count) {
-    ofstream file(filename);
+    fstream file(filename, ios::out);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         return;
@@ -1949,7 +1949,7 @@ void writeStringToFile(const char* filename, char strings[][100], int count) {
 }
 
 int countLinesInFile(const char* filename) {
-    ifstream file(filename);
+    fstream file(filename, ios::in);
     if (!file.is_open()) return 0;
     int count = 0;
     char line[1000];
@@ -1960,7 +1960,7 @@ int countLinesInFile(const char* filename) {
 }
 
 void appendToFile(const char* filename, int arr[], int size) {
-    ofstream file(filename, ios::app);
+    fstream file(filename, ios::app);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         return;
@@ -1973,7 +1973,7 @@ void appendToFile(const char* filename, int arr[], int size) {
 // ============= ADDITIONAL FILE UTILITIES IMPLEMENTATIONS =============
 
 void readFromFileWithCheck(const char* filename, int arr[], int& size, bool& success) {
-    ifstream file(filename);
+    fstream file(filename, ios::in);
     success = file.is_open();
     
     if (!success) {
@@ -1990,7 +1990,7 @@ void readFromFileWithCheck(const char* filename, int arr[], int& size, bool& suc
 }
 
 void readFromFileSafe(const char* filename, int arr[], int maxSize, int& size) {
-    ifstream file(filename);
+    fstream file(filename, ios::in);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         size = 0;
@@ -2019,7 +2019,7 @@ void loadArrayFromFile(const char* filename, int arr[], int& size) {
 }
 
 void readFromBinaryFile(const char* filename, int arr[], int& size) {
-    ifstream file(filename, ios::binary);
+    fstream file(filename, ios::in | ios::binary);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file binario" << endl;
         size = 0;
@@ -2034,7 +2034,7 @@ void readFromBinaryFile(const char* filename, int arr[], int& size) {
 }
 
 void readFromFileUntilValue(const char* filename, int arr[], int& size, int stopValue) {
-    ifstream file(filename);
+    fstream file(filename, ios::in);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         size = 0;
@@ -2053,7 +2053,7 @@ void readFromFileUntilValue(const char* filename, int arr[], int& size, int stop
 }
 
 void readFromFileSkipNegatives(const char* filename, int arr[], int& size) {
-    ifstream file(filename);
+    fstream file(filename, ios::in);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         size = 0;
@@ -2071,7 +2071,7 @@ void readFromFileSkipNegatives(const char* filename, int arr[], int& size) {
 }
 
 void readFromFileInRange(const char* filename, int arr[], int& size, int min, int max) {
-    ifstream file(filename);
+    fstream file(filename, ios::in);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         size = 0;
@@ -2089,7 +2089,7 @@ void readFromFileInRange(const char* filename, int arr[], int& size, int min, in
 }
 
 void writeToFileBinary(const char* filename, int arr[], int size) {
-    ofstream file(filename, ios::binary);
+    fstream file(filename, ios::out | ios::binary);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file binario" << endl;
         return;
@@ -2102,7 +2102,7 @@ void writeToFileBinary(const char* filename, int arr[], int size) {
 }
 
 void writeToFileFormatted(const char* filename, int arr[], int size) {
-    ofstream file(filename);
+    fstream file(filename, ios::out);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         return;
@@ -2119,7 +2119,7 @@ void writeToFileFormatted(const char* filename, int arr[], int size) {
 }
 
 void writeToFileWithHeader(const char* filename, int arr[], int size) {
-    ofstream file(filename);
+    fstream file(filename, ios::out);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         return;
@@ -2136,7 +2136,7 @@ void writeToFileWithHeader(const char* filename, int arr[], int size) {
 }
 
 void writeToFileIndexed(const char* filename, int arr[], int size) {
-    ofstream file(filename);
+    fstream file(filename, ios::out);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         return;
@@ -2149,7 +2149,7 @@ void writeToFileIndexed(const char* filename, int arr[], int size) {
 }
 
 void overwriteFile(const char* filename, int arr[], int size) {
-    ofstream file(filename, ios::trunc);
+    fstream file(filename, ios::out | ios::trunc);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         return;
@@ -2170,7 +2170,7 @@ void saveArrayToFile(const char* filename, int arr[], int size) {
 }
 
 void writeToFileWithTimestamp(const char* filename, int arr[], int size) {
-    ofstream file(filename);
+    fstream file(filename, ios::out);
     if (!file.is_open()) {
         cout << "Errore: impossibile aprire il file" << endl;
         return;
@@ -2188,7 +2188,6 @@ void writeToFileWithTimestamp(const char* filename, int arr[], int size) {
     }
     file.close();
 }
-
 
 // ============= INPUT UTILITIES =============
 
