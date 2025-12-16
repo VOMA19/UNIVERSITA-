@@ -87,6 +87,31 @@ int sumListRecursive(Node* head);                      // Calcola la somma di tu
 void deleteNode(Node*& head, int value);               // Elimina il primo nodo con il valore specificato
 Node* reverseListRecursive(Node* head);                // Inverte la lista ricorsivamente
 void deleteList(Node*& head);                          // Elimina tutti i nodi della lista
+// ADDITIONAL LINKED LIST UTILITIES
+Node* createListFromFile(const char* filename);               // Crea una lista concatenata leggendo interi da file
+Node* createListFromArray(int arr[], int size);               // Converte un array in una lista concatenata
+void arrayFromList(Node* head, int arr[], int& size);         // Converte una lista concatenata in un array
+void removeDuplicates(Node*& head);                           // Rimuove i nodi duplicati dalla lista
+void insertSorted(Node*& head, int value);                    // Inserisce un valore in modo ordinato in una lista crescente
+void insertSortedRecursive(Node*& head, int value);           // Inserisce un valore ordinato ricorsivamente
+Node* mergeSortedLists(Node* list1, Node* list2);             // Merge di due liste ordinate in una nuova lista ordinata
+void reverseListIterative(Node*& head);                       // Inverte la lista iterativamente
+Node* nextGreaterElements(Node* head);                        // Crea lista con elementi maggiori successivi più vicini
+bool swapNodesByIndex(Node*& head, int index1, int index2);   // Scambia due nodi dati i loro indici
+
+// DOUBLY LINKED LIST UTILITIES
+struct DNode {                                                 // Struttura per nodo di lista doppiamente concatenata
+    int data;                                                  // Dato memorizzato nel nodo
+    DNode* next;                                               // Puntatore al nodo successivo
+    DNode* prev;                                               // Puntatore al nodo precedente
+};
+DNode* createDNode(int data);                                 // Crea un nuovo nodo doppio
+void insertAtHeadD(DNode*& head, int data);                   // Inserisce all'inizio della lista doppia
+void insertAtTailD(DNode*& head, int data);                   // Inserisce alla fine della lista doppia
+void printListD(DNode* head);                                 // Stampa la lista doppia
+void printListDReverse(DNode* head);                          // Stampa la lista doppia al contrario
+void deleteListD(DNode*& head);                               // Elimina tutti i nodi della lista doppia
+DNode* createDListFromFile(const char* filename);             // Crea lista doppia da file
 
 // STACK UTILITIES (PILE)
 struct Stack {                                          // Struttura per rappresentare una pila
@@ -111,6 +136,112 @@ int maxStack(Stack* stack);                           // Trova l'elemento massim
 int minStack(Stack* stack);                           // Trova l'elemento minimo nella pila
 bool searchStack(Stack* stack, int value);            // Cerca un valore nella pila
 
+// QUEUE UTILITIES (CODE)
+struct Queue {                                          // Struttura per rappresentare una coda
+    int* data;                                          // Array dinamico per memorizzare gli elementi
+    int front;                                          // Indice del primo elemento
+    int rear;                                           // Indice dell'ultimo elemento
+    int size;                                           // Numero di elementi nella coda
+    int capacity;                                       // Capacità massima della coda
+};
+Queue* createQueue(int capacity);                      // Crea una nuova coda con capacità specificata
+void destroyQueue(Queue* queue);                       // Distrugge una coda e dealloca la memoria
+bool isQueueEmpty(Queue* queue);                       // Verifica se la coda è vuota
+bool isQueueFull(Queue* queue);                        // Verifica se la coda è piena
+bool enqueue(Queue* queue, int value);                 // Inserisce un elemento in fondo alla coda
+bool dequeue(Queue* queue, int& value);                // Rimuove e restituisce il primo elemento
+bool queueFront(Queue* queue, int& value);             // Legge il primo elemento senza rimuoverlo
+int queueSize(Queue* queue);                           // Restituisce il numero di elementi nella coda
+void printQueue(Queue* queue);                         // Stampa tutti gli elementi della coda
+void clearQueue(Queue* queue);                         // Svuota completamente la coda
+
+// DYNAMIC STACK UTILITIES (Pila con ridimensionamento automatico)
+struct DynamicStack {                                   // Struttura per pila con array dinamico ridimensionabile
+    int* data;                                          // Array dinamico per memorizzare gli elementi
+    int top;                                            // Indice dell'elemento in cima
+    int capacity;                                       // Capacità attuale
+};
+DynamicStack* createDynamicStack(int initialCapacity); // Crea pila dinamica con capacità iniziale
+void destroyDynamicStack(DynamicStack* stack);         // Distrugge pila dinamica
+bool pushDynamic(DynamicStack* stack, int value);      // Push con ridimensionamento automatico
+bool popDynamic(DynamicStack* stack, int& value);      // Pop da pila dinamica
+bool peekDynamic(DynamicStack* stack, int& value);     // Peek da pila dinamica
+bool isDynamicStackEmpty(DynamicStack* stack);         // Verifica se pila dinamica è vuota
+int dynamicStackSize(DynamicStack* stack);             // Dimensione pila dinamica
+void printDynamicStack(DynamicStack* stack);           // Stampa pila dinamica
+
+// DYNAMIC QUEUE UTILITIES (Coda con ridimensionamento automatico)
+struct DynamicQueue {                                   // Struttura per coda con array dinamico ridimensionabile
+    int* data;                                          // Array dinamico
+    int front;                                          // Indice primo elemento
+    int rear;                                           // Indice ultimo elemento
+    int size;                                           // Numero elementi
+    int capacity;                                       // Capacità attuale
+};
+DynamicQueue* createDynamicQueue(int initialCapacity); // Crea coda dinamica
+void destroyDynamicQueue(DynamicQueue* queue);         // Distrugge coda dinamica
+bool enqueueDynamic(DynamicQueue* queue, int value);   // Enqueue con ridimensionamento automatico
+bool dequeueDynamic(DynamicQueue* queue, int& value);  // Dequeue da coda dinamica
+bool isDynamicQueueEmpty(DynamicQueue* queue);         // Verifica se coda dinamica è vuota
+int dynamicQueueSize(DynamicQueue* queue);             // Dimensione coda dinamica
+void printDynamicQueue(DynamicQueue* queue);           // Stampa coda dinamica
+
+// STACK LINKED LIST UTILITIES (Pila tramite lista concatenata)
+struct StackNode {                                      // Nodo per pila basata su lista
+    int data;                                           // Dato
+    StackNode* next;                                    // Puntatore al nodo successivo
+};
+struct LinkedStack {                                    // Struttura per pila tramite lista
+    StackNode* top;                                     // Puntatore alla cima della pila
+    int size;                                           // Numero di elementi
+};
+LinkedStack* createLinkedStack();                       // Crea pila basata su lista
+void destroyLinkedStack(LinkedStack* stack);           // Distrugge pila basata su lista
+void pushLinked(LinkedStack* stack, int value);        // Push in pila basata su lista
+bool popLinked(LinkedStack* stack, int& value);        // Pop da pila basata su lista
+bool peekLinked(LinkedStack* stack, int& value);       // Peek da pila basata su lista
+bool isLinkedStackEmpty(LinkedStack* stack);           // Verifica se pila lista è vuota
+int linkedStackSize(LinkedStack* stack);               // Dimensione pila lista
+void printLinkedStack(LinkedStack* stack);             // Stampa pila lista
+
+// QUEUE LINKED LIST UTILITIES (Coda tramite lista concatenata)
+struct QueueNode {                                      // Nodo per coda basata su lista
+    int data;                                           // Dato
+    QueueNode* next;                                    // Puntatore al nodo successivo
+};
+struct LinkedQueue {                                    // Struttura per coda tramite lista
+    QueueNode* front;                                   // Puntatore al primo elemento
+    QueueNode* rear;                                    // Puntatore all'ultimo elemento
+    int size;                                           // Numero di elementi
+};
+LinkedQueue* createLinkedQueue();                       // Crea coda basata su lista
+void destroyLinkedQueue(LinkedQueue* queue);           // Distrugge coda basata su lista
+void enqueueLinked(LinkedQueue* queue, int value);     // Enqueue in coda basata su lista
+bool dequeueLinked(LinkedQueue* queue, int& value);    // Dequeue da coda basata su lista
+bool isLinkedQueueEmpty(LinkedQueue* queue);           // Verifica se coda lista è vuota
+int linkedQueueSize(LinkedQueue* queue);               // Dimensione coda lista
+void printLinkedQueue(LinkedQueue* queue);             // Stampa coda lista
+
+// QUEUE WITH TWO STACKS (Coda implementata con due pile)
+struct QueueWithStacks {                                // Coda implementata usando due pile
+    Stack* stack1;                                      // Pila per enqueue
+    Stack* stack2;                                      // Pila per dequeue
+};
+QueueWithStacks* createQueueWithStacks(int capacity);   // Crea coda con due pile
+void destroyQueueWithStacks(QueueWithStacks* queue);   // Distrugge coda con due pile
+bool enqueueWithStacks(QueueWithStacks* queue, int value); // Enqueue usando pile
+bool dequeueWithStacks(QueueWithStacks* queue, int& value); // Dequeue usando pile
+bool isQueueWithStacksEmpty(QueueWithStacks* queue);   // Verifica se coda con pile è vuota
+void printQueueWithStacks(QueueWithStacks* queue);     // Stampa coda con pile
+
+// EXPRESSION EVALUATION UTILITIES (Valutazione espressioni)
+int evaluateSimpleExpression(const char* expr);         // Valuta espressione con solo addizioni
+int evaluateExpression(const char* expr);               // Valuta espressione con + e * (gestisce precedenza)
+bool isDigit(char c);                                   // Verifica se carattere è una cifra
+bool isOperator(char c);                                // Verifica se carattere è un operatore
+int precedence(char op);                                // Restituisce precedenza operatore
+int applyOperator(int a, int b, char op);              // Applica operatore a due operandi
+
 // STRUCTURE UTILITIES
 struct Persona {                                        // Struttura per memorizzare dati di una persona
     char name[50];                                      // Nome della persona (max 49 caratteri)
@@ -130,6 +261,14 @@ int minArrayRecursive(int arr[], int size, int index = 0, int min = 2147483647);
 int searchArrayRecursive(int arr[], int size, int value, int index = 0); // Cerca valore ricorsivamente
 int countOccurrencesRecursive(int arr[], int size, int value, int index = 0); // Conta occorrenze ricorsivamente
 int prodottoArrayRic(int arr[], int n);                 // Calcola prodotto di tutti gli elementi ricorsivamente
+int pascalTriangle(int row, int col);                  // Calcola elemento del Triangolo di Pascal (riga, colonna)
+void printPascalRow(int row, int col);                 // Stampa ricorsivamente una riga del Triangolo di Pascal
+void printPascalTriangle(int row, int currentRow);     // Stampa ricorsivamente il Triangolo di Pascal fino a row
+int powerRecursive(int base, int exp);                 // Calcola potenza ricorsivamente (alternativa a power)
+int sumDigitsRecursive(int n);                         // Calcola somma cifre ricorsivamente (alternativa a sumDigits)
+bool isPalindromeRecursive(int n, int original, int reversed); // Verifica se numero è palindromo ricorsivamente
+void hailstoneSequence(int n);                         // Stampa sequenza di Hailstone ricorsivamente
+void stackOverflowTest(int depth);                     // Test ricorsivo per causare stack overflow
 
 // FILE UTILITIES
 void readFromFile(const char* filename, int arr[], int& size); // Legge numeri interi da file e li memorizza in array
@@ -310,7 +449,134 @@ int main() {
     
     deleteList(head);
     cout << "Lista eliminata" << endl;
-    
+    // ============= ADDITIONAL LINKED LIST UTILITIES TEST =============
+        cout << "--- ADDITIONAL LINKED LIST UTILITIES ---" << endl;
+        
+        // Test createListFromArray
+        int testArr[5] = {10, 20, 30, 40, 50};
+        Node* listFromArray = createListFromArray(testArr, 5);
+        cout << "Lista creata da array: ";
+        printList(listFromArray);
+        
+        // Test arrayFromList
+        int arrFromList[10];
+        int arrSize;
+        arrayFromList(listFromArray, arrFromList, arrSize);
+        cout << "Array ricreato da lista (" << arrSize << " elementi): ";
+        printArray(arrFromList, arrSize);
+        
+        // Test removeDuplicates
+        Node* listWithDuplicates = nullptr;
+        insertAtTail(listWithDuplicates, 5);
+        insertAtTail(listWithDuplicates, 10);
+        insertAtTail(listWithDuplicates, 5);
+        insertAtTail(listWithDuplicates, 20);
+        insertAtTail(listWithDuplicates, 10);
+        insertAtTail(listWithDuplicates, 30);
+        cout << "Lista con duplicati: ";
+        printList(listWithDuplicates);
+        removeDuplicates(listWithDuplicates);
+        cout << "Lista dopo rimozione duplicati: ";
+        printList(listWithDuplicates);
+        
+        // Test insertSorted
+        Node* sortedList = nullptr;
+        insertSorted(sortedList, 30);
+        insertSorted(sortedList, 10);
+        insertSorted(sortedList, 50);
+        insertSorted(sortedList, 20);
+        insertSorted(sortedList, 40);
+        cout << "Lista ordinata (inserimenti: 30,10,50,20,40): ";
+        printList(sortedList);
+        
+        // Test insertSortedRecursive
+        insertSortedRecursive(sortedList, 25);
+        insertSortedRecursive(sortedList, 5);
+        cout << "Lista dopo inserimenti ricorsivi (25, 5): ";
+        printList(sortedList);
+        
+        // Test mergeSortedLists
+        Node* list1 = nullptr;
+        insertAtTail(list1, 1);
+        insertAtTail(list1, 3);
+        insertAtTail(list1, 5);
+        Node* list2 = nullptr;
+        insertAtTail(list2, 2);
+        insertAtTail(list2, 4);
+        insertAtTail(list2, 6);
+        cout << "Lista 1: ";
+        printList(list1);
+        cout << "Lista 2: ";
+        printList(list2);
+        Node* mergedList = mergeSortedLists(list1, list2);
+        cout << "Liste unite: ";
+        printList(mergedList);
+        
+        // Test reverseListIterative
+        Node* listToReverse = nullptr;
+        insertAtTail(listToReverse, 1);
+        insertAtTail(listToReverse, 2);
+        insertAtTail(listToReverse, 3);
+        insertAtTail(listToReverse, 4);
+        cout << "Lista originale: ";
+        printList(listToReverse);
+        reverseListIterative(listToReverse);
+        cout << "Lista invertita iterativamente: ";
+        printList(listToReverse);
+        
+        // Test nextGreaterElements
+        Node* ngeList = nullptr;
+        insertAtTail(ngeList, 4);
+        insertAtTail(ngeList, 5);
+        insertAtTail(ngeList, 2);
+        insertAtTail(ngeList, 25);
+        insertAtTail(ngeList, 7);
+        cout << "Lista per next greater elements: ";
+        printList(ngeList);
+        Node* ngeResult = nextGreaterElements(ngeList);
+        cout << "Next greater elements: ";
+        printList(ngeResult);
+        
+        // Test swapNodesByIndex
+        Node* swapList = nullptr;
+        insertAtTail(swapList, 100);
+        insertAtTail(swapList, 200);
+        insertAtTail(swapList, 300);
+        insertAtTail(swapList, 400);
+        insertAtTail(swapList, 500);
+        cout << "Lista prima dello scambio: ";
+        printList(swapList);
+        swapNodesByIndex(swapList, 1, 3);
+        cout << "Lista dopo scambio indici 1 e 3: ";
+        printList(swapList);
+        
+        // Cleanup
+        deleteList(listFromArray);
+        deleteList(listWithDuplicates);
+        deleteList(sortedList);
+        deleteList(mergedList);
+        deleteList(listToReverse);
+        deleteList(ngeList);
+        deleteList(ngeResult);
+        deleteList(swapList);
+        
+        // ============= DOUBLY LINKED LIST TEST =============
+        cout << "\n--- DOUBLY LINKED LIST UTILITIES ---" << endl;
+        
+        DNode* dList = nullptr;
+        insertAtHeadD(dList, 30);
+        insertAtHeadD(dList, 20);
+        insertAtHeadD(dList, 10);
+        insertAtTailD(dList, 40);
+        insertAtTailD(dList, 50);
+        
+        cout << "Lista doppia (avanti): ";
+        printListD(dList);
+        cout << "Lista doppia (indietro): ";
+        printListDReverse(dList);
+        
+        deleteListD(dList);
+        cout << "Lista doppia eliminata" << endl;
     cout << endl;
     // ============= STACK UTILITIES =============
     cout << "--- STACK UTILITIES ---" << endl;
@@ -386,7 +652,235 @@ int main() {
     }
     
     cout << endl;
+
+    // ============= QUEUE UTILITIES =============
+    cout << "--- QUEUE UTILITIES ---" << endl;
     
+    // Crea una coda con capacità 10
+    Queue* coda = createQueue(10);
+    if (coda != nullptr) {
+        cout << "Coda creata con capacita' 10" << endl;
+        
+        // Verifica se la coda è vuota
+        cout << "La coda e' vuota? " << (isQueueEmpty(coda) ? "Si" : "No") << endl;
+        
+        // Enqueue di alcuni elementi
+        cout << "\nInserimento elementi: 10, 20, 30, 40, 50" << endl;
+        enqueue(coda, 10);
+        enqueue(coda, 20);
+        enqueue(coda, 30);
+        enqueue(coda, 40);
+        enqueue(coda, 50);
+        
+        cout << "Contenuto coda: ";
+        printQueue(coda);
+        
+        cout << "Dimensione coda: " << queueSize(coda) << endl;
+        cout << "La coda e' vuota? " << (isQueueEmpty(coda) ? "Si" : "No") << endl;
+        cout << "La coda e' piena? " << (isQueueFull(coda) ? "Si" : "No") << endl;
+        
+        // Front della coda
+        int frontValue;
+        if (queueFront(coda, frontValue)) {
+            cout << "Primo elemento (front): " << frontValue << endl;
+        }
+        
+        // Dequeue di un elemento
+        int dequeuedValue;
+        if (dequeue(coda, dequeuedValue)) {
+            cout << "Elemento estratto (dequeue): " << dequeuedValue << endl;
+        }
+        
+        cout << "Contenuto coda dopo dequeue: ";
+        printQueue(coda);
+        
+        // Svuota la coda
+        cout << "\nSvuota la coda" << endl;
+        clearQueue(coda);
+        cout << "Contenuto coda dopo clear: ";
+        printQueue(coda);
+        
+        // Distrugge la coda
+        destroyQueue(coda);
+        cout << "Coda distrutta" << endl;
+    }
+    
+    cout << endl;
+    
+    // ============= DYNAMIC STACK UTILITIES =============
+    cout << "--- DYNAMIC STACK UTILITIES ---" << endl;
+    
+    DynamicStack* dynStack = createDynamicStack(5);
+    if (dynStack != nullptr) {
+        cout << "Pila dinamica creata con capacita' iniziale 5" << endl;
+        
+        cout << "\nInserimento 8 elementi (la pila si ridimensionera' automaticamente)" << endl;
+        for (int i = 1; i <= 8; i++) {
+            pushDynamic(dynStack, i * 10);
+            cout << "Push " << (i * 10) << " - Capacita': " << dynStack->capacity << endl;
+        }
+        
+        cout << "\nContenuto pila dinamica: ";
+        printDynamicStack(dynStack);
+        cout << "Dimensione: " << dynamicStackSize(dynStack) << endl;
+        
+        int val;
+        popDynamic(dynStack, val);
+        cout << "Pop: " << val << endl;
+        cout << "Contenuto dopo pop: ";
+        printDynamicStack(dynStack);
+        
+        destroyDynamicStack(dynStack);
+        cout << "Pila dinamica distrutta" << endl;
+    }
+    
+    cout << endl;
+    
+    // ============= DYNAMIC QUEUE UTILITIES =============
+    cout << "--- DYNAMIC QUEUE UTILITIES ---" << endl;
+    
+    DynamicQueue* dynQueue = createDynamicQueue(5);
+    if (dynQueue != nullptr) {
+        cout << "Coda dinamica creata con capacita' iniziale 5" << endl;
+        
+        cout << "\nInserimento 8 elementi (la coda si ridimensionera' automaticamente)" << endl;
+        for (int i = 1; i <= 8; i++) {
+            enqueueDynamic(dynQueue, i * 5);
+            cout << "Enqueue " << (i * 5) << " - Capacita': " << dynQueue->capacity << endl;
+        }
+        
+        cout << "\nContenuto coda dinamica: ";
+        printDynamicQueue(dynQueue);
+        cout << "Dimensione: " << dynamicQueueSize(dynQueue) << endl;
+        
+        int val;
+        dequeueDynamic(dynQueue, val);
+        cout << "Dequeue: " << val << endl;
+        cout << "Contenuto dopo dequeue: ";
+        printDynamicQueue(dynQueue);
+        
+        destroyDynamicQueue(dynQueue);
+        cout << "Coda dinamica distrutta" << endl;
+    }
+    
+    cout << endl;
+    
+    // ============= LINKED STACK UTILITIES =============
+    cout << "--- LINKED STACK UTILITIES ---" << endl;
+    
+    LinkedStack* linkedStack = createLinkedStack();
+    if (linkedStack != nullptr) {
+        cout << "Pila basata su lista creata" << endl;
+        
+        cout << "\nInserimento elementi: 100, 200, 300, 400" << endl;
+        pushLinked(linkedStack, 100);
+        pushLinked(linkedStack, 200);
+        pushLinked(linkedStack, 300);
+        pushLinked(linkedStack, 400);
+        
+        cout << "Contenuto pila lista: ";
+        printLinkedStack(linkedStack);
+        cout << "Dimensione: " << linkedStackSize(linkedStack) << endl;
+        
+        int val;
+        peekLinked(linkedStack, val);
+        cout << "Peek: " << val << endl;
+        
+        popLinked(linkedStack, val);
+        cout << "Pop: " << val << endl;
+        cout << "Contenuto dopo pop: ";
+        printLinkedStack(linkedStack);
+        
+        destroyLinkedStack(linkedStack);
+        cout << "Pila lista distrutta" << endl;
+    }
+    
+    cout << endl;
+    
+    // ============= LINKED QUEUE UTILITIES =============
+    cout << "--- LINKED QUEUE UTILITIES ---" << endl;
+    
+    LinkedQueue* linkedQueue = createLinkedQueue();
+    if (linkedQueue != nullptr) {
+        cout << "Coda basata su lista creata" << endl;
+        
+        cout << "\nInserimento elementi: 11, 22, 33, 44, 55" << endl;
+        enqueueLinked(linkedQueue, 11);
+        enqueueLinked(linkedQueue, 22);
+        enqueueLinked(linkedQueue, 33);
+        enqueueLinked(linkedQueue, 44);
+        enqueueLinked(linkedQueue, 55);
+        
+        cout << "Contenuto coda lista: ";
+        printLinkedQueue(linkedQueue);
+        cout << "Dimensione: " << linkedQueueSize(linkedQueue) << endl;
+        
+        int val;
+        dequeueLinked(linkedQueue, val);
+        cout << "Dequeue: " << val << endl;
+        cout << "Contenuto dopo dequeue: ";
+        printLinkedQueue(linkedQueue);
+        
+        destroyLinkedQueue(linkedQueue);
+        cout << "Coda lista distrutta" << endl;
+    }
+    
+    cout << endl;
+    
+    // ============= QUEUE WITH TWO STACKS =============
+    cout << "--- QUEUE WITH TWO STACKS ---" << endl;
+    
+    QueueWithStacks* queueStacks = createQueueWithStacks(10);
+    if (queueStacks != nullptr) {
+        cout << "Coda implementata con due pile creata" << endl;
+        
+        cout << "\nInserimento elementi: 1, 2, 3, 4, 5" << endl;
+        enqueueWithStacks(queueStacks, 1);
+        enqueueWithStacks(queueStacks, 2);
+        enqueueWithStacks(queueStacks, 3);
+        enqueueWithStacks(queueStacks, 4);
+        enqueueWithStacks(queueStacks, 5);
+        
+        cout << "Contenuto coda con pile: ";
+        printQueueWithStacks(queueStacks);
+        
+        int val;
+        dequeueWithStacks(queueStacks, val);
+        cout << "Dequeue: " << val << endl;
+        dequeueWithStacks(queueStacks, val);
+        cout << "Dequeue: " << val << endl;
+        
+        cout << "Contenuto dopo 2 dequeue: ";
+        printQueueWithStacks(queueStacks);
+        
+        cout << "Inserimento nuovo elemento: 6" << endl;
+        enqueueWithStacks(queueStacks, 6);
+        cout << "Contenuto finale: ";
+        printQueueWithStacks(queueStacks);
+        
+        destroyQueueWithStacks(queueStacks);
+        cout << "Coda con pile distrutta" << endl;
+    }
+    
+    cout << endl;
+    
+    // ============= EXPRESSION EVALUATION =============
+    cout << "--- EXPRESSION EVALUATION ---" << endl;
+    
+    const char* expr1 = "2+3+5";
+    cout << "Espressione semplice: " << expr1 << endl;
+    cout << "Risultato: " << evaluateSimpleExpression(expr1) << endl;
+    
+    const char* expr2 = "2+3*4";
+    cout << "\nEspressione con precedenza: " << expr2 << endl;
+    cout << "Risultato: " << evaluateExpression(expr2) << endl;
+    
+    const char* expr3 = "10+5*2-3";
+    cout << "\nEspressione complessa: " << expr3 << endl;
+    cout << "Risultato: " << evaluateExpression(expr3) << endl;
+    
+    cout << endl;
+
     // ============= STRUCTURES =============
     cout << "--- STRUCTURES ---" << endl;
     
@@ -430,7 +924,19 @@ int main() {
     cout << "Minimo ricorsivo: " << minArrayRecursive(testArr, 5) << endl;
     cout << "Cerca 3 ricorsivamente: " << searchArrayRecursive(testArr, 5, 3) << endl;
     cout << "Conta occorrenze di 3 ricorsivamente: " << countOccurrencesRecursive(testArr, 5, 3) << endl;
+    cout << "Prodotto ricorsivo: " << prodottoArrayRic(testArr, 5) << endl;    
+    cout << "\nTriangolo di Pascal (prime 5 righe):" << endl;
+    printPascalTriangle(4, 0);
+    cout << "\nPotenza ricorsiva 3^4: " << powerRecursive(3, 4) << endl;
     
+    cout << "Somma cifre ricorsiva di 9876: " << sumDigitsRecursive(9876) << endl;
+    
+    cout << "12321 e' palindromo? " << (isPalindromeRecursive(12321, 12321, 0) ? "Si" : "No") << endl;
+    cout << "12345 e' palindromo? " << (isPalindromeRecursive(12345, 12345, 0) ? "Si" : "No") << endl;
+    
+    cout << "\nSequenza di Hailstone per n=7:" << endl;
+    hailstoneSequence(7);
+
     cout << endl;
     
     // ============= FILE UTILITIES =============
@@ -1119,6 +1625,97 @@ int prodottoArrayRic(int arr[], int n){
     return arr[n-1]*prodottoArrayRic(arr, n-1);
 }
 
+
+int pascalTriangle(int row, int col) {
+    // Caso base: primo o ultimo elemento della riga è sempre 1
+    if (col == 0 || col == row) return 1;
+    
+    // Caso ricorsivo: somma dei due elementi sopra
+    return pascalTriangle(row - 1, col - 1) + pascalTriangle(row - 1, col);
+}
+
+void printPascalRow(int row, int col) {
+    // Caso base: se abbiamo stampato tutti gli elementi della riga
+    if (col > row) {
+        cout << endl;
+        return;
+    }
+    
+    // Stampa l'elemento corrente
+    cout << pascalTriangle(row, col) << " ";
+    
+    // Ricorsione per stampare il prossimo elemento
+    printPascalRow(row, col + 1);
+}
+
+void printPascalTriangle(int row, int currentRow) {
+    // Caso base: se abbiamo stampato tutte le righe
+    if (currentRow > row) return;
+    
+    // Stampa la riga corrente
+    printPascalRow(currentRow, 0);
+    
+    // Ricorsione per stampare la prossima riga
+    printPascalTriangle(row, currentRow + 1);
+}
+
+int powerRecursive(int base, int exp) {
+    // Caso base: qualsiasi numero elevato a 0 è 1
+    if (exp == 0) return 1;
+    
+    // Caso negativo
+    if (exp < 0) return 0;
+    
+    // Caso ricorsivo
+    return base * powerRecursive(base, exp - 1);
+}
+
+int sumDigitsRecursive(int n) {
+    // Caso base: se n è 0, la somma è 0
+    if (n == 0) return 0;
+    
+    // Caso ricorsivo: ultima cifra + somma delle rimanenti
+    return (n % 10) + sumDigitsRecursive(n / 10);
+}
+
+bool isPalindromeRecursive(int n, int original, int reversed) {
+    // Caso base: quando n diventa 0, confronta original con reversed
+    if (n == 0) {
+        return original == reversed;
+    }
+    
+    // Caso ricorsivo: costruisce il numero invertito
+    return isPalindromeRecursive(n / 10, original, reversed * 10 + n % 10);
+}
+
+void hailstoneSequence(int n) {
+    // Stampa il numero corrente
+    cout << n << " ";
+    
+    // Caso base: sequenza termina quando raggiungiamo 1
+    if (n == 1) {
+        cout << endl;
+        return;
+    }
+    
+    // Caso ricorsivo: applica le regole della sequenza di Hailstone
+    if (n % 2 == 0) {
+        // Se pari, dividi per 2
+        hailstoneSequence(n / 2);
+    } else {
+        // Se dispari, moltiplica per 3 e aggiungi 1
+        hailstoneSequence(3 * n + 1);
+    }
+}
+
+void stackOverflowTest(int depth) {
+    // Stampa la profondità corrente
+    cout << "Profondita' ricorsione: " << depth << endl;
+    
+    // Ricorsione infinita (ATTENZIONE: causerà stack overflow!)
+    stackOverflowTest(depth + 1);
+}
+
 // ============= FILE UTILITIES =============
 
 void readFromFile(const char* filename, int arr[], int& size) {
@@ -1408,4 +2005,816 @@ bool searchStack(Stack* stack, int value) {
         if (stack->data[i] == value) return true;
     }
     return false;
+}
+
+
+// ============= ADDITIONAL LINKED LIST UTILITIES IMPLEMENTATIONS =============
+
+Node* createListFromFile(const char* filename) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        return nullptr;
+    }
+    
+    Node* head = nullptr;
+    int value;
+    while (file >> value) {
+        insertAtTail(head, value);
+    }
+    file.close();
+    return head;
+}
+
+Node* createListFromArray(int arr[], int size) {
+    if (size <= 0) return nullptr;
+    
+    Node* head = nullptr;
+    for (int i = 0; i < size; i++) {
+        insertAtTail(head, arr[i]);
+    }
+    return head;
+}
+
+void arrayFromList(Node* head, int arr[], int& size) {
+    size = 0;
+    Node* temp = head;
+    while (temp != nullptr) {
+        arr[size++] = temp->data;
+        temp = temp->next;
+    }
+}
+
+void removeDuplicates(Node*& head) {
+    if (head == nullptr) return;
+    
+    Node* current = head;
+    while (current != nullptr) {
+        Node* runner = current;
+        while (runner->next != nullptr) {
+            if (runner->next->data == current->data) {
+                Node* duplicate = runner->next;
+                runner->next = runner->next->next;
+                delete duplicate;
+            } else {
+                runner = runner->next;
+            }
+        }
+        current = current->next;
+    }
+}
+
+void insertSorted(Node*& head, int value) {
+    Node* newNode = createNode(value);
+    
+    if (head == nullptr || head->data >= value) {
+        newNode->next = head;
+        head = newNode;
+        return;
+    }
+    
+    Node* temp = head;
+    while (temp->next != nullptr && temp->next->data < value) {
+        temp = temp->next;
+    }
+    
+    newNode->next = temp->next;
+    temp->next = newNode;
+}
+
+void insertSortedRecursive(Node*& head, int value) {
+    if (head == nullptr || head->data >= value) {
+        Node* newNode = createNode(value);
+        newNode->next = head;
+        head = newNode;
+        return;
+    }
+    insertSortedRecursive(head->next, value);
+}
+
+Node* mergeSortedLists(Node* list1, Node* list2) {
+    if (list1 == nullptr) return list2;
+    if (list2 == nullptr) return list1;
+    
+    Node* result = nullptr;
+    
+    if (list1->data <= list2->data) {
+        result = createNode(list1->data);
+        result->next = mergeSortedLists(list1->next, list2);
+    } else {
+        result = createNode(list2->data);
+        result->next = mergeSortedLists(list1, list2->next);
+    }
+    
+    return result;
+}
+
+void reverseListIterative(Node*& head) {
+    Node* prev = nullptr;
+    Node* current = head;
+    Node* next = nullptr;
+    
+    while (current != nullptr) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    head = prev;
+}
+
+Node* nextGreaterElements(Node* head) {
+    if (head == nullptr) return nullptr;
+    
+    Node* result = nullptr;
+    Node* temp = head;
+    
+    while (temp != nullptr) {
+        int nextGreater = -1;
+        Node* search = temp->next;
+        
+        while (search != nullptr) {
+            if (search->data > temp->data) {
+                nextGreater = search->data;
+                break;
+            }
+            search = search->next;
+        }
+        
+        insertAtTail(result, nextGreater);
+        temp = temp->next;
+    }
+    
+    return result;
+}
+
+bool swapNodesByIndex(Node*& head, int index1, int index2) {
+    if (head == nullptr || index1 == index2) return false;
+    if (index1 < 0 || index2 < 0) return false;
+    
+    if (index1 > index2) {
+        int temp = index1;
+        index1 = index2;
+        index2 = temp;
+    }
+    
+    Node* node1 = head;
+    Node* node2 = head;
+    
+    for (int i = 0; i < index1 && node1 != nullptr; i++)
+        node1 = node1->next;
+    
+    for (int i = 0; i < index2 && node2 != nullptr; i++)
+        node2 = node2->next;
+    
+    if (node1 == nullptr || node2 == nullptr) return false;
+    
+    int tempData = node1->data;
+    node1->data = node2->data;
+    node2->data = tempData;
+    
+    return true;
+}
+
+// ============= DOUBLY LINKED LIST UTILITIES IMPLEMENTATIONS =============
+
+DNode* createDNode(int data) {
+    DNode* newNode = new DNode();
+    newNode->data = data;
+    newNode->next = nullptr;
+    newNode->prev = nullptr;
+    return newNode;
+}
+
+void insertAtHeadD(DNode*& head, int data) {
+    DNode* newNode = createDNode(data);
+    
+    if (head != nullptr) {
+        newNode->next = head;
+        head->prev = newNode;
+    }
+    head = newNode;
+}
+
+void insertAtTailD(DNode*& head, int data) {
+    DNode* newNode = createDNode(data);
+    
+    if (head == nullptr) {
+        head = newNode;
+        return;
+    }
+    
+    DNode* temp = head;
+    while (temp->next != nullptr) {
+        temp = temp->next;
+    }
+    
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+void printListD(DNode* head) {
+    DNode* temp = head;
+    while (temp != nullptr) {
+        cout << temp->data << " <-> ";
+        temp = temp->next;
+    }
+    cout << "NULL" << endl;
+}
+
+void printListDReverse(DNode* head) {
+    if (head == nullptr) {
+        cout << "NULL" << endl;
+        return;
+    }
+    
+    DNode* temp = head;
+    while (temp->next != nullptr) {
+        temp = temp->next;
+    }
+    
+    while (temp != nullptr) {
+        cout << temp->data << " <-> ";
+        temp = temp->prev;
+    }
+    cout << "NULL" << endl;
+}
+
+void deleteListD(DNode*& head) {
+    while (head != nullptr) {
+        DNode* temp = head;
+        head = head->next;
+        delete temp;
+    }
+}
+
+DNode* createDListFromFile(const char* filename) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        return nullptr;
+    }
+    
+    DNode* head = nullptr;
+    int value;
+    while (file >> value) {
+        insertAtTailD(head, value);
+    }
+    file.close();
+    return head;
+}
+
+// ============= QUEUE UTILITIES IMPLEMENTATIONS =============
+
+Queue* createQueue(int capacity) {
+    if (capacity <= 0) return nullptr;
+    
+    Queue* queue = new Queue();
+    queue->data = new int[capacity];
+    queue->front = 0;
+    queue->rear = -1;
+    queue->size = 0;
+    queue->capacity = capacity;
+    
+    return queue;
+}
+
+void destroyQueue(Queue* queue) {
+    if (queue == nullptr) return;
+    
+    delete[] queue->data;
+    delete queue;
+}
+
+bool isQueueEmpty(Queue* queue) {
+    if (queue == nullptr) return true;
+    return queue->size == 0;
+}
+
+bool isQueueFull(Queue* queue) {
+    if (queue == nullptr) return false;
+    return queue->size == queue->capacity;
+}
+
+bool enqueue(Queue* queue, int value) {
+    if (queue == nullptr || isQueueFull(queue)) return false;
+    
+    queue->rear = (queue->rear + 1) % queue->capacity;
+    queue->data[queue->rear] = value;
+    queue->size++;
+    return true;
+}
+
+bool dequeue(Queue* queue, int& value) {
+    if (queue == nullptr || isQueueEmpty(queue)) return false;
+    
+    value = queue->data[queue->front];
+    queue->front = (queue->front + 1) % queue->capacity;
+    queue->size--;
+    return true;
+}
+
+bool queueFront(Queue* queue, int& value) {
+    if (queue == nullptr || isQueueEmpty(queue)) return false;
+    
+    value = queue->data[queue->front];
+    return true;
+}
+
+int queueSize(Queue* queue) {
+    if (queue == nullptr) return 0;
+    return queue->size;
+}
+
+void printQueue(Queue* queue) {
+    if (queue == nullptr || isQueueEmpty(queue)) {
+        cout << "Queue vuota" << endl;
+        return;
+    }
+    
+    for (int i = 0; i < queue->size; i++) {
+        int index = (queue->front + i) % queue->capacity;
+        cout << queue->data[index] << " ";
+    }
+    cout << endl;
+}
+
+void clearQueue(Queue* queue) {
+    if (queue == nullptr) return;
+    
+    queue->front = 0;
+    queue->rear = -1;
+    queue->size = 0;
+}
+
+// ============= DYNAMIC STACK UTILITIES IMPLEMENTATIONS =============
+
+DynamicStack* createDynamicStack(int initialCapacity) {
+    if (initialCapacity <= 0) initialCapacity = 10;
+    
+    DynamicStack* stack = new DynamicStack();
+    stack->data = new int[initialCapacity];
+    stack->top = -1;
+    stack->capacity = initialCapacity;
+    
+    return stack;
+}
+
+void destroyDynamicStack(DynamicStack* stack) {
+    if (stack == nullptr) return;
+    
+    delete[] stack->data;
+    delete stack;
+}
+
+bool pushDynamic(DynamicStack* stack, int value) {
+    if (stack == nullptr) return false;
+    
+    if (stack->top == stack->capacity - 1) {
+        int newCapacity = stack->capacity * 2;
+        int* newData = new int[newCapacity];
+        
+        for (int i = 0; i <= stack->top; i++) {
+            newData[i] = stack->data[i];
+        }
+        
+        delete[] stack->data;
+        stack->data = newData;
+        stack->capacity = newCapacity;
+    }
+    
+    stack->data[++stack->top] = value;
+    return true;
+}
+
+bool popDynamic(DynamicStack* stack, int& value) {
+    if (stack == nullptr || stack->top == -1) return false;
+    
+    value = stack->data[stack->top--];
+    return true;
+}
+
+bool peekDynamic(DynamicStack* stack, int& value) {
+    if (stack == nullptr || stack->top == -1) return false;
+    
+    value = stack->data[stack->top];
+    return true;
+}
+
+bool isDynamicStackEmpty(DynamicStack* stack) {
+    if (stack == nullptr) return true;
+    return stack->top == -1;
+}
+
+int dynamicStackSize(DynamicStack* stack) {
+    if (stack == nullptr) return 0;
+    return stack->top + 1;
+}
+
+void printDynamicStack(DynamicStack* stack) {
+    if (stack == nullptr || isDynamicStackEmpty(stack)) {
+        cout << "Dynamic Stack vuoto" << endl;
+        return;
+    }
+    
+    for (int i = 0; i <= stack->top; i++) {
+        cout << stack->data[i] << " ";
+    }
+    cout << endl;
+}
+
+// ============= DYNAMIC QUEUE UTILITIES IMPLEMENTATIONS =============
+
+DynamicQueue* createDynamicQueue(int initialCapacity) {
+    if (initialCapacity <= 0) initialCapacity = 10;
+    
+    DynamicQueue* queue = new DynamicQueue();
+    queue->data = new int[initialCapacity];
+    queue->front = 0;
+    queue->rear = -1;
+    queue->size = 0;
+    queue->capacity = initialCapacity;
+    
+    return queue;
+}
+
+void destroyDynamicQueue(DynamicQueue* queue) {
+    if (queue == nullptr) return;
+    
+    delete[] queue->data;
+    delete queue;
+}
+
+bool enqueueDynamic(DynamicQueue* queue, int value) {
+    if (queue == nullptr) return false;
+    
+    if (queue->size == queue->capacity) {
+        int newCapacity = queue->capacity * 2;
+        int* newData = new int[newCapacity];
+        
+        for (int i = 0; i < queue->size; i++) {
+            int index = (queue->front + i) % queue->capacity;
+            newData[i] = queue->data[index];
+        }
+        
+        delete[] queue->data;
+        queue->data = newData;
+        queue->front = 0;
+        queue->rear = queue->size - 1;
+        queue->capacity = newCapacity;
+    }
+    
+    queue->rear = (queue->rear + 1) % queue->capacity;
+    queue->data[queue->rear] = value;
+    queue->size++;
+    return true;
+}
+
+bool dequeueDynamic(DynamicQueue* queue, int& value) {
+    if (queue == nullptr || queue->size == 0) return false;
+    
+    value = queue->data[queue->front];
+    queue->front = (queue->front + 1) % queue->capacity;
+    queue->size--;
+    return true;
+}
+
+bool isDynamicQueueEmpty(DynamicQueue* queue) {
+    if (queue == nullptr) return true;
+    return queue->size == 0;
+}
+
+int dynamicQueueSize(DynamicQueue* queue) {
+    if (queue == nullptr) return 0;
+    return queue->size;
+}
+
+void printDynamicQueue(DynamicQueue* queue) {
+    if (queue == nullptr || isDynamicQueueEmpty(queue)) {
+        cout << "Dynamic Queue vuota" << endl;
+        return;
+    }
+    
+    for (int i = 0; i < queue->size; i++) {
+        int index = (queue->front + i) % queue->capacity;
+        cout << queue->data[index] << " ";
+    }
+    cout << endl;
+}
+
+// ============= STACK LINKED LIST UTILITIES IMPLEMENTATIONS =============
+
+LinkedStack* createLinkedStack() {
+    LinkedStack* stack = new LinkedStack();
+    stack->top = nullptr;
+    stack->size = 0;
+    return stack;
+}
+
+void destroyLinkedStack(LinkedStack* stack) {
+    if (stack == nullptr) return;
+    
+    while (stack->top != nullptr) {
+        StackNode* temp = stack->top;
+        stack->top = stack->top->next;
+        delete temp;
+    }
+    delete stack;
+}
+
+void pushLinked(LinkedStack* stack, int value) {
+    if (stack == nullptr) return;
+    
+    StackNode* newNode = new StackNode();
+    newNode->data = value;
+    newNode->next = stack->top;
+    stack->top = newNode;
+    stack->size++;
+}
+
+bool popLinked(LinkedStack* stack, int& value) {
+    if (stack == nullptr || stack->top == nullptr) return false;
+    
+    value = stack->top->data;
+    StackNode* temp = stack->top;
+    stack->top = stack->top->next;
+    delete temp;
+    stack->size--;
+    return true;
+}
+
+bool peekLinked(LinkedStack* stack, int& value) {
+    if (stack == nullptr || stack->top == nullptr) return false;
+    
+    value = stack->top->data;
+    return true;
+}
+
+bool isLinkedStackEmpty(LinkedStack* stack) {
+    if (stack == nullptr) return true;
+    return stack->top == nullptr;
+}
+
+int linkedStackSize(LinkedStack* stack) {
+    if (stack == nullptr) return 0;
+    return stack->size;
+}
+
+void printLinkedStack(LinkedStack* stack) {
+    if (stack == nullptr || isLinkedStackEmpty(stack)) {
+        cout << "Linked Stack vuoto" << endl;
+        return;
+    }
+    
+    StackNode* temp = stack->top;
+    while (temp != nullptr) {
+        cout << temp->data << " ";
+        temp = temp->next;
+    }
+    cout << endl;
+}
+
+// ============= QUEUE LINKED LIST UTILITIES IMPLEMENTATIONS =============
+
+LinkedQueue* createLinkedQueue() {
+    LinkedQueue* queue = new LinkedQueue();
+    queue->front = nullptr;
+    queue->rear = nullptr;
+    queue->size = 0;
+    return queue;
+}
+
+void destroyLinkedQueue(LinkedQueue* queue) {
+    if (queue == nullptr) return;
+    
+    while (queue->front != nullptr) {
+        QueueNode* temp = queue->front;
+        queue->front = queue->front->next;
+        delete temp;
+    }
+    delete queue;
+}
+
+void enqueueLinked(LinkedQueue* queue, int value) {
+    if (queue == nullptr) return;
+    
+    QueueNode* newNode = new QueueNode();
+    newNode->data = value;
+    newNode->next = nullptr;
+    
+    if (queue->rear == nullptr) {
+        queue->front = queue->rear = newNode;
+    } else {
+        queue->rear->next = newNode;
+        queue->rear = newNode;
+    }
+    queue->size++;
+}
+
+bool dequeueLinked(LinkedQueue* queue, int& value) {
+    if (queue == nullptr || queue->front == nullptr) return false;
+    
+    value = queue->front->data;
+    QueueNode* temp = queue->front;
+    queue->front = queue->front->next;
+    
+    if (queue->front == nullptr) {
+        queue->rear = nullptr;
+    }
+    
+    delete temp;
+    queue->size--;
+    return true;
+}
+
+bool isLinkedQueueEmpty(LinkedQueue* queue) {
+    if (queue == nullptr) return true;
+    return queue->front == nullptr;
+}
+
+int linkedQueueSize(LinkedQueue* queue) {
+    if (queue == nullptr) return 0;
+    return queue->size;
+}
+
+void printLinkedQueue(LinkedQueue* queue) {
+    if (queue == nullptr || isLinkedQueueEmpty(queue)) {
+        cout << "Linked Queue vuota" << endl;
+        return;
+    }
+    
+    QueueNode* temp = queue->front;
+    while (temp != nullptr) {
+        cout << temp->data << " ";
+        temp = temp->next;
+    }
+    cout << endl;
+}
+
+// ============= QUEUE WITH TWO STACKS IMPLEMENTATIONS =============
+
+QueueWithStacks* createQueueWithStacks(int capacity) {
+    if (capacity <= 0) return nullptr;
+    
+    QueueWithStacks* queue = new QueueWithStacks();
+    queue->stack1 = createStack(capacity);
+    queue->stack2 = createStack(capacity);
+    
+    if (queue->stack1 == nullptr || queue->stack2 == nullptr) {
+        destroyStack(queue->stack1);
+        destroyStack(queue->stack2);
+        delete queue;
+        return nullptr;
+    }
+    
+    return queue;
+}
+
+void destroyQueueWithStacks(QueueWithStacks* queue) {
+    if (queue == nullptr) return;
+    
+    destroyStack(queue->stack1);
+    destroyStack(queue->stack2);
+    delete queue;
+}
+
+bool enqueueWithStacks(QueueWithStacks* queue, int value) {
+    if (queue == nullptr) return false;
+    
+    return push(queue->stack1, value);
+}
+
+bool dequeueWithStacks(QueueWithStacks* queue, int& value) {
+    if (queue == nullptr) return false;
+    
+    if (isEmpty(queue->stack2)) {
+        while (!isEmpty(queue->stack1)) {
+            int temp;
+            pop(queue->stack1, temp);
+            push(queue->stack2, temp);
+        }
+    }
+    
+    return pop(queue->stack2, value);
+}
+
+bool isQueueWithStacksEmpty(QueueWithStacks* queue) {
+    if (queue == nullptr) return true;
+    return isEmpty(queue->stack1) && isEmpty(queue->stack2);
+}
+
+void printQueueWithStacks(QueueWithStacks* queue) {
+    if (queue == nullptr || isQueueWithStacksEmpty(queue)) {
+        cout << "Queue with Stacks vuota" << endl;
+        return;
+    }
+    
+    Stack* tempStack = createStack(queue->stack1->capacity + queue->stack2->capacity);
+    
+    for (int i = 0; i <= queue->stack2->top; i++) {
+        cout << queue->stack2->data[i] << " ";
+        push(tempStack, queue->stack2->data[i]);
+    }
+    
+    for (int i = queue->stack1->top; i >= 0; i--) {
+        cout << queue->stack1->data[i] << " ";
+    }
+    
+    cout << endl;
+    destroyStack(tempStack);
+}
+
+// ============= EXPRESSION EVALUATION UTILITIES IMPLEMENTATIONS =============
+
+bool isDigit(char c) {
+    return c >= '0' && c <= '9';
+}
+
+bool isOperator(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/';
+}
+
+int precedence(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    return 0;
+}
+
+int applyOperator(int a, int b, char op) {
+    switch (op) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/': return a / b;
+        default: return 0;
+    }
+}
+
+int evaluateSimpleExpression(const char* expr) {
+    int result = 0;
+    int currentNumber = 0;
+    
+    for (int i = 0; expr[i] != '\0'; i++) {
+        if (isDigit(expr[i])) {
+            currentNumber = currentNumber * 10 + (expr[i] - '0');
+        } else if (expr[i] == '+') {
+            result += currentNumber;
+            currentNumber = 0;
+        }
+    }
+    result += currentNumber;
+    
+    return result;
+}
+
+int evaluateExpression(const char* expr) {
+    DynamicStack* values = createDynamicStack(100);
+    DynamicStack* operators = createDynamicStack(100);
+    
+    for (int i = 0; expr[i] != '\0'; i++) {
+        if (expr[i] == ' ') continue;
+        
+        if (isDigit(expr[i])) {
+            int num = 0;
+            while (i < stringLength((char*)expr) && isDigit(expr[i])) {
+                num = num * 10 + (expr[i] - '0');
+                i++;
+            }
+            i--;
+            pushDynamic(values, num);
+        } else if (isOperator(expr[i])) {
+            while (!isDynamicStackEmpty(operators)) {
+                int topOp;
+                peekDynamic(operators, topOp);
+                
+                if (precedence((char)topOp) >= precedence(expr[i])) {
+                    popDynamic(operators, topOp);
+                    int val2, val1;
+                    popDynamic(values, val2);
+                    popDynamic(values, val1);
+                    pushDynamic(values, applyOperator(val1, val2, (char)topOp));
+                } else {
+                    break;
+                }
+            }
+            pushDynamic(operators, expr[i]);
+        }
+    }
+    
+    while (!isDynamicStackEmpty(operators)) {
+        int op;
+        popDynamic(operators, op);
+        int val2, val1;
+        popDynamic(values, val2);
+        popDynamic(values, val1);
+        pushDynamic(values, applyOperator(val1, val2, (char)op));
+    }
+    
+    int result;
+    popDynamic(values, result);
+    
+    destroyDynamicStack(values);
+    destroyDynamicStack(operators);
+    
+    return result;
 }
