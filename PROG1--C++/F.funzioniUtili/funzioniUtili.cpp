@@ -88,6 +88,29 @@ void deleteNode(Node*& head, int value);               // Elimina il primo nodo 
 Node* reverseListRecursive(Node* head);                // Inverte la lista ricorsivamente
 void deleteList(Node*& head);                          // Elimina tutti i nodi della lista
 
+// STACK UTILITIES (PILE)
+struct Stack {                                          // Struttura per rappresentare una pila
+    int* data;                                          // Array dinamico per memorizzare gli elementi
+    int top;                                            // Indice dell'elemento in cima alla pila
+    int capacity;                                       // Capacità massima della pila
+};
+Stack* createStack(int capacity);                      // Crea una nuova pila con capacità specificata
+void destroyStack(Stack* stack);                       // Distrugge una pila e dealloca la memoria
+bool isEmpty(Stack* stack);                            // Verifica se la pila è vuota
+bool isFull(Stack* stack);                            // Verifica se la pila è piena
+bool push(Stack* stack, int value);                    // Inserisce un elemento in cima alla pila
+bool pop(Stack* stack, int& value);                    // Rimuove e restituisce l'elemento in cima
+bool peek(Stack* stack, int& value);                   // Legge l'elemento in cima senza rimuoverlo
+int stackSize(Stack* stack);                          // Restituisce il numero di elementi nella pila
+void printStack(Stack* stack);                        // Stampa tutti gli elementi della pila (dal basso verso l'alto)
+void clearStack(Stack* stack);                        // Svuota completamente la pila
+bool duplicateTop(Stack* stack);                      // Duplica l'elemento in cima alla pila
+bool swapTop(Stack* stack);                           // Scambia i due elementi in cima alla pila
+int sumStack(Stack* stack);                           // Calcola la somma di tutti gli elementi nella pila
+int maxStack(Stack* stack);                           // Trova l'elemento massimo nella pila
+int minStack(Stack* stack);                           // Trova l'elemento minimo nella pila
+bool searchStack(Stack* stack, int value);            // Cerca un valore nella pila
+
 // STRUCTURE UTILITIES
 struct Persona {                                        // Struttura per memorizzare dati di una persona
     char name[50];                                      // Nome della persona (max 49 caratteri)
@@ -287,6 +310,80 @@ int main() {
     
     deleteList(head);
     cout << "Lista eliminata" << endl;
+    
+    cout << endl;
+    // ============= STACK UTILITIES =============
+    cout << "--- STACK UTILITIES ---" << endl;
+    
+    // Crea una pila con capacità 10
+    Stack* pila = createStack(10);
+    if (pila != nullptr) {
+        cout << "Pila creata con capacita' 10" << endl;
+        
+        // Verifica se la pila è vuota
+        cout << "La pila e' vuota? " << (isEmpty(pila) ? "Si" : "No") << endl;
+        
+        // Push di alcuni elementi
+        cout << "\nInserimento elementi: 5, 10, 15, 20, 25" << endl;
+        push(pila, 5);
+        push(pila, 10);
+        push(pila, 15);
+        push(pila, 20);
+        push(pila, 25);
+        
+        cout << "Contenuto pila: ";
+        printStack(pila);
+        
+        cout << "Dimensione pila: " << stackSize(pila) << endl;
+        cout << "La pila e' vuota? " << (isEmpty(pila) ? "Si" : "No") << endl;
+        cout << "La pila e' piena? " << (isFull(pila) ? "Si" : "No") << endl;
+        
+        // Peek dell'elemento in cima
+        int topValue;
+        if (peek(pila, topValue)) {
+            cout << "Elemento in cima (peek): " << topValue << endl;
+        }
+        
+        // Pop di un elemento
+        int poppedValue;
+        if (pop(pila, poppedValue)) {
+            cout << "Elemento estratto (pop): " << poppedValue << endl;
+        }
+        
+        cout << "Contenuto pila dopo pop: ";
+        printStack(pila);
+        
+        // Duplica l'elemento in cima
+        cout << "\nDuplica elemento in cima" << endl;
+        duplicateTop(pila);
+        cout << "Contenuto pila: ";
+        printStack(pila);
+        
+        // Scambia i due elementi in cima
+        cout << "\nScambia i due elementi in cima" << endl;
+        swapTop(pila);
+        cout << "Contenuto pila: ";
+        printStack(pila);
+        
+        // Operazioni di calcolo
+        cout << "\nSomma elementi nella pila: " << sumStack(pila) << endl;
+        cout << "Elemento massimo: " << maxStack(pila) << endl;
+        cout << "Elemento minimo: " << minStack(pila) << endl;
+        
+        // Ricerca elemento
+        cout << "Cerca 10 nella pila: " << (searchStack(pila, 10) ? "Trovato" : "Non trovato") << endl;
+        cout << "Cerca 99 nella pila: " << (searchStack(pila, 99) ? "Trovato" : "Non trovato") << endl;
+        
+        // Svuota la pila
+        cout << "\nSvuota la pila" << endl;
+        clearStack(pila);
+        cout << "Contenuto pila dopo clear: ";
+        printStack(pila);
+        
+        // Distrugge la pila
+        destroyStack(pila);
+        cout << "Pila distrutta" << endl;
+    }
     
     cout << endl;
     
@@ -1182,4 +1279,133 @@ void fillDynamicMatrix(int** mat, int rows, int cols, int value) {
             mat[i][j] = value;
         }
     }
+}
+
+// ============= STACK UTILITIES IMPLEMENTATIONS =============
+
+Stack* createStack(int capacity) {
+    if (capacity <= 0) return nullptr;
+    
+    Stack* stack = new Stack();
+    stack->data = new int[capacity];
+    stack->top = -1;
+    stack->capacity = capacity;
+    
+    return stack;
+}
+
+void destroyStack(Stack* stack) {
+    if (stack == nullptr) return;
+    
+    delete[] stack->data;
+    delete stack;
+}
+
+bool isEmpty(Stack* stack) {
+    if (stack == nullptr) return true;
+    return stack->top == -1;
+}
+
+bool isFull(Stack* stack) {
+    if (stack == nullptr) return false;
+    return stack->top == stack->capacity - 1;
+}
+
+bool push(Stack* stack, int value) {
+    if (stack == nullptr || isFull(stack)) return false;
+    
+    stack->data[++stack->top] = value;
+    return true;
+}
+
+bool pop(Stack* stack, int& value) {
+    if (stack == nullptr || isEmpty(stack)) return false;
+    
+    value = stack->data[stack->top--];
+    return true;
+}
+
+bool peek(Stack* stack, int& value) {
+    if (stack == nullptr || isEmpty(stack)) return false;
+    
+    value = stack->data[stack->top];
+    return true;
+}
+
+int stackSize(Stack* stack) {
+    if (stack == nullptr) return 0;
+    return stack->top + 1;
+}
+
+void printStack(Stack* stack) {
+    if (stack == nullptr || isEmpty(stack)) {
+        cout << "Stack vuoto" << endl;
+        return;
+    }
+    
+    for (int i = 0; i <= stack->top; i++) {
+        cout << stack->data[i] << " ";
+    }
+    cout << endl;
+}
+
+void clearStack(Stack* stack) {
+    if (stack == nullptr) return;
+    stack->top = -1;
+}
+
+bool duplicateTop(Stack* stack) {
+    if (stack == nullptr || isEmpty(stack) || isFull(stack)) return false;
+    
+    int topValue = stack->data[stack->top];
+    stack->data[++stack->top] = topValue;
+    return true;
+}
+
+bool swapTop(Stack* stack) {
+    if (stack == nullptr || stackSize(stack) < 2) return false;
+    
+    int temp = stack->data[stack->top];
+    stack->data[stack->top] = stack->data[stack->top - 1];
+    stack->data[stack->top - 1] = temp;
+    return true;
+}
+
+int sumStack(Stack* stack) {
+    if (stack == nullptr || isEmpty(stack)) return 0;
+    
+    int sum = 0;
+    for (int i = 0; i <= stack->top; i++) {
+        sum += stack->data[i];
+    }
+    return sum;
+}
+
+int maxStack(Stack* stack) {
+    if (stack == nullptr || isEmpty(stack)) return 0;
+    
+    int max = stack->data[0];
+    for (int i = 1; i <= stack->top; i++) {
+        if (stack->data[i] > max) max = stack->data[i];
+    }
+    return max;
+}
+
+int minStack(Stack* stack) {
+    if (stack == nullptr || isEmpty(stack)) return 0;
+    
+    int min = stack->data[0];
+    for (int i = 1; i <= stack->top; i++) {
+        if (stack->data[i] < min) min = stack->data[i];
+    }
+    return min;
+}
+
+bool searchStack(Stack* stack, int value) {
+    if (stack == nullptr || isEmpty(stack)) return false;
+    
+    for (int i = 0; i <= stack->top; i++) {
+        if (stack->data[i] == value) return true;
+    }
+    return false;
 }
