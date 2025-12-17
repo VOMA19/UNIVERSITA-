@@ -1719,6 +1719,25 @@ void deleteNode(Node*& head, int value) {
     }
 }
 
+Node* eliminaDuplicati(Node* head){
+    Node* curr = head;
+    while(curr != nullptr){
+        Node* temp = curr;
+        while(temp->next != nullptr){
+            if(curr->data == temp->next->data){
+                Node* duplicato = temp->next;
+                temp->next = temp->next->next;
+                delete duplicato;
+                cout << "Node eliminato" <<endl;
+            } else {
+                temp = temp->next;
+            }
+        }
+        curr = curr->next;
+    }
+    return head;
+}
+
 Node* reverseListRecursive(Node* head) {
     if (head == nullptr || head->next == nullptr) return head;
     Node* newHead = reverseListRecursive(head->next);
