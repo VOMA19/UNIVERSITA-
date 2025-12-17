@@ -1735,6 +1735,40 @@ void deleteList(Node*& head) {
     }
 }
 
+// ============= ADDITIONAL LINKED LIST UTILITIES =============
+
+Node* copyList(Node* head) {
+    if (head == nullptr) return nullptr;
+    
+    Node* newHead = nullptr;
+    Node* temp = head;
+    
+    while (temp != nullptr) {
+        if (newHead == nullptr) {
+            newHead = createNode(temp->data);
+        } else {
+            Node* newNode = createNode(temp->data);
+            Node* tail = newHead;
+            while (tail->next != nullptr) {
+            tail = tail->next;
+            }
+            tail->next = newNode;
+        }
+        temp = temp->next;
+    }
+    
+    return newHead;
+}
+
+Node* copyListRecursive(Node* head) {
+    if (head == nullptr) return nullptr;
+    
+    Node* newNode = createNode(head->data);
+    newNode->next = copyListRecursive(head->next);
+    
+    return newNode;
+}
+
 // ============= STRUCTURES =============
 
 void printPersona(Persona p) {
