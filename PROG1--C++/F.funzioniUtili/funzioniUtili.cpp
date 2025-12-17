@@ -98,6 +98,7 @@ Node* mergeSortedLists(Node* list1, Node* list2);             // Merge di due li
 void reverseListIterative(Node*& head);                       // Inverte la lista iterativamente
 Node* nextGreaterElements(Node* head);                        // Crea lista con elementi maggiori successivi più vicini
 bool swapNodesByIndex(Node*& head, int index1, int index2);   // Scambia due nodi dati i loro indici
+Nodo* sortList(Nodo* head);
 
 // DOUBLY LINKED LIST UTILITIES
 struct DNode {                                                 // Struttura per nodo di lista doppiamente concatenata
@@ -1675,6 +1676,32 @@ int listLength(Node* head) {
         temp = temp->next;
     }
     return count;
+}
+
+Node* sortList(Node* head){
+    if (head == nullptr || head->next == nullptr) {
+        return head;
+        }
+        
+        // Bubble sort per lista concatenata
+        bool scambiato;
+        do {
+        scambiato = false;
+        Node* corrente = head;
+        
+        while (corrente != nullptr && corrente->next != nullptr) {
+            if (corrente->data > corrente->next->data) {
+            // Scambia i valori
+            int temp = corrente->data;
+            corrente->data = corrente->next->data;
+            corrente->next->data = temp;
+            scambiato = true;
+            }
+            corrente = corrente->next;
+        }
+        } while (scambiato);
+        
+        return head;
 }
 
 bool searchList(Node* head, int value) {
