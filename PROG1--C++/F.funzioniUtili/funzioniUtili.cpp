@@ -1750,7 +1750,7 @@ Node* copyList(Node* head) {
             Node* newNode = createNode(temp->data);
             Node* tail = newHead;
             while (tail->next != nullptr) {
-            tail = tail->next;
+                tail = tail->next;
             }
             tail->next = newNode;
         }
