@@ -145,6 +145,7 @@ struct Queue {                                          // Struttura per rappres
     int size;                                           // Numero di elementi nella coda
     int capacity;                                       // Capacità massima della coda
 };
+
 Queue* createQueue(int capacity);                      // Crea una nuova coda con capacità specificata
 void destroyQueue(Queue* queue);                       // Distrugge una coda e dealloca la memoria
 bool isQueueEmpty(Queue* queue);                       // Verifica se la coda è vuota
