@@ -499,133 +499,133 @@ int main() {
     deleteList(head);
     cout << "Lista eliminata" << endl;
     // ============= ADDITIONAL LINKED LIST UTILITIES TEST =============
-        cout << "--- ADDITIONAL LINKED LIST UTILITIES ---" << endl;
-        
-        // Test createListFromArray
-        int testArr[5] = {10, 20, 30, 40, 50};
-        Node* listFromArray = createListFromArray(testArr, 5);
-        cout << "Lista creata da array: ";
-        printList(listFromArray);
-        
-        // Test arrayFromList
-        int arrFromList[10];
-        int arrSize;
-        arrayFromList(listFromArray, arrFromList, arrSize);
-        cout << "Array ricreato da lista (" << arrSize << " elementi): ";
-        printArray(arrFromList, arrSize);
-        
-        // Test removeDuplicates
-        Node* listWithDuplicates = nullptr;
-        insertAtTail(listWithDuplicates, 5);
-        insertAtTail(listWithDuplicates, 10);
-        insertAtTail(listWithDuplicates, 5);
-        insertAtTail(listWithDuplicates, 20);
-        insertAtTail(listWithDuplicates, 10);
-        insertAtTail(listWithDuplicates, 30);
-        cout << "Lista con duplicati: ";
-        printList(listWithDuplicates);
-        removeDuplicates(listWithDuplicates);
-        cout << "Lista dopo rimozione duplicati: ";
-        printList(listWithDuplicates);
-        
-        // Test insertSorted
-        Node* sortedList = nullptr;
-        insertSorted(sortedList, 30);
-        insertSorted(sortedList, 10);
-        insertSorted(sortedList, 50);
-        insertSorted(sortedList, 20);
-        insertSorted(sortedList, 40);
-        cout << "Lista ordinata (inserimenti: 30,10,50,20,40): ";
-        printList(sortedList);
-        
-        // Test insertSortedRecursive
-        insertSortedRecursive(sortedList, 25);
-        insertSortedRecursive(sortedList, 5);
-        cout << "Lista dopo inserimenti ricorsivi (25, 5): ";
-        printList(sortedList);
-        
-        // Test mergeSortedLists
-        Node* list1 = nullptr;
-        insertAtTail(list1, 1);
-        insertAtTail(list1, 3);
-        insertAtTail(list1, 5);
-        Node* list2 = nullptr;
-        insertAtTail(list2, 2);
-        insertAtTail(list2, 4);
-        insertAtTail(list2, 6);
-        cout << "Lista 1: ";
-        printList(list1);
-        cout << "Lista 2: ";
-        printList(list2);
-        Node* mergedList = mergeSortedLists(list1, list2);
-        cout << "Liste unite: ";
-        printList(mergedList);
-        
-        // Test reverseListIterative
-        Node* listToReverse = nullptr;
-        insertAtTail(listToReverse, 1);
-        insertAtTail(listToReverse, 2);
-        insertAtTail(listToReverse, 3);
-        insertAtTail(listToReverse, 4);
-        cout << "Lista originale: ";
-        printList(listToReverse);
-        reverseListIterative(listToReverse);
-        cout << "Lista invertita iterativamente: ";
-        printList(listToReverse);
-        
-        // Test nextGreaterElements
-        Node* ngeList = nullptr;
-        insertAtTail(ngeList, 4);
-        insertAtTail(ngeList, 5);
-        insertAtTail(ngeList, 2);
-        insertAtTail(ngeList, 25);
-        insertAtTail(ngeList, 7);
-        cout << "Lista per next greater elements: ";
-        printList(ngeList);
-        Node* ngeResult = nextGreaterElements(ngeList);
-        cout << "Next greater elements: ";
-        printList(ngeResult);
-        
-        // Test swapNodesByIndex
-        Node* swapList = nullptr;
-        insertAtTail(swapList, 100);
-        insertAtTail(swapList, 200);
-        insertAtTail(swapList, 300);
-        insertAtTail(swapList, 400);
-        insertAtTail(swapList, 500);
-        cout << "Lista prima dello scambio: ";
-        printList(swapList);
-        swapNodesByIndex(swapList, 1, 3);
-        cout << "Lista dopo scambio indici 1 e 3: ";
-        printList(swapList);
-        
-        // Cleanup
-        deleteList(listFromArray);
-        deleteList(listWithDuplicates);
-        deleteList(sortedList);
-        deleteList(mergedList);
-        deleteList(listToReverse);
-        deleteList(ngeList);
-        deleteList(ngeResult);
-        deleteList(swapList);
-        
-        // ============= DOUBLY LINKED LIST TEST =============
-        cout << "\n--- DOUBLY LINKED LIST UTILITIES ---" << endl;
-        
-        DNode* dList = nullptr;
-        insertAtHeadD(dList, 30);
-        insertAtHeadD(dList, 20);
-        insertAtHeadD(dList, 10);
-        insertAtTailD(dList, 40);
-        insertAtTailD(dList, 50);
-        
-        cout << "Lista doppia (avanti): ";
-        printListD(dList);
-        cout << "Lista doppia (indietro): ";
-        printListDReverse(dList);
-        
-        deleteListD(dList);
-        cout << "Lista doppia eliminata" << endl;
+    cout << "--- ADDITIONAL LINKED LIST UTILITIES ---" << endl;
+    
+    // Test createListFromArray
+    int testArr[5] = {10, 20, 30, 40, 50};
+    Node* listFromArray = createListFromArray(testArr, 5);
+    cout << "Lista creata da array: ";
+    printList(listFromArray);
+    
+    // Test arrayFromList
+    int arrFromList[10];
+    int arrSize;
+    arrayFromList(listFromArray, arrFromList, arrSize);
+    cout << "Array ricreato da lista (" << arrSize << " elementi): ";
+    printArray(arrFromList, arrSize);
+    
+    // Test removeDuplicates
+    Node* listWithDuplicates = nullptr;
+    insertAtTail(listWithDuplicates, 5);
+    insertAtTail(listWithDuplicates, 10);
+    insertAtTail(listWithDuplicates, 5);
+    insertAtTail(listWithDuplicates, 20);
+    insertAtTail(listWithDuplicates, 10);
+    insertAtTail(listWithDuplicates, 30);
+    cout << "Lista con duplicati: ";
+    printList(listWithDuplicates);
+    removeDuplicates(listWithDuplicates);
+    cout << "Lista dopo rimozione duplicati: ";
+    printList(listWithDuplicates);
+    
+    // Test insertSorted
+    Node* sortedList = nullptr;
+    insertSorted(sortedList, 30);
+    insertSorted(sortedList, 10);
+    insertSorted(sortedList, 50);
+    insertSorted(sortedList, 20);
+    insertSorted(sortedList, 40);
+    cout << "Lista ordinata (inserimenti: 30,10,50,20,40): ";
+    printList(sortedList);
+    
+    // Test insertSortedRecursive
+    insertSortedRecursive(sortedList, 25);
+    insertSortedRecursive(sortedList, 5);
+    cout << "Lista dopo inserimenti ricorsivi (25, 5): ";
+    printList(sortedList);
+    
+    // Test mergeSortedLists
+    Node* list1 = nullptr;
+    insertAtTail(list1, 1);
+    insertAtTail(list1, 3);
+    insertAtTail(list1, 5);
+    Node* list2 = nullptr;
+    insertAtTail(list2, 2);
+    insertAtTail(list2, 4);
+    insertAtTail(list2, 6);
+    cout << "Lista 1: ";
+    printList(list1);
+    cout << "Lista 2: ";
+    printList(list2);
+    Node* mergedList = mergeSortedLists(list1, list2);
+    cout << "Liste unite: ";
+    printList(mergedList);
+    
+    // Test reverseListIterative
+    Node* listToReverse = nullptr;
+    insertAtTail(listToReverse, 1);
+    insertAtTail(listToReverse, 2);
+    insertAtTail(listToReverse, 3);
+    insertAtTail(listToReverse, 4);
+    cout << "Lista originale: ";
+    printList(listToReverse);
+    reverseListIterative(listToReverse);
+    cout << "Lista invertita iterativamente: ";
+    printList(listToReverse);
+    
+    // Test nextGreaterElements
+    Node* ngeList = nullptr;
+    insertAtTail(ngeList, 4);
+    insertAtTail(ngeList, 5);
+    insertAtTail(ngeList, 2);
+    insertAtTail(ngeList, 25);
+    insertAtTail(ngeList, 7);
+    cout << "Lista per next greater elements: ";
+    printList(ngeList);
+    Node* ngeResult = nextGreaterElements(ngeList);
+    cout << "Next greater elements: ";
+    printList(ngeResult);
+    
+    // Test swapNodesByIndex
+    Node* swapList = nullptr;
+    insertAtTail(swapList, 100);
+    insertAtTail(swapList, 200);
+    insertAtTail(swapList, 300);
+    insertAtTail(swapList, 400);
+    insertAtTail(swapList, 500);
+    cout << "Lista prima dello scambio: ";
+    printList(swapList);
+    swapNodesByIndex(swapList, 1, 3);
+    cout << "Lista dopo scambio indici 1 e 3: ";
+    printList(swapList);
+    
+    // Cleanup
+    deleteList(listFromArray);
+    deleteList(listWithDuplicates);
+    deleteList(sortedList);
+    deleteList(mergedList);
+    deleteList(listToReverse);
+    deleteList(ngeList);
+    deleteList(ngeResult);
+    deleteList(swapList);
+    
+    // ============= DOUBLY LINKED LIST TEST =============
+    cout << "\n--- DOUBLY LINKED LIST UTILITIES ---" << endl;
+    
+    DNode* dList = nullptr;
+    insertAtHeadD(dList, 30);
+    insertAtHeadD(dList, 20);
+    insertAtHeadD(dList, 10);
+    insertAtTailD(dList, 40);
+    insertAtTailD(dList, 50);
+    
+    cout << "Lista doppia (avanti): ";
+    printListD(dList);
+    cout << "Lista doppia (indietro): ";
+    printListDReverse(dList);
+    
+    deleteListD(dList);
+    cout << "Lista doppia eliminata" << endl;
     cout << endl;
     // ============= STACK UTILITIES =============
     cout << "--- STACK UTILITIES ---" << endl;
