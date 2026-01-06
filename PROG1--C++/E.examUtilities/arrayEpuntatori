@@ -1,0 +1,185 @@
+/******************************************************************************
+ * EQUIVALENZA ARRAY VS PUNTATORI: TUTTE LE CASISTICHE
+ ******************************************************************************
+ *
+ * 1. LIVELLO 1: MONODIMENSIONALE (int[] vs int*)
+ * --------------------------------------------------------------------------*/
+
+void caso1_Mono() {
+    int arr[5] = {1, 2, 3, 4, 5};
+    int* ptr = arr; // SÌ: l'array decade a puntatore al primo elemento.
+
+    // EQUIVALENZA NEGLI ACCESSI:
+    // arr[i]   == ptr[i]
+    // *(arr+i) == *(ptr+i)
+}
+
+/**
+ * NELLE FUNZIONI:
+ * void func(int a[])  E' IDENTICO A  void func(int* a)
+ */
+
+/*-----------------------------------------------------------------------------
+ * 2. LIVELLO 2: BIDIMENSIONALE (int[][] vs int**)
+ * ----------------------------------------------------------------------------
+ * ATTENZIONE: Qui la situazione si complica. 
+ * Un "int**" NON è sempre equivalente a un "int[][]".
+ */
+
+void caso2_Bi() {
+    // A. ARRAY BIDIMENSIONALE CLASSICO (Matrice statica)
+    // Memoria: un unico blocco contiguo di 6 interi.
+    int matrice[2][3] = {{1,2,3}, {4,5,6}};
+
+    // B. PUNTATORE A PUNTATORE (Matrice dinamica)
+    // Memoria: un array di puntatori, ognuno dei quali punta a un altro array.
+    int** ptrPtr; 
+}
+
+/**
+ * PERCHÉ int matrice[2][3] != int** ?
+ *
+ * 1. Layout di Memoria: 
+ * - La matrice statica è un unico blocco. 
+ * - Il puntatore a puntatore può avere righe sparse in zone diverse della memoria.
+ *
+ * 2. Decadimento:
+ * - 'matrice' non decade in 'int**'. 
+ * - Decade in un "puntatore a un array di 3 interi": int (*ptr)[3].
+ */
+
+/*-----------------------------------------------------------------------------
+ * 3. LIVELLO 3: ARRAY DI PUNTATORI (Il caso di argv)
+ * ----------------------------------------------------------------------------
+ * char* argv[] è un array di puntatori. 
+ * Questo decade CORRETTAMENTE in char**, perché è già una lista di indirizzi.
+ */
+
+void caso3_Argv(int argc, char** argv) {
+    // Qui char* argv[] == char** argv è 100% VERO.
+}
+
+/*-----------------------------------------------------------------------------
+ * 4. TABELLA DELLE EQUIVALENZE (Cosa puoi sostituire e dove)
+ * ----------------------------------------------------------------------------
+ * TIPO DICHIARATO      | DECAY IN FUNZIONE       | COMPATIBILITÀ DIRETTA
+ * ---------------------|-------------------------|---------------------------
+ * int a[5]             | int* | SÌ (Puntatore a elemento)
+ * int a[2][3]          | int (*a)[3]             | NO con int**
+ * int* a[5]            | int** | SÌ (Puntatore a puntatore)
+ * int (*a)[5]          | int (*a)[5]             | Puntatore a array fisso
+ * ---------------------|-------------------------|---------------------------
+ *
+ * 5. LE TRE REGOLE D'ORO PER NON SBAGLIARE
+ * ----------------------------------------------------------------------------
+ * 1. Una dimensione ignota (int a[]) è sempre un puntatore (int*).
+ * 2. Se hai un array di array, solo la PRIMA dimensione può essere omessa 
+ * nella firma di una funzione: void f(int a[][3]) è OK, void f(int a[][]) NO.
+ * 3. Se crei una matrice con "new int*[righe]", allora DEVI usare "int**".
+ *****************************************************************************/
+
+/******************************************************************************
+ * ESEMPI PRATICI DI DICHIARAZIONE E UTILIZZO: ARRAY VS PUNTATORI
+ ******************************************************************************
+ *
+ * 1. MONODIMENSIONALE STATICO (Stack)
+ * L'array ha una dimensione fissa decisa alla scrittura del codice.
+ * --------------------------------------------------------------------------*/
+
+void esempioStatico() {
+    // Dichiarazione e inizializzazione
+    double valori[3] = {1.1, 2.2, 3.3}; 
+
+    // Utilizzo base
+    valori[0] = 5.5; 
+    
+    // Passaggio a funzione (decade in double*)
+    // printStack(valori); // Se printStack accettasse un array
+}
+
+/*-----------------------------------------------------------------------------
+ * 2. MONODIMENSIONALE DINAMICO (Heap)
+ * Utile quando la dimensione è decisa a runtime (es. dall'utente).
+ * --------------------------------------------------------------------------*/
+
+void esempioDinamico(int n) {
+    // Dichiarazione: int[] NON può essere usato con variabili. Serve int*.
+    double* lista = new double[n]; 
+
+    // Utilizzo: identico all'array
+    for(int i = 0; i < n; i++) {
+        lista[i] = i * 1.5;
+    }
+
+    // Obbligatorio liberare
+    delete[] lista; 
+}
+
+/*-----------------------------------------------------------------------------
+ * 3. BIDIMENSIONALE STATICO (Matrice)
+ * Memoria contigua. Tutte le dimensioni tranne la prima devono essere fisse.
+ * --------------------------------------------------------------------------*/
+
+// Nella firma, il "3" è obbligatorio per far capire al compilatore il salto di riga
+void elaboraMatrice(int mat[][3], int righe) {
+    mat[0][1] = 10; 
+}
+
+void esempioMatrice() {
+    int scacchiera[2][3] = {{1,2,3}, {4,5,6}};
+    elaboraMatrice(scacchiera, 2);
+}
+
+/*-----------------------------------------------------------------------------
+ * 4. PUNTATORE A PUNTATORE (Matrice Dinamica / Array di Stringhe)
+ * È il caso di "char** argv". Ogni "riga" può avere lunghezza diversa.
+ * --------------------------------------------------------------------------*/
+
+void esempioDoppioPuntatore() {
+    int righe = 2;
+    // 1. Alloco un array di PUNTATORI (le "maniglie" per le righe)
+    int** matrice = new int*[righe];
+
+    // 2. Per ogni riga, alloco un array di INTERI
+    for(int i = 0; i < righe; i++) {
+        matrice[i] = new int[3]; 
+    }
+
+    // Utilizzo:
+    matrice[1][2] = 50;
+
+    // 3. Deallocazione (al contrario: prima le righe, poi il puntatore principale)
+    for(int i = 0; i < righe; i++) {
+        delete[] matrice[i];
+    }
+    delete[] matrice;
+}
+
+/*-----------------------------------------------------------------------------
+ * 5. IL CASO "argv" (char** / char* [])
+ * Array di array di caratteri (stringhe C).
+ * --------------------------------------------------------------------------*/
+
+void esempioArgv(int argc, char** argv) {
+    if (argc > 1) {
+        // Accesso al primo carattere del primo argomento
+        char primoCarattere = argv[1][0]; 
+        
+        // Accesso all'intera prima stringa
+        char* primaStringa = argv[1]; 
+    }
+}
+
+/******************************************************************************
+ * RIASSUNTO VELOCE DELLE SINTASSI
+ ******************************************************************************
+ *
+ * TIPO             | DICHIARAZIONE            | ACCESSO        | MEMORIA
+ * -----------------|--------------------------|----------------|--------------
+ * Array 1D         | int a[5];                | a[i]           | Stack
+ * Puntatore 1D     | int* a = new int[n];     | a[i]           | Heap
+ * Array 2D         | int a[2][3];             | a[r][c]        | Stack (Contigua)
+ * Puntatore 2D     | int** a;                 | a[r][c]        | Heap (Sparsa)
+ * Array di Ptr     | char* a[3];              | a[i] (è char*) | Stack (Indirizzi)
+ *
+ *****************************************************************************/
