@@ -282,6 +282,10 @@ void readFromBinaryFile(const char* filename, int arr[], int& size); // Legge nu
 void readFromFileUntilValue(const char* filename, int arr[], int& size, int stopValue); // Legge fino a trovare un valore specifico
 void readFromFileSkipNegatives(const char* filename, int arr[], int& size); // Legge saltando valori negativi
 void readFromFileInRange(const char* filename, int arr[], int& size, int min, int max); // Legge solo valori in un range
+void readPersonaFromFile(const char* filename, Persona& p);      // Legge i dati di una persona da file
+void writePersonaToFile(const char* filename, const Persona& p); // Scrive i dati di una persona su file
+void readPersonasFromFile(const char* filename, Persona arr[], int& count); // Legge array di persone da file
+void writePersonasToFile(const char* filename, Persona arr[], int count);   // Scrive array di persone su file
 void writeToFileBinary(const char* filename, int arr[], int size); // Scrive array su file binario
 void writeToFileFormatted(const char* filename, int arr[], int size); // Scrive con formattazione
 void writeToFileWithHeader(const char* filename, int arr[], int size); // Scrive con intestazione
@@ -2267,6 +2271,71 @@ void writeToFileWithTimestamp(const char* filename, int arr[], int size) {
     for (int i = 0; i < size; i++) {
         file << arr[i] << endl;
     }
+    file.close();
+}
+
+
+
+void readPersonaFromFile(const char* filename, Persona& p) {
+    fstream file(filename, ios::in);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        return;
+    }
+    
+    file >> p.name;
+    file >> p.age;
+    file >> p.email;
+    
+    file.close();
+}
+
+void writePersonaToFile(const char* filename, const Persona& p) {
+    fstream file(filename, ios::out);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        return;
+    }
+    
+    file << p.name << endl;
+    file << p.age << endl;
+    file << p.email << endl;
+    
+    file.close();
+}
+
+void readPersonasFromFile(const char* filename, Persona arr[], int& count) {
+    fstream file(filename, ios::in);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        count = 0;
+        return;
+    }
+    
+    count = 0;
+    while (file.getline(arr[count].name, 50)) {
+        file >> arr[count].age;
+        file.ignore();
+        file.getline(arr[count].email, 50);
+        count++;
+    }
+    
+    file.close();
+}
+
+void writePersonasToFile(const char* filename, Persona arr[], int count) {
+    fstream file(filename, ios::out);
+    if (!file.is_open()) {
+        cout << "Errore: impossibile aprire il file" << endl;
+        return;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        file << arr[i].name << endl;
+        file << arr[i].age << endl;
+        file << arr[i].email << endl;
+    }
+    
     file.close();
 }
 
