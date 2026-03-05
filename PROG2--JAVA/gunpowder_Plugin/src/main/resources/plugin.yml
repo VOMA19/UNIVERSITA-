@@ -1,0 +1,6 @@
+name: GunpowderBlock
+version: 1.0
+main: it.tuonome.gunpowderblock.GunpowderBlock
+api-version: "1.21"
+author: TuoNome
+description: Aggiunge un blocco di polvere da sparo per compattare lo spazio nei bauli.
