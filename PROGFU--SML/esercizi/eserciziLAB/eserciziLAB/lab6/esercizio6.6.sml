@@ -1,0 +1,1 @@
+simpleMap (fn x => if x < 0.0 then 0.0 else x, L);
