@@ -180,4 +180,5 @@ double calcola(struct Tree *root)
     return result;
 }
 
+
 // Inserire qui sopra la definizione della funzione calcola
