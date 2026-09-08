@@ -7,20 +7,20 @@
 using namespace std;
 
 // Struttura del nodo per la lista concatenata dei risultati
-struct Node {
+struct Nodo {
     int val;
-    Node* next;
+    Nodo* next;
 };
 
 // ============================================================================
 // DICHIARAZIONE DELLA FUNZIONE VISITA (Richiesta dall'Esercizio 3)
 // ============================================================================
-Node* visita(bool** A, int N, int source);
+Nodo* visita(bool** A, int N, int source);
 
 // ============================================================================
 // IMPLEMENTAZIONE DELLA FUNZIONE VISITA
 // ============================================================================
-Node* visita(bool** A, int N, int source) {
+Nodo* visita(bool** A, int N, int source) {
     // 1. Creo un array visited di boolean di dimensione N, inizializzato a False
     bool* visited = new (std::nothrow) bool[N];
     if (!visited) {
@@ -32,7 +32,7 @@ Node* visita(bool** A, int N, int source) {
     }
 
     // 2. Creo una lista result inizialmente vuota
-    Node* result = nullptr;
+    Nodo* result = nullptr;
 
     // 3. Creo uno stack e vi inserisco il nodo sorgente ricevuto come argomento
     Stack s;
@@ -48,11 +48,11 @@ Node* visita(bool** A, int N, int source) {
             visited[curr] = true;
 
             // Lo aggiungo in testa alla lista result (inserimento in testa)
-            Node* newNode = new (std::nothrow) Node;
-            if (newNode) {
-                newNode->val = curr;
-                newNode->next = result;
-                result = newNode;
+            Nodo* newNodo = new (std::nothrow) Nodo;
+            if (newNodo) {
+                newNodo->val = curr;
+                newNodo->next = result;
+                result = newNodo;
             }
 
             // Considero tutti i nodi j adiacenti al nodo curr (A[curr][j] == True)
@@ -110,11 +110,11 @@ int main() {
     cout << "\nAvvio visita dal nodo sorgente: " << sorgente << endl;
 
     // Chiamata della funzione visita
-    Node* list = visita(A, N, sorgente);
+    Nodo* list = visita(A, N, sorgente);
 
     // Stampa dei risultati della lista concatenata dei nodi raggiungibili
     cout << "Lista: ";
-    Node* temp = list;
+    Nodo* temp = list;
     while (temp != nullptr) {
         cout << temp->val << " ";
         temp = temp->next;
@@ -123,7 +123,7 @@ int main() {
 
     // Deallocazione della lista dei risultati
     while (list != nullptr) {
-        Node* toDelete = list;
+        Nodo* toDelete = list;
         list = list->next;
         delete toDelete;
     }

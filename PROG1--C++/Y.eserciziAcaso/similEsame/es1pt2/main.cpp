@@ -53,12 +53,12 @@ int stampaUrgenti(const Segnalazione* backlog, int loaded) {
 int main(int argc, char* argv[]) {
     // 1. Controllo che il numero di parametri passati da linea di comando sia corretto (argc == 2)
     if (argc != 2) {
-        std::cerr << "Usage: " << argv << " <numero_segnalazioni>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <numero_segnalazioni>" << std::endl;
         return 1;
     }
 
     // 2. Controllo che il valore N inserito sia maggiore di zero
-    int N = std::atoi(argv[3]);
+    int N = std::atoi(argv[1]);
     if (N <= 0) {
         std::cerr << "Errore: il numero di segnalazioni N deve essere maggiore di zero." << std::endl;
         return 1;
