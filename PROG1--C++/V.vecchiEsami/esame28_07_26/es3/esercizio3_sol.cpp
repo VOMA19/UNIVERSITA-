@@ -182,3 +182,4 @@ double calcola(struct Tree *root)
 
 
 // Inserire qui sopra la definizione della funzione calcola
+
