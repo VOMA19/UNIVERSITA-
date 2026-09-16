@@ -20,12 +20,12 @@ Nodo* calcola(int N);
 // DEFINIZIONE DELLA FUNZIONE RICORSIVA CALCOLA (Senza cicli iterativi)
 // ============================================================================
 Nodo* calcola(int N) {
-    // Caso base: se N è minore o uguale a zero, la lista è vuota (nullptr)
-    if (N <= 0) {
+// Caso base: se N è minore o uguale a zero, la lista è vuota (nullptr)
+if (N <= 0) {
         return nullptr;
     }
     
-    // Allocazione dinamica del nodo corrente con std::nothrow (stile docente)
+    // Allocazione dinamica del Nodo corrente con std::nothrow (stile docente)
     Nodo* head = new (std::nothrow) Nodo;
     if (!head) {
         std::cerr << "Errore: allocazione di memoria fallita." << std::endl;
